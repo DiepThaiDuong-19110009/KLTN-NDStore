@@ -1,0 +1,139 @@
+.box {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(238, 238, 238);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.back-home {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1000;
+    cursor: pointer;
+    border: none;
+    background-color: var(--main-color);
+    padding: 10px 20px;
+    border-radius: 10px;
+    color: aliceblue;
+}
+
+.form-login {
+    display: flex;
+    width: 60%;
+    height: 80%;
+    background-color: var(--main-color);
+    border-radius: 10px;
+}
+
+.form-left {
+    width: 50%;
+    height: 100%;
+    background-color: rgb(255, 255, 255);
+}
+
+.row-input {
+    display: flex;
+    padding: 10px 20px;
+    flex-direction: column;
+}
+
+h4 {
+    margin-top: 20px;
+}
+
+label {
+    margin-bottom: 10px;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    color: aliceblue;
+}
+
+input {
+    padding: 15px 15px;
+    border-radius: 10px;
+    border: none;
+    background-color: rgba(231, 231, 231, 0.745);
+    outline: none;
+}
+
+.show-password {
+    display: flex;
+    align-items: center;
+}
+
+.forgot-password {
+    color: var(--main-color);
+}
+
+.forgot-password:hover {
+    color: var(--main-color);
+}
+
+.btn-login {
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    background-color: var(--main-color);
+    color: aliceblue;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.btn-login:hover {
+    background-color: #0092c3;
+}
+
+.btn-login-google {
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    background-color: rgb(249, 249, 249);
+    color: var(--main-color);
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: 1px 2px 10px #e0e0e0;
+}
+
+.btn-login-google:hover {
+    background-color: #f2f2f2;
+}
+
+image {
+    width: 300px;
+}
+
+.form-right {
+    width: 50%;
+    height: 100%;
+    background-color: var(--main-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.title {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #f2f2f2;
+    gap: 20px;
+}
+
+.btn-register {
+    text-decoration: none;
+    color: aliceblue;
+    border: solid 1px #e0e0e0;
+    padding: 15px 20px;
+    border-radius: 10px;
+}

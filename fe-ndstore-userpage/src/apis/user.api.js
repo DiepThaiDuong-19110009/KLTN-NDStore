@@ -1,4 +1,5 @@
 import axios from "axios";
+import { API_URL_GHN } from "../common/common";
 
 export const getProvince = () => {
   const config = {
@@ -8,7 +9,7 @@ export const getProvince = () => {
     },
   }
 
-  return axios.get('https://online-gateway.ghn.vn/shiip/public-api/master-data/province', config)
+  return axios.get(API_URL_GHN + '/province', config)
 }
 
 export const getDistrict = (provinceId) => {
@@ -20,7 +21,7 @@ export const getDistrict = (provinceId) => {
     data: { province_id: parseInt(provinceId) }
   }
 
-  return axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=${provinceId}`, config)
+  return axios.get(API_URL_GHN + `/district?province_id=${provinceId}`, config)
 }
 
 export const getWard = (districtId) => {
@@ -32,7 +33,7 @@ export const getWard = (districtId) => {
     data: { district_id: parseInt(districtId) }
   }
 
-  return axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${districtId}`, config)
+  return axios.get(API_URL_GHN + `/ward?district_id=${districtId}`, config)
 }
 
 export const loginUser = (email, password) => {

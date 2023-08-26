@@ -3,6 +3,7 @@ import '../Login/Login.css'
 import logoGoogle from '../../images/icon-google.png'
 import {Image} from 'react-bootstrap'
 import { EMAIL_REGEX_PATTERN } from '../../common/common'
+import { loginUser } from '../../apis/user.api'
 
 const Login = () => {
 
@@ -39,15 +40,21 @@ const Login = () => {
             setMessage("Email không đúng định dạng");
             return;
         }
-        console.log(email, password)
+        loginUser(email, password)
+        .then((res) => {
+            console.log(res)
+        })
+        .catch((err) => {
+            return err;
+        })
     }
 
     return (
         <div className='box'>
-            <a href='/' className='back-home'>Quay lại</a>
+            <a href='/' className='back-home'>Trang chủ</a>
             <div className='form-login'>
-                <div className='form-left'>
-                    <h4 style={{marginLeft: '20px'}}>Đăng nhập</h4>
+                <div>
+                    <h4 style={{textAlign: 'center'}}>Đăng nhập</h4>
                     <div className='row-input'>
                         <label>Email</label>
                         <input value={email} onChange={(e) => getEmail(e)} placeholder='Email' type='email'></input>
@@ -76,14 +83,9 @@ const Login = () => {
                             <span>Đăng nhập với Google</span>
                         </button>
                     </div>
-                </div>
-                <div className='form-right'>
-                    <div className='title'>
-                        <h4>Chào mừng đến ND Store</h4>
-                        <p>Bạn chưa có tài khoản?</p>
-                    </div>
-                    <div className='row-input'>
-                        <a className='btn-register' href='/'>Đăng ký</a>
+                    <div style={{display: 'flex', justifyContent: 'center', margin: '15px 0px 25px 0px'}}>
+                        <span style={{marginRight: '6px'}}>Bạn chưa có tài khoản?</span>
+                        <a style={{color: 'var(--main-color)', fontWeight: 'bold'}} href='/register'>Đăng ký</a>
                     </div>
                 </div>
             </div>

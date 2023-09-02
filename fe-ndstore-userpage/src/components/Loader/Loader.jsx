@@ -8,7 +8,7 @@ export const Loader = () => {
             width: '100vw', height: '100vh', display: 'flex',
             justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.349)'
         }}>
-            <span class="loader"></span>
+            <span className="loader"></span>
         </div>
     )
 }

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL_GHN } from "../common/common";
+import { API_URL, API_URL_GHN } from "../common/common";
 
 export const getProvince = () => {
   const config = {
@@ -43,5 +43,5 @@ export const loginUser = (email, password) => {
     },
   }
 
-  return axios.post(`https://apingweb.com/api/login`, {email: email, password: password}, config)
+  return axios.post( API_URL + `/api/auth/login`, {email: email, password: password}, config)
 }

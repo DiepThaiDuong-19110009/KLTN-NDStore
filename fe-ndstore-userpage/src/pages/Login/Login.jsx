@@ -22,8 +22,10 @@ const Login = () => {
     let navigate = useNavigate();
 
     useEffect(() => {
-
-    }, [])
+        if(localStorage.getItem('access-token')) {
+            navigate('/');
+        }
+    }, [navigate])
 
     const getEmail = (e) => {
         setMessage("")
@@ -37,7 +39,6 @@ const Login = () => {
 
     const login = () => {
         setMessage('');
-        setIsLoading(true)
         if (email === '' || password === '') {
             setMessage("Vui lòng điền đủ thông tin");
             return;
@@ -46,17 +47,26 @@ const Login = () => {
             setMessage("Email không đúng định dạng");
             return;
         }
+        setIsLoading(true)
         loginUser(email, password)
             .then((res) => {
-                if (res) {
-                    console.log(res)
-                    localStorage.setItem('token', res?.data?.token)
+                if (res?.data?.success === true) {
+                    localStorage.setItem('access-token', res?.data?.data?.accessToken)
+                    localStorage.setItem('user-infor', JSON.stringify({email: res?.data?.data?.email, name: res?.data?.data?.name,
+                         gender: res?.data?.data?.gender, avatar: res?.data?.data?.avatar}))
                     setIsLoading(false);
                     return navigate("/")
+                } else if (res?.data?.success === false) {
+                    setIsLoading(false);
+                    setMessage('Email hoặc mật khẩu không đúng')
+                    return;
                 }
             })
             .catch((err) => {
                 setIsLoading(false);
+                if (err?.response?.data?.message === 'Email or password incorrect') {
+                    setMessage('Email hoặc mật khẩu không đúng')
+                }
                 return err;
             })
     }
@@ -96,7 +106,7 @@ const Login = () => {
                         <div className='row-input'>
                             <button className='btn-login-google'>
                                 <Image style={{ width: '30px', marginRight: '20px' }} src={logoGoogle} alt='icon-google'></Image>
-                                <span>Đăng nhập với Google</span>
+                                <a href='http://localhost:8080/oauth2/authorization/google'>Đăng nhập với Google</a>
                             </button>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'center', margin: '15px 0px 25px 0px' }}>

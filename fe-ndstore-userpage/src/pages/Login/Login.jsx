@@ -22,7 +22,7 @@ const Login = () => {
     let navigate = useNavigate();
 
     useEffect(() => {
-        if(localStorage.getItem('access-token')) {
+        if (localStorage.getItem('access-token')) {
             navigate('/');
         }
     }, [navigate])
@@ -52,11 +52,17 @@ const Login = () => {
             .then((res) => {
                 if (res?.data?.success === true) {
                     localStorage.setItem('access-token', res?.data?.data?.accessToken)
-                    localStorage.setItem('user-infor', JSON.stringify({email: res?.data?.data?.email, name: res?.data?.data?.name,
-                         gender: res?.data?.data?.gender, avatar: res?.data?.data?.avatar}))
+                    localStorage.setItem('user-infor', JSON.stringify({
+                        email: res?.data?.data?.email, name: res?.data?.data?.name,
+                        gender: res?.data?.data?.gender, avatar: res?.data?.data?.avatar
+                    }))
                     setIsLoading(false);
                     return navigate("/")
                 } else if (res?.data?.success === false) {
+                    if (res?.data?.message === 'Your account is unconfirm') {
+                        setIsLoading(false);
+                        navigate(`/verify/${email}`)
+                    };
                     setIsLoading(false);
                     setMessage('Email hoặc mật khẩu không đúng')
                     return;
@@ -80,14 +86,14 @@ const Login = () => {
                 <a href='/' className='back-home'>Trang chủ</a>
                 <div className='form-login'>
                     <div>
-                        <h4 style={{ textAlign: 'center' }}>Đăng nhập</h4>
-                        <div className='row-input'>
+                        <h4 className='title-login' style={{ textAlign: 'center' }}>Đăng nhập</h4>
+                        <div className='row-input-login'>
                             <label>Email</label>
-                            <input value={email} onChange={(e) => getEmail(e)} placeholder='Email' type='email'></input>
+                            <input className='input-login' value={email} onChange={(e) => getEmail(e)} placeholder='Email' type='email'></input>
                         </div>
-                        <div className='row-input'>
+                        <div className='row-input-login'>
                             <label>Mật khẩu</label>
-                            <input value={password} onChange={(e) => getPassword(e)} placeholder='Mật khẩu' type={passwordShown ? "text" : "password"}></input>
+                            <input className='input-login' value={password} onChange={(e) => getPassword(e)} placeholder='Mật khẩu' type={passwordShown ? "text" : "password"}></input>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: ' 10px 20px' }}>
                             <div className='show-password'>
@@ -97,17 +103,17 @@ const Login = () => {
                             <a className='forgot-password' href='/'>Quên mật khẩu?</a>
                         </div>
                         {<p style={{ color: 'red', textAlign: 'center', marginTop: '10px' }}>{message}</p>}
-                        <div className='row-input'>
+                        <div className='row-input-login'>
                             <button onClick={login} className='btn-login'>Đăng nhập</button>
                         </div>
-                        <div className='row-input'>
+                        <div className='row-input-login'>
                             <span style={{ margin: '0 auto' }}>Hoặc</span>
                         </div>
-                        <div className='row-input'>
-                            <button className='btn-login-google'>
+                        <div className='row-input-login'>
+                            <a href='http://localhost:8080/oauth2/authorization/google' className='btn-login-google'>
                                 <Image style={{ width: '30px', marginRight: '20px' }} src={logoGoogle} alt='icon-google'></Image>
-                                <a href='http://localhost:8080/oauth2/authorization/google'>Đăng nhập với Google</a>
-                            </button>
+                                <span>Đăng nhập với Google</span>
+                            </a>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'center', margin: '15px 0px 25px 0px' }}>
                             <span style={{ marginRight: '6px' }}>Bạn chưa có tài khoản?</span>

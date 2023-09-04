@@ -1,0 +1,12 @@
+.footer {
+    width: 100vw;
+    height: 80px;
+    background-color: var(--main-color);
+}
+
+.container-footer {
+    width: 80%;
+    height: 100%;
+    margin: 0 auto;
+    background-color: aquamarine;
+}

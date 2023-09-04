@@ -31,13 +31,13 @@
     box-shadow: 1px 2px 10px #e0e0e0;
 }
 
-.row-input {
+.row-input-login {
     display: flex;
     padding: 10px 20px;
     flex-direction: column;
 }
 
-h4 {
+.title-login {
     margin-top: 20px;
 }
 
@@ -49,7 +49,8 @@ a {
     text-decoration: none;
 }
 
-input, select {
+.input-login {
+    margin-top: 10px;
     padding: 10px 10px;
     border-radius: 10px;
     border: none;
@@ -85,6 +86,9 @@ input, select {
 }
 
 .btn-login-google {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 10px;
     border-radius: 10px;
     border: none;

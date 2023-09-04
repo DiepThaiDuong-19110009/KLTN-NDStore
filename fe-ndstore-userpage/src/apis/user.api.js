@@ -45,3 +45,25 @@ export const loginUser = (email, password) => {
 
   return axios.post( API_URL + `/api/auth/login`, {email: email, password: password}, config)
 }
+
+export const registerUser = (name, email, password, phone, provinceId, districtId, wardId, address, gender) => {
+  console.log(name, email, password, phone, address, gender, provinceId, districtId, wardId)
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }
+
+  return axios.post( API_URL + `/api/auth/register`, {name: name, email: email, password: password, phone: phone,
+    province: parseInt(provinceId), district: parseInt(districtId), ward: parseInt(wardId), address: address, gender: gender}, config)
+}
+
+export const verifyUser = (email, otp) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }
+
+  return axios.post( API_URL + `/api/auth/verifyaccount`, {email: email, otp: otp, type: 'register'}, config)
+}

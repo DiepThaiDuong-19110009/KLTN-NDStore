@@ -1,0 +1,140 @@
+.box-register {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(238, 238, 238);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.back-home {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1000;
+    cursor: pointer;
+    border: none;
+    background-color: var(--main-color);
+    padding: 10px 20px;
+    border-radius: 10px;
+    color: aliceblue;
+}
+
+.back-home:hover {
+    color: #f2f2f2;
+    background-color: #0092c3;
+}
+
+.form-register {
+    border-radius: 10px;
+    background-color: #f2f2f2;
+    box-shadow: 1px 2px 10px #e0e0e0;
+}
+
+.row-input-register {
+    display: flex;
+    padding: 10px 20px;
+    flex-direction: column;
+}
+
+.title-login {
+    margin-top: 20px;
+}
+
+label {
+    margin-bottom: 10px;
+}
+
+a {
+    text-decoration: none;
+}
+
+.input-register {
+    margin-top: 10px;
+    padding: 10px 10px;
+    border-radius: 10px;
+    border: none;
+    background-color: rgba(231, 231, 231, 0.745);
+    outline: none;
+}
+
+.show-password {
+    display: flex;
+    align-items: center;
+}
+
+.forgot-password {
+    color: var(--main-color);
+}
+
+.forgot-password:hover {
+    color: var(--main-color);
+}
+
+.btn-login {
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background-color: var(--main-color);
+    color: aliceblue;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.btn-login:hover {
+    background-color: #0092c3;
+}
+
+.btn-login-google {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background-color: rgb(249, 249, 249);
+    color: var(--main-color);
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: 1px 2px 10px #e0e0e0;
+}
+
+.btn-login-google:hover {
+    background-color: #f2f2f2;
+}
+
+.title {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #f2f2f2;
+    gap: 20px;
+}
+
+.btn-register {
+    text-decoration: none;
+    color: aliceblue;
+    border: solid 1px #e0e0e0;
+    padding: 15px 20px;
+    border-radius: 10px;
+}
+
+@media only screen and (max-width: 800px) {
+    .form-register {
+        width: 90%;
+    }
+}
+
+@media only screen and (min-width: 801px) {
+    .form-register {
+        width: 60%;
+    }
+}
+
+@media only screen and (min-width: 1240px) {
+    .form-register {
+        width: 30%;
+    }
+}

@@ -8,6 +8,7 @@ const Header = () => {
     const [info, setInfo] = useState({})
     const [sticky, setSticky] = useState('');
     const [showMenu, setShowMenu] = useState(false)
+    const [showCategory, setShowCategory] = useState(false)
 
     let navigate = useNavigate();
 
@@ -34,6 +35,7 @@ const Header = () => {
     }
 
     const showDropdown = () => {
+        console.log(showMenu)
         showMenu === true ? setShowMenu(false) : setShowMenu(true);
     }
 
@@ -42,10 +44,53 @@ const Header = () => {
         window.location.reload();
     }
 
+    const goToCart = () => {
+        navigate('/cart')
+    }
+
+    const showDropdownCategory = () => {
+        console.log(showMenu)
+        showCategory === true ? setShowCategory(false) : setShowCategory(true);
+    }
+
+    // window.addEventListener('mouseup', function (event) {
+    //     setShowMenu(false)
+    // });
+
     return (
         <div className="header">
             <div className='container-header'>
                 <a className='logo-header' href='/'>NDStore</a>
+                <div className='category-header'>
+                    <div className='btn-catergory'>
+                        <div onClick={showDropdownCategory}>
+                            <i style={{ marginRight: '10px' }} className='fas fa-list'></i>
+                            <span>Danh mục sản phẩm</span>
+                        </div>
+                        {
+                            showCategory === true &&
+                            <div className='list-category-header'>
+                                <ul>
+                                    <a href='/product/category/1'>
+                                        <li>Laptop</li>
+                                    </a>
+                                    <a href='/product/category/1'>
+                                        <li>Laptop</li>
+                                    </a>
+                                    <a href='/product/category/1'>
+                                        <li>Laptop</li>
+                                    </a>
+                                    <a href='/product/category/1'>
+                                        <li>Laptop</li>
+                                    </a>
+                                    <a href='/product/category/1'>
+                                        <li>Laptop</li>
+                                    </a>
+                                </ul>
+                            </div>
+                        }
+                    </div>
+                </div>
                 <div className='search-header'>
                     <input className='input-search-header' placeholder='Tìm kiếm sản phẩm...'></input>
                     <button className='btn-search'>
@@ -53,7 +98,7 @@ const Header = () => {
                     </button>
                 </div>
                 <div className='login-register-cart-user'>
-                    <div className='cart-header'>
+                    <div style={{ cursor: 'pointer' }} onClick={() => goToCart()} className='cart-header'>
                         <i className='fas fa-shopping-cart icon-cart'></i>
                         <span className='cart-quantity'>10</span>
                     </div>
@@ -72,8 +117,10 @@ const Header = () => {
                                 <span className='name-user'>{info?.name}</span>
                                 {
                                     showMenu === true &&
-                                    <ul className='drop-down-user-infor'>
-                                        <li>Thông tin cá nhân</li>
+                                    <ul id='drop-down-user-infor'>
+                                        <li>
+                                            <a style={{ textDecoration: 'none', color: 'black' }} href='/user-detail'>Thông tin cá nhân</a>
+                                        </li>
                                         <li>Đổi mật khẩu</li>
                                         <li onClick={logOut}>
                                             <i style={{ marginRight: '10px', fontSize: '20px' }} className='fas fa-sign-out-alt'></i>

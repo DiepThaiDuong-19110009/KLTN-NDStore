@@ -1,11 +1,14 @@
+import CarouselComponent from "../../components/Carousel/Carousel";
 import Footer from "../../components/Footer/Footer";
 import Header from "../../components/Header/Header";
 
 const Home = () => {
-    return(
+    return (
         <div>
             <Header></Header>
-            Home
+            <div className="">
+                <CarouselComponent />
+            </div>
             <Footer></Footer>
         </div>
     )

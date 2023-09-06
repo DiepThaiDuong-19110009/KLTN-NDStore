@@ -5,7 +5,7 @@ import React from "react";
 const CarouselComponent = () => {
     return (
         <HeroSlider
-            style={{}}
+            width={'100%'}
             height={"50vh"}
             autoplay
             controller={{

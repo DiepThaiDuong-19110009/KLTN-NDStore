@@ -1,0 +1,34 @@
+.card-product {
+    width: 180px;
+    height: auto;
+    background-color: rgb(255, 255, 255);
+    padding: 10px 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.card-product img {
+    width: 160px;
+    transition: transform .5s, filter 1s ease-in-out;
+}
+
+.card-product img:hover {
+    transform: scale(1.1);
+}
+
+.content-card {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.content-card .price{
+    color: var(--main-color);
+}
+
+.content-card .discount {
+    display: flex;
+    gap: 10px;
+    font-size: 12px;
+}

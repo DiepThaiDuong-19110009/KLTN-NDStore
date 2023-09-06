@@ -6,11 +6,13 @@ import { useNavigate } from 'react-router-dom';
 const Header = () => {
 
     const [info, setInfo] = useState({})
-    const [sticky, setSticky] = useState('');
     const [showMenu, setShowMenu] = useState(false)
     const [showCategory, setShowCategory] = useState(false)
 
     let navigate = useNavigate();
+
+    // Scroll page
+    const [sticky, setSticky] = useState("");
 
     useEffect(() => {
         window.addEventListener("scroll", isSticky);
@@ -20,11 +22,12 @@ const Header = () => {
     }, []);
 
     const isSticky = () => {
-        /* Method that will fix header after a specific scrollable */
         const scrollTop = window.scrollY;
         const stickyClass = scrollTop >= 50 ? "is-sticky" : "";
         setSticky(stickyClass);
     };
+
+    const classes = `header-section ${sticky}`;
 
     useEffect(() => {
         getUserInfor()
@@ -58,7 +61,7 @@ const Header = () => {
     // });
 
     return (
-        <div className="header">
+        <div className={classes} id='header'>
             <div className='container-header'>
                 <a className='logo-header' href='/'>NDStore</a>
                 <div className='category-header'>

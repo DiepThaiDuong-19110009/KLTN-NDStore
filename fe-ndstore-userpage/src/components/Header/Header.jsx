@@ -124,7 +124,12 @@ const Header = () => {
                                         <li>
                                             <a style={{ textDecoration: 'none', color: 'black' }} href='/user-detail'>Thông tin cá nhân</a>
                                         </li>
-                                        <li>Đổi mật khẩu</li>
+                                        <li>
+                                            <a style={{ textDecoration: 'none', color: 'black' }} href='/forgot-password'>Đổi mật khẩu</a>
+                                        </li>
+                                        <li>
+                                            <a style={{ textDecoration: 'none', color: 'black' }} href='/order-history'>Lịch sử đơn hàng</a>
+                                        </li>
                                         <li onClick={logOut}>
                                             <i style={{ marginRight: '10px', fontSize: '20px' }} className='fas fa-sign-out-alt'></i>
                                             Đăng xuất

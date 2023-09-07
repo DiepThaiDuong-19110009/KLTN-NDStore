@@ -1,0 +1,29 @@
+.order-history {
+    width: 80%;
+    margin: 20px auto;
+}
+
+.content-order-history {
+    overflow-y: scroll;
+    height: 500px;
+    padding: 20px;
+}
+
+.row-item-order {
+    margin-top: 20px;
+    border-bottom: 1px solid rgb(226, 226, 226);
+}
+
+.row-item-order .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-cancel-order {
+    border: none;
+    background-color: var(--danger);
+    padding: 5px 10px;
+    color: white;
+    border-radius: 5px;
+}

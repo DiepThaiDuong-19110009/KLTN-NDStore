@@ -48,6 +48,7 @@ const OrderHistory = () => {
                         value === 1 &&
                         <div className="content-order-history">
                             <div className="row-item-order">
+                                <h5 style={{ marginBottom: '15px' }}>Laptop Gaming ASUS</h5>
                                 <p>Số lượng: <strong>1</strong></p>
                                 <p>Tên người nhận: <strong>Diệp Thái Dương</strong></p>
                                 <p>Số điện thoại: <strong>0939816390</strong></p>
@@ -61,6 +62,7 @@ const OrderHistory = () => {
                         value === 2 &&
                         <div className="content-order-history">
                             <div className="row-item-order">
+                                <h5 style={{ marginBottom: '15px' }}>Laptop Gaming ASUS</h5>
                                 <p>Số lượng: <strong>1</strong></p>
                                 <p>Tên người nhận: <strong>Diệp Thái Dương</strong></p>
                                 <p>Số điện thoại: <strong>0939816390</strong></p>
@@ -76,7 +78,7 @@ const OrderHistory = () => {
                             <div className="row-item-order">
                                 <div className="top">
                                     <h5 style={{ marginBottom: '15px' }}>Laptop Gaming ASUS</h5>
-                                    <img style={{width: '100px'}} alt="" src='https://static.vecteezy.com/system/resources/previews/021/433/014/non_2x/cancelled-rubber-stamp-free-png.png'></img>
+                                    <img style={{ width: '100px' }} alt="" src='https://static.vecteezy.com/system/resources/previews/021/433/014/non_2x/cancelled-rubber-stamp-free-png.png'></img>
                                 </div>
                                 <p>Số lượng: <strong>1</strong></p>
                                 <p>Tên người nhận: <strong>Diệp Thái Dương</strong></p>

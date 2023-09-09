@@ -1,0 +1,87 @@
+.container-product {
+    width: 80%;
+    min-height: 100px;
+    margin: 30px auto;
+    background-color: transparent;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.filter-product {
+    width: 200px;
+    height: auto;
+    padding: 10px;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 1px 2px 8px rgb(213, 213, 213);
+    border-radius: 5px;
+}
+
+.filter-action {
+    display: flex;
+    justify-content: space-between;
+}
+
+.range input {
+    padding: 5px;
+    border: 1px solid rgb(190, 190, 190);
+    border-radius: 5px;
+    outline: none;
+}
+
+.filter-action button{
+    width: 70px;
+    border: 1px solid var(--main-color);
+    background-color: var(--main-color);
+    padding: 5px;
+    border-radius: 5px;
+    color: white;
+}
+
+.list-product {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 80%;
+}
+
+.list-product .name-category {
+    width: 100%;
+    background-color: white;
+    box-shadow: 1px 2px 8px rgb(213, 213, 213);
+    border-radius: 5px;
+    padding: 5px 15px;
+}
+
+.list-product .filter-by {
+    width: 100%;
+    padding: 10px 15px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+    background-color: white;
+    box-shadow: 1px 2px 8px rgb(213, 213, 213);
+    border-radius: 5px;
+}
+
+.list-product .filter-by button {
+    border: 1px solid var(--main-color);
+    border-radius: 10px;
+    padding: 6px 10px;
+    background-color: transparent;
+    color: var(--main-color);
+}
+
+.products {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    overflow: hidden;
+    gap: 5px;
+    padding: 10px 20px;
+    width: 100%;
+    background-color: rgba(245, 245, 245, 0.87);
+    box-shadow: 1px 2px 8px rgb(213, 213, 213);
+    border-radius: 5px;
+}

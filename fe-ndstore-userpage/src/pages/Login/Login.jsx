@@ -100,7 +100,7 @@ const Login = () => {
                                 <input onClick={togglePasswordVisiblity} style={{ margin: '0px 10px 0px 0px' }} type='checkBox'></input>
                                 <label style={{ margin: '0px' }}>Hiển thị mật khẩu</label>
                             </div>
-                            <a className='forgot-password' href='/'>Quên mật khẩu?</a>
+                            <a className='forgot-password' href='/forgot-password'>Quên mật khẩu?</a>
                         </div>
                         {<p style={{ color: 'red', textAlign: 'center', marginTop: '10px' }}>{message}</p>}
                         <div className='row-input-login'>

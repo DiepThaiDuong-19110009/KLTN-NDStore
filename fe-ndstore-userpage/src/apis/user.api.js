@@ -43,7 +43,7 @@ export const loginUser = (email, password) => {
     },
   }
 
-  return axios.post( API_URL + `/api/auth/login`, {email: email, password: password}, config)
+  return axios.post( API_URL + `/api/auth/login/account`, {email: email, password: password}, config)
 }
 
 export const registerUser = (name, email, password, phone, provinceId, districtId, wardId, address, gender) => {
@@ -54,7 +54,7 @@ export const registerUser = (name, email, password, phone, provinceId, districtI
     },
   }
 
-  return axios.post( API_URL + `/api/auth/register`, {name: name, email: email, password: password, phone: phone,
+  return axios.post( API_URL + `/api/auth/register/account`, {name: name, email: email, password: password, phone: phone,
     province: parseInt(provinceId), district: parseInt(districtId), ward: parseInt(wardId), address: address, gender: gender}, config)
 }
 
@@ -65,5 +65,25 @@ export const verifyUser = (email, otp) => {
     },
   }
 
-  return axios.post( API_URL + `/api/auth/verifyaccount`, {email: email, otp: otp, type: 'register'}, config)
+  return axios.post( API_URL + `/api/auth/verifyaccount/account`, {email: email, otp: otp, type: 'register'}, config)
+}
+
+export const resendOTP = (email) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }
+
+  return axios.post( API_URL + `/api/auth/mail/get/otp/account?email=${email}`, {}, config)
+}
+
+export const forgotPasswordUser = (email) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }
+
+  return axios.post( API_URL + `/api/auth/mail/forget/new/pass/account?email=${email}`, {}, config)
 }

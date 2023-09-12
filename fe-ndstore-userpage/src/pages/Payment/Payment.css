@@ -1,0 +1,48 @@
+.container-payment {
+    width: 80%;
+    min-height: 400px;
+    background-color: white;
+    margin: 30px auto;
+    display: flex;
+    gap: 30px;
+}
+
+.info-payment {
+    width: 65%;
+    min-height: 400px;
+    box-shadow: 1px 2px 10px rgb(224, 224, 224);
+    padding: 15px;
+}
+
+.info-payment button {
+    width: 130px;
+    height: 50px;
+    background-color: aliceblue;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 1px 2px 10px rgb(224, 224, 224);
+}
+
+.choose-method {
+    border: 1px solid var(--main-color);
+}
+
+.information-delivery label {
+    padding: 0;
+    margin: 10px 0 5px 0;
+    outline: none;
+}
+
+.information-delivery input, select {
+    padding: 7px 10px;
+    outline: none;
+    border: 1px solid rgb(212, 212, 212);
+    border-radius: 5px;
+}
+
+.total-payment {
+    width: 35%;
+    min-height: 400px;
+    box-shadow: 1px 2px 10px rgb(224, 224, 224);
+    padding: 15px;
+}

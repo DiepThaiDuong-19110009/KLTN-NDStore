@@ -8,6 +8,9 @@ import UserDetail from '../pages/UserDetail/UserDetail';
 import OrderHistory from '../pages/OrderHistory/OrderHistory';
 import Product from '../pages/Product/Product';
 import ProductDetail from '../pages/ProductDetail/ProductDetail';
+import Cart from '../pages/Cart/Cart';
+import Payment from '../pages/Payment/Payment';
+import ForgotPassword from '../pages/ForgotPassword/ForgotPassword';
 
 const ClientRouter = () => {
   return (
@@ -22,6 +25,9 @@ const ClientRouter = () => {
           <Route path='/order-history' element={<OrderHistory />} />
           <Route path='/product' element={<Product />} />
           <Route path='/product/:id' element={<ProductDetail />} />
+          <Route path='/cart' element={<Cart />} />
+          <Route path='/payment' element={<Payment />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
         </Routes>
       </main>
     </>

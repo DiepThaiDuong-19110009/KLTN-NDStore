@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import OTPInput, { ResendOTP } from "otp-input-react";
+import OTPInput from "otp-input-react";
 import '../Verify/Verify.css'
-import { verifyUser } from "../../apis/user.api";
+import { verifyUser, resendOTP } from "../../apis/user.api";
 import { Loader } from "../../components/Loader/Loader";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
 const Verify = () => {
    const [OTP, setOTP] = useState("");
    const [message, setMessage] = useState('')
    const [isLoading, setIsLoading] = useState(false);
+   const [openDialog, setOpenDialog] = useState(false);
 
    let navigate = useNavigate();
 
@@ -24,6 +26,7 @@ const Verify = () => {
          setMessage('Vui lòng cung cấp mã OTP')
          return;
       }
+      setIsLoading(true);
       verifyUser(email, OTP)
          .then((res) => {
             if (res?.data?.success === true) {
@@ -41,6 +44,27 @@ const Verify = () => {
          })
    }
 
+   const resend = () => {
+      setIsLoading(true);
+      resendOTP(email)
+         .then((res) => {
+            if (res?.data?.success === true) {
+               setIsLoading(false);
+               setMessage('');
+               setOpenDialog(true);
+            }
+         })
+         .catch((err) => {
+            setIsLoading(false);
+            setMessage('Đã xảy ra lỗi')
+            return err;
+         })
+   }
+
+   const handleClose = () => {
+      setOpenDialog(false);
+    };
+
    return (
       <div className="verify">
          {
@@ -50,7 +74,7 @@ const Verify = () => {
          <h4>Xác thực tài khoản</h4>
          <p>Vui lòng cung cấp mã OTP được gửi qua địa chỉ email</p>
          <div className="email-verify">
-            <label style={{margin: '0', marginRight: '10px'}}>Email: </label>
+            <label style={{ margin: '0', marginRight: '10px' }}>Email: </label>
             <span className="label-email-verify">{'********' + email.substring(8, email.length)}</span>
          </div>
          <div className="OTP-input" style={{ margin: '20px 0 20px 20px' }}>
@@ -66,7 +90,25 @@ const Verify = () => {
          </div>
          <p style={{ color: 'red' }}>{message}</p>
          <button onClick={() => verifyRegister()} className="btn-login">Xác thực</button>
-         <strong style={{ color: 'var(--main-color)', marginTop: '20px', cursor: 'pointer' }}>Gửi lại mã OTP</strong>
+         <strong onClick={() => resend()} style={{ color: 'var(--main-color)', marginTop: '20px', cursor: 'pointer' }}>Gửi lại mã OTP</strong>
+         <Dialog
+            open={openDialog}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+         >
+            <DialogTitle id="alert-dialog-title">
+               Thông báo
+            </DialogTitle>
+            <DialogContent>
+               <DialogContentText id="alert-dialog-description">
+                  Mã OTP đã được gửi lại thành công. Vui lòng kiểm tra Email!
+               </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+               <Button onClick={handleClose}>OK</Button>
+            </DialogActions>
+         </Dialog>
       </div>
    )
 }

@@ -38,7 +38,7 @@ const ForgotPassword = () => {
             })
             .catch((err) => {
                 setIsLoading(false);
-                setMessage('Đã xảy ra lỗi')
+                setMessage('Vui lòng kiểm tra lại email')
                 return err;
             })
     }

@@ -11,6 +11,7 @@ import ProductDetail from '../pages/ProductDetail/ProductDetail';
 import Cart from '../pages/Cart/Cart';
 import Payment from '../pages/Payment/Payment';
 import ForgotPassword from '../pages/ForgotPassword/ForgotPassword';
+import AuthGoogle from '../pages/AuthGoogle/AuthGoogle';
 
 const ClientRouter = () => {
   return (
@@ -19,6 +20,7 @@ const ClientRouter = () => {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/login' element={<Login />} />
+          <Route path='/oauth2/redirect' element={<AuthGoogle />} />
           <Route path='/register' element={<Register />} />
           <Route path='/user-detail' element={<UserDetail />} />
           <Route path='/verify/:email' element={<Verify />} />

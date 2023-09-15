@@ -87,3 +87,20 @@ export const forgotPasswordUser = (email) => {
 
   return axios.post( API_URL + `/api/auth/mail/forget/new/pass/account?email=${email}`, {}, config)
 }
+
+export const changePassword = () => {}
+
+export const getProfileUser = (userId) => {
+  const token = localStorage.getItem('access-token')
+  if (!token || !userId) {
+    return;
+  }
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+  }
+
+  return axios.get( API_URL + `/api/users/get/profile/${userId}`, config)
+}

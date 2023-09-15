@@ -2,7 +2,8 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import '../UserDetail/UserDetail.css'
 import { useEffect, useState } from "react";
-import { getDistrict, getProvince, getWard } from "../../apis/user.api";
+import { getDistrict, getProfileUser, getProvince, getWard } from "../../apis/user.api";
+import { useNavigate } from "react-router-dom";
 
 const UserDetail = () => {
     const [province, setProvince] = useState([])
@@ -13,7 +14,11 @@ const UserDetail = () => {
     const [wardId, setWardId] = useState('')
     const [message, setMessage] = useState('')
 
+    const userId = JSON.parse(localStorage.getItem('user-infor'))?.id
+
     const [disableEdit, setDisableEdit] = useState(true)
+
+    let navigate = useNavigate();
 
     const getProvinceList = () => {
         getProvince()
@@ -68,6 +73,24 @@ const UserDetail = () => {
     useEffect(() => {
         getProvinceList();
     }, [])
+
+    useEffect(() => {
+        getUserDetail(userId)
+    }, [userId])
+
+    const getUserDetail = (userId) => {
+        if(!userId) {
+            navigate('/')
+            return;
+        }
+        getProfileUser(userId)
+            .then((res) => {
+                console.log(res)
+            })
+            .catch((err) => {
+                return err;
+            })
+    }
 
     const acceptEdit = () => {
         disableEdit === true ? setDisableEdit(false) : setDisableEdit(true);

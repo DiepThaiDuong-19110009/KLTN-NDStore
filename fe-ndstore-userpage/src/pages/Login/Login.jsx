@@ -53,8 +53,10 @@ const Login = () => {
                 if (res?.data?.success === true) {
                     localStorage.setItem('access-token', res?.data?.data?.accessToken)
                     localStorage.setItem('user-infor', JSON.stringify({
-                        email: res?.data?.data?.email, name: res?.data?.data?.name,
-                        gender: res?.data?.data?.gender, avatar: res?.data?.data?.avatar
+                        email: res?.data?.data?.email,
+                        name: res?.data?.data?.name,
+                        avatar: res?.data?.data?.avatar,
+                        id: res?.data?.data?.id
                     }))
                     setIsLoading(false);
                     return navigate("/")

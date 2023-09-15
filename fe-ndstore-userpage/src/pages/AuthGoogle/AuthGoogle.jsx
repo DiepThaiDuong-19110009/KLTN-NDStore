@@ -49,7 +49,7 @@ const AuthGoogle = () => {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Tài khoản Email đã xảy ra lỗi. Vui lòng sử dụng Email khác.
+                        Tài khoản Email đã xảy ra lỗi. Vui lòng thử lại hoặc sử dụng Email khác.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>

@@ -1,7 +1,6 @@
 import { React, useEffect, useState } from 'react'
 import '../Register/Register.css'
 import logoGoogle from '../../images/icon-google.png'
-import { Image } from 'react-bootstrap'
 import { EMAIL_REGEX_PATTERN } from '../../common/common'
 import { getDistrict, getProvince, getWard, registerUser } from '../../apis/user.api'
 import { Loader } from '../../components/Loader/Loader'
@@ -108,7 +107,7 @@ const Register = () => {
         setWardId(e)
     }
 
-    const login = () => {
+    const register = () => {
         // console.log(name, email, password, phone, address, gender, provinceId, districtId, wardId)
         setMessage('');
         if (name === '' || email === '' || password === '' || phone === '' || address === '' || provinceId === '' || districtId === '' || wardId === '') {
@@ -215,16 +214,16 @@ const Register = () => {
                             </div>
                             {<p style={{ color: 'red', textAlign: 'center' }}>{message}</p>}
                             <div className='row-input-register'>
-                                <button onClick={login} className='btn-login'>Đăng ký</button>
+                                <button onClick={register} className='btn-login'>Đăng ký</button>
                             </div>
                             <div className='row-input-register'>
                                 <span style={{ margin: '0 auto' }}>Hoặc</span>
                             </div>
                             <div className='row-input-register'>
-                                <button className='btn-login-google'>
-                                    <Image style={{ width: '30px', marginRight: '20px' }} src={logoGoogle} alt='icon-google'></Image>
+                                <a href='http://localhost:8080/oauth2/authorization/google' className='btn-login-google'>
+                                    <img style={{ width: '30px', marginRight: '20px' }} src={logoGoogle} alt='icon-google'></img>
                                     <span>Đăng ký với Google</span>
-                                </button>
+                                </a>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'center', margin: '15px 0px 25px 0px' }}>
                                 <span style={{ marginRight: '6px' }}>Bạn đã có tài khoản?</span>

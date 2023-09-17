@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import Paper from "@material-ui/core/Paper";
-import Tab from "@material-ui/core/Tab";
-import Tabs from "@material-ui/core/Tabs";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import '../OrderHistory/OrderHistory.css'
+import { Paper, Tab, Tabs } from "@mui/material";
 
 const OrderHistory = () => {
     const [value, setValue] = useState(0);

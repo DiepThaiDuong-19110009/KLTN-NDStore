@@ -3,24 +3,55 @@ import Footer from "../../components/Footer/Footer";
 import Header from "../../components/Header/Header";
 import { Pagination } from "@mui/material";
 import '../Product/Product.css'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getProductByPage } from "../../apis/product.api";
+import { Loader } from "../../components/Loader/Loader";
 
 const Product = () => {
     const [page, setPage] = useState(1);
-    const handleChange = (event, value) => {
+    const [totalAmount, setTotalAmount] = useState(0)
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleChangePage = (event, value) => {
+        console.log(listProduct)
         setPage(value);
-        console.log(value)
     };
+    const [listProduct, setListProduct] = useState([])
 
     const navigate = useNavigate()
 
     const goToDetail = (id) => {
         navigate(`/product/${id}`)
     }
+
+    useEffect(() => {
+        getProduct(page)
+    }, [page])
+
+    const getProduct = (page) => {
+        setIsLoading(true)
+        getProductByPage(page - 1)
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    setIsLoading(false);
+                    setTotalAmount(res?.data?.data?.totalQuantity);
+                    setListProduct(res?.data?.data?.list)
+                }
+            })
+            .catch((err) => {
+                setListProduct([])
+                setIsLoading(false)
+                return err;
+            })
+    }
+
     return (
         <div>
             <Header></Header>
+            {
+                isLoading === true && <Loader></Loader>
+            }
             <div className="container-product">
                 <div className="filter-product">
                     <div className="filter-action">
@@ -76,38 +107,27 @@ const Product = () => {
                         <button>Sản phẩm bán chạy nhất</button>
                     </div>
                     <div className="products">
-                        <div onClick={() => goToDetail(1)}>
-                            <CardProduct
-                                src='https://phucanhcdn.com/media/product/47266_laptop_dell_latitude_3420_l3420i5ssdf__h4.jpg'
-                                brand='ASUS' name='ASUS GTR-120 8GB RAM' price='23000000' discount='26000000'></CardProduct>
-                        </div>
-                        <CardProduct
-                            src='https://phucanhcdn.com/media/product/47266_laptop_dell_latitude_3420_l3420i5ssdf__h4.jpg'
-                            brand='ASUS' name='ASUS GTR-120 8GB RAM' price='23000000' discount='26000000'></CardProduct>
-                        <CardProduct
-                            src='https://phucanhcdn.com/media/product/47266_laptop_dell_latitude_3420_l3420i5ssdf__h4.jpg'
-                            brand='ASUS' name='ASUS GTR-120 8GB RAM' price='23000000' discount='26000000'></CardProduct>
-                        <CardProduct
-                            src='https://phucanhcdn.com/media/product/47266_laptop_dell_latitude_3420_l3420i5ssdf__h4.jpg'
-                            brand='ASUS' name='ASUS GTR-120 8GB RAM' price='23000000' discount='26000000'></CardProduct>
-                        <CardProduct
-                            src='https://phucanhcdn.com/media/product/47266_laptop_dell_latitude_3420_l3420i5ssdf__h4.jpg'
-                            brand='ASUS' name='ASUS GTR-120 8GB RAM' price='23000000' discount='26000000'></CardProduct>
-                        <CardProduct
-                            src='https://phucanhcdn.com/media/product/47266_laptop_dell_latitude_3420_l3420i5ssdf__h4.jpg'
-                            brand='ASUS' name='ASUS GTR-120 8GB RAM' price='23000000' discount='26000000'></CardProduct>
-                        <CardProduct
-                            src='https://phucanhcdn.com/media/product/47266_laptop_dell_latitude_3420_l3420i5ssdf__h4.jpg'
-                            brand='ASUS' name='ASUS GTR-120 8GB RAM' price='23000000' discount='26000000'></CardProduct>
-                        <CardProduct
-                            src='https://phucanhcdn.com/media/product/47266_laptop_dell_latitude_3420_l3420i5ssdf__h4.jpg'
-                            brand='ASUS' name='ASUS GTR-120 8GB RAM' price='23000000' discount='26000000'></CardProduct>
-                        <CardProduct
-                            src='https://phucanhcdn.com/media/product/47266_laptop_dell_latitude_3420_l3420i5ssdf__h4.jpg'
-                            brand='ASUS' name='ASUS GTR-120 8GB RAM' price='23000000' discount='26000000'></CardProduct>
-
+                        {
+                            listProduct.length !== 0 ?
+                            listProduct.map((product) => (
+                                <div key={product?.id} onClick={() => goToDetail(product?.id)}>
+                                    <CardProduct
+                                        src={product?.images[0]?.url || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsG3u77s8fTCxsnn7O/f5OfFyczP09bM0dO8wMPk6ezY3eDd4uXR1tnJzdBvAX/cAAACVElEQVR4nO3b23KDIBRA0ShGU0n0//+2KmO94gWZ8Zxmr7fmwWEHJsJUHw8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwO1MHHdn+L3rIoK6eshsNJ8kTaJI07fERPOO1Nc1vgQm2oiBTWJ+d8+CqV1heplLzMRNonED+4mg7L6p591FC+133/xCRNCtd3nL9BlxWP++MOaXFdEXFjZ7r8D9l45C8y6aG0cWtP/SUGhs2d8dA/ZfGgrzYX+TVqcTNRRO9l+fS5eSYzQs85psUcuzk6igcLoHPz2J8gvzWaH/JLS+95RfOD8o1p5CU5R7l5LkfKEp0mQ1UX7hsVXqDpRrifILD/3S9CfmlUQFhQfuFu0STTyJ8gsP3PH7GVxN1FC4t2sbBy4TNRTu7LyHJbqaqKFw+/Q0ncFloo7CjRPwMnCWqKXQZ75El4nKC9dmcJaou9AXOE5UXbi+RGeJygrz8Uf+GewSn9uXuplnWDZJ7d8f24F/s6iq0LYf9olbS3Q8i5oKrRu4S9ybwaQ/aCkqtP3I28QDgeoK7TBya/aXqL5COx67PTCD2grtdOwH+pQV2r0a7YVBgZoKwwIVFQYG6ikMDVRTGByopjD8ATcKb0UhhRTe77sKs2DV7FKSjId18TUEBYVyLhUThWfILHTDqmI85/2RWWjcE/bhP6OD7maT3h20MHsA47JC3PsW0wcwLhv9t0OOPOIkCn21y2bXXwlyylxiYMPk1SuCSmpfK8bNQvIrpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwNX4BCbAju9/X67UAAAAASUVORK5CYII='}
+                                        brand={product?.nameBrand}
+                                        name={product?.name}
+                                        price={product?.discountPrice}
+                                        discount={product?.originPrice}
+                                        discountPercent={product?.discount}>
+                                    </CardProduct>
+                                </div>
+                            )) : 
+                            <div style={{margin: '10px auto', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                <img style={{width: '80px', marginBottom: '20px'}} alt="Not Found" src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png"></img>
+                                <p>Không tìm thấy sản phẩm</p>
+                            </div>
+                        }
                     </div>
-                    <Pagination style={{ margin: '0 auto', marginTop: '20px' }} count={10} page={page} onChange={handleChange} />
+                    <Pagination style={{ margin: '0 auto', marginTop: '20px' }} count={Math.floor(totalAmount/20) + 1} page={page} onChange={handleChangePage} />
                 </div>
 
             </div>

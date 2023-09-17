@@ -8,7 +8,7 @@
 }
 
 .card-product img {
-    width: 160px;
+    width: 100%;
     transition: transform .5s, filter 1s ease-in-out;
 }
 

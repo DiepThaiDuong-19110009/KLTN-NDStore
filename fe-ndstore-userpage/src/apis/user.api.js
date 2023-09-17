@@ -88,7 +88,17 @@ export const forgotPasswordUser = (email) => {
   return axios.post( API_URL + `/api/auth/mail/forget/new/pass/account?email=${email}`, {}, config)
 }
 
-export const changePassword = () => {}
+export const changePassword = (userId, oldPass, newPass) => {
+  const token = localStorage.getItem('access-token')
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+  }
+
+  return axios.put( API_URL + `/api/users/change/new/password/${userId}`, {oldPass: oldPass, newPass: newPass}, config)
+}
 
 export const getProfileUser = (userId) => {
   const token = localStorage.getItem('access-token')
@@ -103,4 +113,21 @@ export const getProfileUser = (userId) => {
   }
 
   return axios.get( API_URL + `/api/users/get/profile/${userId}`, config)
+}
+
+export const updateAvatar = (userId, selectedFile) => {
+  const token = localStorage.getItem('access-token')
+  if (!token || !userId) {
+    return;
+  }
+  let formData = new FormData()
+  formData.append('file', selectedFile);
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': `Bearer ${token}`
+    },
+  }
+
+  return axios.post( API_URL + `/api/users/update/avatar/${userId}`, formData, config)
 }

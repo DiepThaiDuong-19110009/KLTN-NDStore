@@ -1,13 +1,22 @@
 import { useEffect, useState } from 'react';
 import '../Header/Header.css'
 import { useNavigate } from 'react-router-dom';
+import { Button, Menu, MenuItem } from '@mui/material';
+import { getProfileUser } from '../../apis/user.api';
 
 
 const Header = () => {
 
     const [info, setInfo] = useState({})
-    const [showMenu, setShowMenu] = useState(false)
     const [showCategory, setShowCategory] = useState(false)
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     let navigate = useNavigate();
 
@@ -34,12 +43,31 @@ const Header = () => {
     }, [])
 
     const getUserInfor = () => {
-        setInfo(JSON.parse(localStorage.getItem('user-infor')))
-    }
-
-    const showDropdown = () => {
-        console.log(showMenu)
-        showMenu === true ? setShowMenu(false) : setShowMenu(true);
+        if (localStorage.getItem('user-infor')) {
+            if (JSON.parse(localStorage.getItem('user-infor'))?.sub) {
+                const userInfoGoogle = JSON.parse(localStorage.getItem('user-infor'))?.sub.split(",");
+                getProfileUser(userInfoGoogle[0])
+                    .then((res) => {
+                        console.log(res)
+                        if (res.status === 200) {
+                            let userInfo = {
+                                name: res?.data?.data?.name,
+                                email: res?.data?.data?.email,
+                                avatar: res?.data?.data?.avatar ? res?.data?.data?.avatar : 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Faenza-avatar-default-symbolic.svg/800px-Faenza-avatar-default-symbolic.svg.png',
+                                id: userInfoGoogle[0],
+                                type: 'email-google'
+                            }
+                            localStorage.setItem(('user-infor'), JSON.stringify(userInfo))
+                            setInfo(userInfo)
+                        }
+                    })
+                    .catch((err) => {
+                        return err;
+                    })
+            } else if (!JSON.parse(localStorage.getItem('user-infor'))?.sub) {
+                setInfo(JSON.parse(localStorage.getItem('user-infor')))
+            }
+        }
     }
 
     const logOut = () => {
@@ -47,18 +75,13 @@ const Header = () => {
         window.location.reload();
     }
 
-    const goToCart = () => {
-        navigate('/cart')
+    const navigatePage = (link) => {
+        navigate(link)
     }
 
     const showDropdownCategory = () => {
-        console.log(showMenu)
         showCategory === true ? setShowCategory(false) : setShowCategory(true);
     }
-
-    // window.addEventListener('mouseup', function (event) {
-    //     setShowMenu(false)
-    // });
 
     return (
         <div className={classes} id='header'>
@@ -101,7 +124,7 @@ const Header = () => {
                     </button>
                 </div>
                 <div className='login-register-cart-user'>
-                    <div style={{ cursor: 'pointer' }} onClick={() => goToCart()} className='cart-header'>
+                    <div style={{ cursor: 'pointer' }} onClick={() => navigatePage('/cart')} className='cart-header'>
                         <i className='fas fa-shopping-cart icon-cart'></i>
                         <span className='cart-quantity'>10</span>
                     </div>
@@ -114,28 +137,36 @@ const Header = () => {
                                 <a href='/register'>Đăng ký</a>
                             </div>
                             :
-                            <div onClick={showDropdown} className='user-infor'>
-                                <i className='fas fa-user-circle icon-user'></i>
-                                <span style={{ marginRight: '5px' }}>Xin chào,</span>
-                                <span className='name-user'>{info?.name}</span>
-                                {
-                                    showMenu === true &&
-                                    <ul id='drop-down-user-infor'>
-                                        <li>
-                                            <a style={{ textDecoration: 'none', color: 'black' }} href='/user-detail'>Thông tin cá nhân</a>
-                                        </li>
-                                        <li>
-                                            <a style={{ textDecoration: 'none', color: 'black' }} href='/forgot-password'>Đổi mật khẩu</a>
-                                        </li>
-                                        <li>
-                                            <a style={{ textDecoration: 'none', color: 'black' }} href='/order-history'>Lịch sử đơn hàng</a>
-                                        </li>
-                                        <li onClick={logOut}>
-                                            <i style={{ marginRight: '10px', fontSize: '20px' }} className='fas fa-sign-out-alt'></i>
-                                            Đăng xuất
-                                        </li>
-                                    </ul>
-                                }
+                            <div>
+                                <Button
+                                    id="basic-button"
+                                    aria-controls={open ? 'basic-menu' : undefined}
+                                    aria-haspopup="true"
+                                    aria-expanded={open ? 'true' : undefined}
+                                    onClick={handleClick}
+                                    style={{ textTransform: 'none', fontSize: '13px' }}
+                                >
+                                    <img style={{ width: '25px', height: '25px', marginRight: '10px', borderRadius: '50%' }} alt='' src={info.avatar}></img>
+                                    <span style={{ marginRight: '5px', color: 'black' }}>Xin chào,</span>
+                                    <span className='name-user' style={{ fontSize: '16px' }}>{info?.name}</span>
+                                </Button>
+                                <Menu
+                                    style={{ display: 'flex', flexDirection: 'column' }}
+                                    id="basic-menu"
+                                    anchorEl={anchorEl}
+                                    open={open}
+                                    onClose={handleClose}
+                                    MenuListProps={{
+                                        'aria-labelledby': 'basic-button',
+                                    }}
+                                >
+                                    <MenuItem onClick={() => navigatePage('/user-detail')}>Thông tin cá nhân</MenuItem>
+                                    <MenuItem onClick={() => navigatePage('/order-history')}>Lịch sử đơn hàng</MenuItem>
+                                    <MenuItem onClick={logOut}>
+                                        <i style={{ marginRight: '10px', fontSize: '20px', color: 'var(--main-color)' }} className='fas fa-sign-out-alt'></i>
+                                        <span style={{ color: 'var(--main-color)' }}>Đăng xuất</span>
+                                    </MenuItem>
+                                </Menu>
                             </div>
                     }
                 </div>

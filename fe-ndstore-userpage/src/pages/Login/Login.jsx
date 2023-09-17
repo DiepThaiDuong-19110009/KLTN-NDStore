@@ -2,7 +2,6 @@ import { React, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../Login/Login.css'
 import logoGoogle from '../../images/icon-google.png'
-import { Image } from 'react-bootstrap'
 import { EMAIL_REGEX_PATTERN } from '../../common/common'
 import { loginUser } from '../../apis/user.api'
 import { Loader } from '../../components/Loader/Loader'
@@ -113,7 +112,7 @@ const Login = () => {
                         </div>
                         <div className='row-input-login'>
                             <a href='http://localhost:8080/oauth2/authorization/google' className='btn-login-google'>
-                                <Image style={{ width: '30px', marginRight: '20px' }} src={logoGoogle} alt='icon-google'></Image>
+                                <img style={{ width: '30px', marginRight: '20px' }} src={logoGoogle} alt='icon-google'></img>
                                 <span>Đăng nhập với Google</span>
                             </a>
                         </div>

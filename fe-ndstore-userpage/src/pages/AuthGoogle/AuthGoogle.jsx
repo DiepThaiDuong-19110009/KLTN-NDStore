@@ -1,6 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { useEffect, useState } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 
 const AuthGoogle = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -22,20 +23,10 @@ const AuthGoogle = () => {
         }
         if (searchParams.get("token")) {
             localStorage.setItem('access-token', searchParams.get("token"))
-            localStorage.setItem('user-infor', JSON.stringify(parseJwt(searchParams.get('token'))))
+            localStorage.setItem('user-infor', JSON.stringify(jwt_decode(searchParams.get('token'))))
             return navigate("/")
         }
     }, [searchParams, navigate])
-
-    function parseJwt(token) {
-        let base64Url = token.split('.')[1];
-        let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        let jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-
-        return JSON.parse(jsonPayload);
-    }
 
     return (
         <>
@@ -57,7 +48,8 @@ const AuthGoogle = () => {
                         OK
                     </Button>
                 </DialogActions>
-            </Dialog></>
+            </Dialog>
+        </>
     )
 }
 

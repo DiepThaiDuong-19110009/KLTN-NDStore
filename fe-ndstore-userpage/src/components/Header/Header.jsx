@@ -3,19 +3,32 @@ import '../Header/Header.css'
 import { useNavigate } from 'react-router-dom';
 import { Button, Menu, MenuItem } from '@mui/material';
 import { getProfileUser } from '../../apis/user.api';
+import { getCategoryAll } from '../../apis/category.api';
 
 
 const Header = () => {
 
     const [info, setInfo] = useState({})
-    const [showCategory, setShowCategory] = useState(false)
-    const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
+    const [listCategory, setListCategory] = useState([])
+    const [openMenuUserInfo, setOpenMenuUserInfo] = useState(null);
+    const [openMenuCategory, setOpenMenuCategory] = useState(null);
+    const openUserInfo = Boolean(openMenuUserInfo);
+    const openCategory = Boolean(openMenuCategory);
+
+    // Open menu User infor
+    const handleClickUserInfo = (event) => {
+        setOpenMenuUserInfo(event.currentTarget);
     };
-    const handleClose = () => {
-        setAnchorEl(null);
+    const handleCloseUserInfo = () => {
+        setOpenMenuUserInfo(null);
+    };
+
+    // Open menu Category
+    const handleClickCategory = (event) => {
+        setOpenMenuCategory(event.currentTarget);
+    };
+    const handleCloseCategory = () => {
+        setOpenMenuCategory(null);
     };
 
     let navigate = useNavigate();
@@ -39,7 +52,8 @@ const Header = () => {
     const classes = `header-section ${sticky}`;
 
     useEffect(() => {
-        getUserInfor()
+        getUserInfor();
+        getCategory();
     }, [])
 
     const getUserInfor = () => {
@@ -79,8 +93,16 @@ const Header = () => {
         navigate(link)
     }
 
-    const showDropdownCategory = () => {
-        showCategory === true ? setShowCategory(false) : setShowCategory(true);
+    const getCategory = () => {
+        getCategoryAll()
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    setListCategory(res?.data?.data)
+                }
+            })
+            .catch((err) => {
+                return err;
+            })
     }
 
     return (
@@ -89,32 +111,38 @@ const Header = () => {
                 <a className='logo-header' href='/'>NDStore</a>
                 <div className='category-header'>
                     <div className='btn-catergory'>
-                        <div onClick={showDropdownCategory}>
-                            <i style={{ marginRight: '10px' }} className='fas fa-list'></i>
-                            <span>Danh mục sản phẩm</span>
+                        <div>
+                            <Button
+                                id="basic-button"
+                                aria-controls={openCategory ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={openCategory ? 'true' : undefined}
+                                onClick={handleClickCategory}
+                                style={{ textTransform: 'none', fontSize: '13px' }}
+                            >
+                                <i style={{ marginRight: '8px', color: 'var(--main-color)' }} className='fas fa-list'></i>
+                                <span style={{ marginRight: '5px', color: 'black' }}>Danh mục sản phẩm</span>
+                            </Button>
+                            <Menu
+                                style={{ display: 'flex', flexDirection: 'column' }}
+                                id="basic-menu"
+                                anchorEl={openMenuCategory}
+                                open={openCategory}
+                                onClose={handleCloseCategory}
+                                MenuListProps={{
+                                    'aria-labelledby': 'basic-button',
+                                }}
+                            >
+                                {
+                                    listCategory.map((category) => (
+                                        <MenuItem style={{width: '200px'}} key={category.id}>
+                                            <img style={{width: '30px', height: '30px', marginRight: '20px'}} src={category?.imageCategory} alt=''></img>
+                                            <span>{category?.titleCategory}</span>
+                                        </MenuItem>
+                                    ))
+                                }
+                            </Menu>
                         </div>
-                        {
-                            showCategory === true &&
-                            <div className='list-category-header'>
-                                <ul>
-                                    <a href='/product/category/1'>
-                                        <li>Laptop</li>
-                                    </a>
-                                    <a href='/product/category/1'>
-                                        <li>Laptop</li>
-                                    </a>
-                                    <a href='/product/category/1'>
-                                        <li>Laptop</li>
-                                    </a>
-                                    <a href='/product/category/1'>
-                                        <li>Laptop</li>
-                                    </a>
-                                    <a href='/product/category/1'>
-                                        <li>Laptop</li>
-                                    </a>
-                                </ul>
-                            </div>
-                        }
                     </div>
                 </div>
                 <div className='search-header'>
@@ -140,10 +168,10 @@ const Header = () => {
                             <div>
                                 <Button
                                     id="basic-button"
-                                    aria-controls={open ? 'basic-menu' : undefined}
+                                    aria-controls={openUserInfo ? 'basic-menu' : undefined}
                                     aria-haspopup="true"
-                                    aria-expanded={open ? 'true' : undefined}
-                                    onClick={handleClick}
+                                    aria-expanded={openUserInfo ? 'true' : undefined}
+                                    onClick={handleClickUserInfo}
                                     style={{ textTransform: 'none', fontSize: '13px' }}
                                 >
                                     <img style={{ width: '25px', height: '25px', marginRight: '10px', borderRadius: '50%' }} alt='' src={info.avatar}></img>
@@ -153,9 +181,9 @@ const Header = () => {
                                 <Menu
                                     style={{ display: 'flex', flexDirection: 'column' }}
                                     id="basic-menu"
-                                    anchorEl={anchorEl}
-                                    open={open}
-                                    onClose={handleClose}
+                                    anchorEl={openMenuUserInfo}
+                                    open={openUserInfo}
+                                    onClose={handleCloseUserInfo}
                                     MenuListProps={{
                                         'aria-labelledby': 'basic-button',
                                     }}

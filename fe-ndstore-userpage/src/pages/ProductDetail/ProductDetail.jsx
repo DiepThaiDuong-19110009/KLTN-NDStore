@@ -3,11 +3,20 @@ import Footer from "../../components/Footer/Footer";
 import Header from "../../components/Header/Header";
 import '../ProductDetail/ProductDetail.css'
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
+import { getProductDetailById } from "../../apis/product.api";
+import { useParams } from "react-router-dom";
+import { addProductToCart } from "../../apis/cart.api";
+import { Loader } from "../../components/Loader/Loader";
 
 const ProductDetail = () => {
     const [srcImg, setSrcImg] = useState('')
     const [openComment, setOpenComment] = useState(false);
     const [contentComment, setContentComment] = useState('')
+    const [isLoading, setIsLoading] = useState(false);
+
+    const [productDetail, setProductDetail] = useState({})
+
+    let { id } = useParams()
 
     const handleClickOpen = () => {
         setOpenComment(true);
@@ -19,15 +28,11 @@ const ProductDetail = () => {
     };
 
     useEffect(() => {
-        setSrcImg('https://lh3.googleusercontent.com/yh2DbfQQt65VoTudA6-sUlXxq8lq_QLs404beNvcQqPlIkOrAl5N1i80816P38ecR9Ga90IQsrYMKrKXtYo1z5M9rfdesFM=w500-rw')
-    }, [])
+        getProductDetail(id)
+    }, [id])
 
     const numberWithCommas = (x) => {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-
-    const getPercent = (n1, n2) => {
-        return (((parseInt(n2) - parseInt(n1)) / parseInt(n2)) * 100).toFixed(1)
     }
 
     const getImage = (src) => {
@@ -38,27 +43,81 @@ const ProductDetail = () => {
         console.log(contentComment)
     }
 
+    const getProductDetail = (id) => {
+        setIsLoading(true)
+        getProductDetailById(id)
+            .then((res) => {
+                if (res) {
+                    setIsLoading(false)
+                    setProductDetail(res?.data?.data)
+                    setSrcImg(res?.data?.data?.images[0]?.url)
+                }
+            })
+            .catch((err) => {
+                if (err) {
+                    console.log(err)
+                    setIsLoading(false)
+                }
+            })
+    }
+
+    const addToCart = (stock) => {
+        if (stock === 0) {
+            return;
+        }
+        setIsLoading(true)
+        addProductToCart(id, 1)
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    window.location.reload()
+                    setIsLoading(false)
+                }
+            })
+            .catch((err) => {
+                if (err) {
+                    console.log(err)
+                    setIsLoading(false)
+                }
+            })
+    }
+
     return (
         <div style={{ position: 'relative' }}>
             <Header></Header>
+            {
+                isLoading === true && <Loader></Loader>
+            }
             <div className="container-product-detail">
                 <div className="product-detail">
                     <div className="imgae-product">
-                        <img alt="" src={srcImg}></img>
+                        <img alt="img-product" src={srcImg}></img>
                         <div className="list-detail-imgage">
-                            <img alt="" onClick={() => getImage('https://lh3.googleusercontent.com/yh2DbfQQt65VoTudA6-sUlXxq8lq_QLs404beNvcQqPlIkOrAl5N1i80816P38ecR9Ga90IQsrYMKrKXtYo1z5M9rfdesFM=w500-rw')} src="https://lh3.googleusercontent.com/yh2DbfQQt65VoTudA6-sUlXxq8lq_QLs404beNvcQqPlIkOrAl5N1i80816P38ecR9Ga90IQsrYMKrKXtYo1z5M9rfdesFM=w500-rw"></img>
-                            <img alt="" onClick={() => getImage('https://lh3.googleusercontent.com/iOVJMR40hBE-TYxQnK1WEcU-9cSOzIa6vLlViUmyJzET-mpH_0L-ko7tBqLJHUwqACRp9PpH_X0IptiYh-lrfJIsCL_7B0k9=w500-rw')} src="https://lh3.googleusercontent.com/iOVJMR40hBE-TYxQnK1WEcU-9cSOzIa6vLlViUmyJzET-mpH_0L-ko7tBqLJHUwqACRp9PpH_X0IptiYh-lrfJIsCL_7B0k9=w500-rw"></img>
-                            <img alt="" onClick={() => getImage('https://lh3.googleusercontent.com/Tm3j5xQcl3D_4V7gmfK1TXyapepFX6EdkxV0l1f8I-uYHEOFYrNuj5PykCuoQ3xSMQz5gMI72XNeR0jf6Hb83cfPdDS_Z8e1=w500-rw')} src="https://lh3.googleusercontent.com/Tm3j5xQcl3D_4V7gmfK1TXyapepFX6EdkxV0l1f8I-uYHEOFYrNuj5PykCuoQ3xSMQz5gMI72XNeR0jf6Hb83cfPdDS_Z8e1=w500-rw"></img>
+                            {
+                                productDetail?.images?.map((img) => {
+                                    return (
+                                        <img key={img?.id_image} alt={img?.id_image} onClick={() => getImage(img.url)} src={img?.url}></img>
+                                    )
+                                })
+                            }
                         </div>
                     </div>
                     <div className="image-info-detail">
-                        <h3>Laptop ASUS Vivobook X415EA-EK675W</h3>
-                        <p style={{ marginTop: '10px' }}>Thương hiệu: <strong style={{ color: 'var(--main-color)' }}>ASUS</strong></p>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <h3 style={{ marginRight: '10px' }}>{productDetail?.name}</h3><span>(Đã bán {productDetail?.sold} sản phẩm)</span>
+                        </div>
                         <div>
-                            <h2 style={{ color: 'var(--main-color)', marginTop: '5px' }} className='price'>{numberWithCommas(16000000)} VNĐ</h2>
+                            {
+                                productDetail?.stock === 0 ?
+                                    <p>Tình trạng: <strong style={{ color: 'red' }}>Hết hàng</strong></p> :
+                                    <p>Tình trạng: <strong style={{ color: 'green' }}>Còn hàng</strong></p>
+                            }
+                        </div>
+                        <p style={{ marginTop: '10px' }}>Thương hiệu: <strong style={{ color: 'var(--main-color)' }}>{productDetail?.nameBrand}</strong></p>
+                        <div>
+                            <h2 style={{ color: 'var(--main-color)', marginTop: '5px' }} className='price'>{numberWithCommas(parseInt(productDetail?.discountPrice))} VNĐ</h2>
                             <div style={{ display: 'flex' }}>
-                                <p style={{ textDecoration: 'line-through', marginRight: '10px' }}>{numberWithCommas(19000000)} VNĐ</p>
-                                <p style={{ color: 'var(--main-color)' }}>{getPercent(19000000, 16000000)}%</p>
+                                <p style={{ textDecoration: 'line-through', marginRight: '10px' }}>{numberWithCommas(parseInt(productDetail?.originPrice))} VNĐ</p>
+                                <p style={{ color: 'var(--main-color)' }}>{productDetail?.discount}%</p>
                             </div>
                         </div>
                         <hr />
@@ -71,9 +130,12 @@ const ProductDetail = () => {
                                 <li style={{ listStyle: 'none', marginTop: '10px' }}>. . . <span style={{ marginLeft: '10px', color: 'var(--main-color)', cursor: 'pointer' }}>Xem thông tin chi tiết</span></li>
                             </ul>
                         </div>
-                        <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'space-between' }}>
+                        <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'space-between', gap: '30px' }}>
                             <button className="view-comment" onClick={handleClickOpen}>Xem đánh giá sản phẩm</button>
-                            <button className="add-to-cart"><i style={{ marginRight: '10px' }} className="fas fa-cart-plus"></i>Thêm vào giỏ hàng</button>
+                            <button style={{ background: productDetail?.stock === 0 ? '#009ed469' : 'var(--main-color)' }}
+                                disabled={productDetail?.stock === 0} onClick={() => addToCart(productDetail?.stock)} className="add-to-cart">
+                                <i style={{ marginRight: '10px' }} className="fas fa-cart-plus"></i>Thêm vào giỏ hàng
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -115,43 +177,43 @@ const ProductDetail = () => {
                         <Button disabled={!contentComment ? true : false} onClick={sendComment}>Gửi đánh giá</Button>
                     </DialogActions>
                     <div className="last-comment">
-                        <h5 style={{ marginBottom: '20px' }}>Các đánh giá trước đó <span style={{color: 'var(--main-color)'}}>(5)</span></h5>
-                        <div style={{boxShadow: '1px 2px 10px rgb(224, 224, 224)', padding: '10px', marginTop: '10px'}}>
+                        <h5 style={{ marginBottom: '20px' }}>Các đánh giá trước đó <span style={{ color: 'var(--main-color)' }}>(5)</span></h5>
+                        <div style={{ boxShadow: '1px 2px 10px rgb(224, 224, 224)', padding: '10px', marginTop: '10px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQAp-kUfbmEzt3HLLzgNOoQjCsz-mywoifMg&usqp=CAU" alt="" className="avatar-comment"></img>
                                 <div>
-                                    <strong>Duong Diep</strong><br/>
-                                    <small style={{margin: 0}}>20/07/2023 13:40</small>
+                                    <strong>Duong Diep</strong><br />
+                                    <small style={{ margin: 0 }}>20/07/2023 13:40</small>
                                 </div>
                             </div>
                             <p style={{ marginTop: '10px' }}>Sản phẩm tạm ổn</p>
                         </div>
-                        <div style={{boxShadow: '1px 2px 10px rgb(224, 224, 224)', padding: '10px', marginTop: '10px'}}>
+                        <div style={{ boxShadow: '1px 2px 10px rgb(224, 224, 224)', padding: '10px', marginTop: '10px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQAp-kUfbmEzt3HLLzgNOoQjCsz-mywoifMg&usqp=CAU" alt="" className="avatar-comment"></img>
                                 <div>
-                                    <strong>Duong Diep</strong><br/>
-                                    <small style={{margin: 0}}>20/07/2023 13:40</small>
+                                    <strong>Duong Diep</strong><br />
+                                    <small style={{ margin: 0 }}>20/07/2023 13:40</small>
                                 </div>
                             </div>
                             <p style={{ marginTop: '10px' }}>Sản phẩm tạm ổn</p>
                         </div>
-                        <div style={{boxShadow: '1px 2px 10px rgb(224, 224, 224)', padding: '10px', marginTop: '10px'}}>
+                        <div style={{ boxShadow: '1px 2px 10px rgb(224, 224, 224)', padding: '10px', marginTop: '10px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQAp-kUfbmEzt3HLLzgNOoQjCsz-mywoifMg&usqp=CAU" alt="" className="avatar-comment"></img>
                                 <div>
-                                    <strong>Duong Diep</strong><br/>
-                                    <small style={{margin: 0}}>20/07/2023 13:40</small>
+                                    <strong>Duong Diep</strong><br />
+                                    <small style={{ margin: 0 }}>20/07/2023 13:40</small>
                                 </div>
                             </div>
                             <p style={{ marginTop: '10px' }}>Sản phẩm tạm ổn</p>
                         </div>
-                        <div style={{boxShadow: '1px 2px 10px rgb(224, 224, 224)', padding: '10px', marginTop: '10px'}}>
+                        <div style={{ boxShadow: '1px 2px 10px rgb(224, 224, 224)', padding: '10px', marginTop: '10px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQAp-kUfbmEzt3HLLzgNOoQjCsz-mywoifMg&usqp=CAU" alt="" className="avatar-comment"></img>
                                 <div>
-                                    <strong>Duong Diep</strong><br/>
-                                    <small style={{margin: 0}}>20/07/2023 13:40</small>
+                                    <strong>Duong Diep</strong><br />
+                                    <small style={{ margin: 0 }}>20/07/2023 13:40</small>
                                 </div>
                             </div>
                             <p style={{ marginTop: '10px' }}>Sản phẩm tạm ổn</p>

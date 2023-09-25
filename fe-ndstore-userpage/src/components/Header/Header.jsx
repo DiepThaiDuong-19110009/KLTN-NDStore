@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Menu, MenuItem } from '@mui/material';
 import { getProfileUser } from '../../apis/user.api';
 import { getCategoryAll } from '../../apis/category.api';
+import { useDispatch, useSelector } from 'react-redux'
+import { actFetchProductsRequest } from '../../redux/actions/ActionsCart';
 
 
 const Header = () => {
@@ -14,6 +16,14 @@ const Header = () => {
     const [openMenuCategory, setOpenMenuCategory] = useState(null);
     const openUserInfo = Boolean(openMenuUserInfo);
     const openCategory = Boolean(openMenuCategory);
+
+    const dispatch = useDispatch()
+
+    const cart = useSelector(state => state.cart)
+
+    useEffect(() => {
+        dispatch(actFetchProductsRequest())
+    }, [])
 
     // Open menu User infor
     const handleClickUserInfo = (event) => {
@@ -135,8 +145,8 @@ const Header = () => {
                             >
                                 {
                                     listCategory.map((category) => (
-                                        <MenuItem style={{width: '200px'}} key={category.id}>
-                                            <img style={{width: '30px', height: '30px', marginRight: '20px'}} src={category?.imageCategory} alt=''></img>
+                                        <MenuItem style={{ width: '200px' }} key={category.id}>
+                                            <img style={{ width: '30px', height: '30px', marginRight: '20px' }} src={category?.imageCategory} alt=''></img>
                                             <span>{category?.titleCategory}</span>
                                         </MenuItem>
                                     ))
@@ -154,7 +164,7 @@ const Header = () => {
                 <div className='login-register-cart-user'>
                     <div style={{ cursor: 'pointer' }} onClick={() => navigatePage('/cart')} className='cart-header'>
                         <i className='fas fa-shopping-cart icon-cart'></i>
-                        <span className='cart-quantity'>10</span>
+                        <span className='cart-quantity'>{cart?.numberCart || 0}</span>
                     </div>
                     {
                         !info?.name

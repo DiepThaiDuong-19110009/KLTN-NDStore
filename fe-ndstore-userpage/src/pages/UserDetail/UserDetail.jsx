@@ -2,7 +2,8 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import '../UserDetail/UserDetail.css'
 import { useEffect, useState } from "react";
-import { changePassword, getDistrict, getProfileUser, getProvince, getWard, updateAvatar } from "../../apis/user.api";
+import { getDistrict, getProvince, getWard } from '../../apis/logictis.api'
+import { changePassword, getProfileUser, updateAvatar, updateProfileUser } from "../../apis/user.api";
 import { useNavigate } from "react-router-dom";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { Loader } from "../../components/Loader/Loader";
@@ -16,6 +17,7 @@ const UserDetail = () => {
     const [districtId, setDistrictId] = useState('')
     const [wardId, setWardId] = useState('')
     const [message, setMessage] = useState('')
+
     const [messageChangePassword, setMessageChangePassword] = useState('')
 
     const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +37,6 @@ const UserDetail = () => {
     const [address, setAddress] = useState('')
 
     // Change Avater
-    const [photo, setPhoto] = useState('');
 
     const userId = JSON.parse(localStorage.getItem('user-infor'))?.id
     const typeLogin = JSON.parse(localStorage.getItem('user-infor'))?.type
@@ -119,8 +120,10 @@ const UserDetail = () => {
                         setAvatar(res?.data?.data?.avatar)
                     }
                     setAddress(res?.data?.data?.address)
-                    setDistrictId(res?.data?.data?.district)
                     setProvinceId(res?.data?.data?.province)
+                    getDistrictList(res?.data?.data?.province)
+                    setDistrictId(res?.data?.data?.district)
+                    getWardList(res?.data?.data?.district)
                     setWardId(res?.data?.data?.ward)
                 }
             })
@@ -135,13 +138,30 @@ const UserDetail = () => {
     }
 
     const saveEdit = () => {
-        if (phone === '' || address === 'unknown' || address === '' || provinceId === 0 || wardId === 0 || districtId === 0) {
+        if (!phone || !address || !provinceId || !wardId || !districtId) {
             setMessage('Vui lòng cung cấp đầy đủ thông tin')
             return;
         }
         setMessage('')
+        setIsLoading(true)
+        updateProfileUser(userId, name, phone, provinceId, districtId, wardId, address)
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    getUserDetail(userId)
+                    updateLocalStorageName(name)
+                    window.location.reload();
+                    setIsLoading(false)
+                    setDisableEdit(true)
+                }
+            })
+            .catch((err) => {
+                setIsLoading(false)
+                setDisableEdit(true)
+                return err;
+            })
     }
 
+    // Change password
     const handleCloseChangePassword = () => {
         setOldPassword('')
         setNewPassword('')
@@ -187,9 +207,14 @@ const UserDetail = () => {
             })
     }
 
-    const updateLocalStorage = (avatar) => {
+    const updateLocalStorageAvatar = (avatar) => {
         const data = JSON.parse(localStorage.getItem('user-infor'))
-        localStorage.setItem('user-infor', JSON.stringify({...data, avatar: avatar}))
+        localStorage.setItem('user-infor', JSON.stringify({ ...data, avatar: avatar }))
+    }
+
+    const updateLocalStorageName = (name) => {
+        const data = JSON.parse(localStorage.getItem('user-infor'))
+        localStorage.setItem('user-infor', JSON.stringify({ ...data, name: name }))
     }
 
     // Change Avatar
@@ -203,16 +228,13 @@ const UserDetail = () => {
                 updateAvatar(userId, e.target.files[0])
                     .then((res) => {
                         if (res?.data?.success === true) {
-                            updateLocalStorage(res?.data?.data?.avatar)
+                            updateLocalStorageAvatar(res?.data?.data?.avatar)
                             window.location.reload();
                             setIsLoading(false);
                         }
                     })
                     .catch((err) => {
                         setIsLoading(false);
-                        if (err?.response?.data?.message === 'Email already exists') {
-                            setMessage('Email đã tồn tại')
-                        }
                         return err;
                     })
             });
@@ -243,7 +265,6 @@ const UserDetail = () => {
                                 }}
                                 id="file-avatar" type="file"></input>
                         </div>
-                        <h5 style={{ margin: '20px 0' }}>{name}</h5>
                         <p>Email: <span style={{ color: 'var(--main-color)', fontWeight: '500' }}>{email}</span></p>
                         {
                             typeLogin !== 'email-google' &&
@@ -258,12 +279,33 @@ const UserDetail = () => {
                         <h4 style={{ color: 'var(--main-color)', textAlign: 'center', padding: '5px 0 15px 0' }}>Thông tin giao hàng</h4>
                         <div className="delivery-info">
                             <div className="row-info">
+                                <label htmlFor="">Tên người dùng</label>
+                                <input value={name} onChange={(e) => setName(e.target.value)}
+                                    className={disableEdit ? 'disable-edit' : ''}
+                                    disabled={disableEdit} placeholder="Tên người dùng" type="text"></input>
+                                <label htmlFor="">Địa chỉ</label>
+                                <input value={address === 'unknown' ? '' : address} onChange={(e) => setAddress(e.target.value)}
+                                    className={disableEdit ? 'disable-edit' : ''} disabled={disableEdit}
+                                    placeholder="Số nhà, tên đường" type="text"></input>
+                                <label htmlFor="">Quận, huyện</label>
+                                <select className={disableEdit ? 'disable-edit' : ''} disabled={disableEdit}
+                                    onChange={(e) => getDistrictId(e.target.value)} value={districtId}>
+                                    <option value=''>Quận / Huyện</option>
+                                    {
+                                        district.map((item, index) =>
+                                            <option value={item.DistrictID} key={index}>{item?.DistrictName}</option>
+                                        )
+                                    }
+                                </select>
+                            </div>
+                            <div className="row-info">
                                 <label htmlFor="">Số điện thoại</label>
                                 <input value={phone} onChange={(e) => setPhone(e.target.value)}
                                     className={disableEdit ? 'disable-edit' : ''}
                                     disabled={disableEdit} placeholder="Số điện thoại" type="number"></input>
                                 <label htmlFor="">Tỉnh, Thành phố</label>
-                                <select className={disableEdit ? 'disable-edit' : ''} disabled={disableEdit} onChange={(e) => getProvinceId(e.target.value)}>
+                                <select className={disableEdit ? 'disable-edit' : ''} disabled={disableEdit}
+                                    onChange={(e) => getProvinceId(e.target.value)} value={provinceId}>
                                     <option value=''>Tỉnh / Thành Phố</option>
                                     {
                                         province.map((item, index) =>
@@ -272,7 +314,8 @@ const UserDetail = () => {
                                     }
                                 </select>
                                 <label htmlFor="">Xã, phường</label>
-                                <select className={disableEdit ? 'disable-edit' : ''} disabled={disableEdit} onChange={(e) => getWardId(e.target.value)}>
+                                <select className={disableEdit ? 'disable-edit' : ''} disabled={disableEdit}
+                                    onChange={(e) => getWardId(e.target.value)} value={wardId}>
                                     <option value=''>Xã / Phường</option>
                                     {
                                         ward.map((item, index) =>
@@ -280,40 +323,25 @@ const UserDetail = () => {
                                         )
                                     }
                                 </select>
-                            </div>
-                            <div className="row-info">
-                                <label htmlFor="">Địa chỉ</label>
-                                <input value={address === 'unknown' ? '' : address} onChange={(e) => setAddress(e.target.value)}
-                                    className={disableEdit ? 'disable-edit' : ''} disabled={disableEdit}
-                                    placeholder="Số nhà, tên đường" type="text"></input>
-                                <label htmlFor="">Quận, huyện</label>
-                                <select className={disableEdit ? 'disable-edit' : ''} disabled={disableEdit} onChange={(e) => getDistrictId(e.target.value)}>
-                                    <option value=''>Quận / Huyện</option>
-                                    {
-                                        district.map((item, index) =>
-                                            <option value={item.DistrictID} key={index}>{item?.DistrictName}</option>
-                                        )
-                                    }
-                                </select>
                                 <span style={{ height: '26px' }}></span>
-                                <div>
-                                    {
-                                        disableEdit &&
-                                        <div>
-                                            <button onClick={() => acceptEdit()} className="btn-edit-info" style={{ height: '32px', width: '100px', marginRight: '10px' }}>Chỉnh sửa</button>
-                                        </div>
-                                    }
-                                    {
-                                        !disableEdit &&
-                                        <div>
-                                            <button onClick={() => saveEdit()} className="btn-edit-info" style={{ height: '32px', width: '100px', marginRight: '10px' }}>Lưu</button>
-                                            <button onClick={() => acceptEdit()} className="btn-edit-info" style={{ height: '32px', width: '100px', marginRight: '10px', backgroundColor: 'var(--danger)' }}>Hủy</button>
-                                        </div>
-                                    }
-                                </div>
                             </div>
                         </div>
                         <p style={{ color: 'red', textAlign: 'center', marginTop: '20px' }}>{message}</p>
+                        <div>
+                            {
+                                disableEdit &&
+                                <div>
+                                    <button onClick={() => acceptEdit()} className="btn-edit-info" style={{ height: '32px', width: '100px', marginRight: '10px' }}>Chỉnh sửa</button>
+                                </div>
+                            }
+                            {
+                                !disableEdit &&
+                                <div>
+                                    <button onClick={() => saveEdit()} className="btn-edit-info" style={{ height: '32px', width: '100px', marginRight: '10px' }}>Lưu</button>
+                                    <button onClick={() => acceptEdit()} className="btn-edit-info" style={{ height: '32px', width: '100px', marginRight: '10px', backgroundColor: 'var(--danger)' }}>Hủy</button>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>

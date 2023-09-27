@@ -7,7 +7,7 @@ export const ADD_CART = 'ADD_CART' ;
 export const UPDATE_CART = 'UPDATE_CART';
 export const DELETE_CART = 'DELETE_CART';
 
-export const actFetchProductsRequest = () => {
+export const actionCartRequest = () => {
     return (dispatch) => {
         return getCartProductUser()?.then(res => {
             dispatch(GetAllCart(res?.data?.data?.items));

@@ -24,7 +24,8 @@
 }
 
 .choose-method {
-    border: 1px solid var(--main-color);
+    border: none;
+    outline: none;
 }
 
 .information-delivery label {

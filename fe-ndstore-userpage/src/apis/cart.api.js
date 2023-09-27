@@ -28,3 +28,15 @@ export const addProductToCart = (productId, quantity) => {
   
     return axios.post( API_URL + `/api/cart/put`, {productId: productId, quantity: quantity}, config)
 }
+
+export const removeItemCart = (cartItemId) => {
+  const token = localStorage.getItem('access-token')
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    }
+  
+    return axios.delete( API_URL + `/api/cart/remove/${cartItemId}`, config)
+} 

@@ -1,40 +1,5 @@
 import axios from "axios";
-import { API_URL, API_URL_GHN } from "../common/common";
-
-export const getProvince = () => {
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      'Token': 'c95f1988-417a-11ee-b394-8ac29577e80e'
-    },
-  }
-
-  return axios.get(API_URL_GHN + '/province', config)
-}
-
-export const getDistrict = (provinceId) => {
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      'Token': 'c95f1988-417a-11ee-b394-8ac29577e80e'
-    },
-    data: { province_id: parseInt(provinceId) }
-  }
-
-  return axios.get(API_URL_GHN + `/district?province_id=${provinceId}`, config)
-}
-
-export const getWard = (districtId) => {
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      'Token': 'c95f1988-417a-11ee-b394-8ac29577e80e'
-    },
-    data: { district_id: parseInt(districtId) }
-  }
-
-  return axios.get(API_URL_GHN + `/ward?district_id=${districtId}`, config)
-}
+import { API_URL } from "../common/common";
 
 export const loginUser = (email, password) => {
   const config = {
@@ -43,7 +8,7 @@ export const loginUser = (email, password) => {
     },
   }
 
-  return axios.post( API_URL + `/api/auth/login/account`, {email: email, password: password}, config)
+  return axios.post(API_URL + `/api/auth/login/account`, { email: email, password: password }, config)
 }
 
 export const registerUser = (name, email, password, phone, provinceId, districtId, wardId, address, gender) => {
@@ -54,8 +19,10 @@ export const registerUser = (name, email, password, phone, provinceId, districtI
     },
   }
 
-  return axios.post( API_URL + `/api/auth/register/account`, {name: name, email: email, password: password, phone: phone,
-    province: parseInt(provinceId), district: parseInt(districtId), ward: parseInt(wardId), address: address, gender: gender}, config)
+  return axios.post(API_URL + `/api/auth/register/account`, {
+    name: name, email: email, password: password, phone: phone,
+    province: parseInt(provinceId), district: parseInt(districtId), ward: parseInt(wardId), address: address, gender: gender
+  }, config)
 }
 
 export const verifyUser = (email, otp) => {
@@ -65,7 +32,7 @@ export const verifyUser = (email, otp) => {
     },
   }
 
-  return axios.post( API_URL + `/api/auth/verifyaccount/account`, {email: email, otp: otp, type: 'register'}, config)
+  return axios.post(API_URL + `/api/auth/verifyaccount/account`, { email: email, otp: otp, type: 'register' }, config)
 }
 
 export const resendOTP = (email) => {
@@ -75,7 +42,7 @@ export const resendOTP = (email) => {
     },
   }
 
-  return axios.post( API_URL + `/api/auth/mail/get/otp/account?email=${email}`, {}, config)
+  return axios.post(API_URL + `/api/auth/mail/get/otp/account?email=${email}`, {}, config)
 }
 
 export const forgotPasswordUser = (email) => {
@@ -85,7 +52,7 @@ export const forgotPasswordUser = (email) => {
     },
   }
 
-  return axios.post( API_URL + `/api/auth/mail/forget/new/pass/account?email=${email}`, {}, config)
+  return axios.post(API_URL + `/api/auth/mail/forget/new/pass/account?email=${email}`, {}, config)
 }
 
 export const changePassword = (userId, oldPass, newPass) => {
@@ -97,7 +64,7 @@ export const changePassword = (userId, oldPass, newPass) => {
     },
   }
 
-  return axios.put( API_URL + `/api/users/change/new/password/${userId}`, {oldPass: oldPass, newPass: newPass}, config)
+  return axios.put(API_URL + `/api/users/change/new/password/${userId}`, { oldPass: oldPass, newPass: newPass }, config)
 }
 
 export const getProfileUser = (userId) => {
@@ -112,7 +79,29 @@ export const getProfileUser = (userId) => {
     },
   }
 
-  return axios.get( API_URL + `/api/users/get/profile/${userId}`, config)
+  return axios.get(API_URL + `/api/users/get/profile/${userId}`, config)
+}
+
+export const updateProfileUser = (userId, name, phone, provinceId, districtId, wardId, address) => {
+  const token = localStorage.getItem('access-token')
+  if (!token || !userId) {
+    return;
+  }
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+  }
+
+  return axios.put(API_URL + `/api/users/edit/information/profile/${userId}`, {
+    name: name,
+    phone: phone,
+    province: parseInt(provinceId),
+    district: parseInt(districtId),
+    ward: parseInt(wardId),
+    address: address
+  }, config)
 }
 
 export const updateAvatar = (userId, selectedFile) => {
@@ -129,5 +118,5 @@ export const updateAvatar = (userId, selectedFile) => {
     },
   }
 
-  return axios.post( API_URL + `/api/users/update/avatar/${userId}`, formData, config)
+  return axios.post(API_URL + `/api/users/update/avatar/${userId}`, formData, config)
 }

@@ -5,7 +5,7 @@ import { Button, Menu, MenuItem } from '@mui/material';
 import { getProfileUser } from '../../apis/user.api';
 import { getCategoryAll } from '../../apis/category.api';
 import { useDispatch, useSelector } from 'react-redux'
-import { actFetchProductsRequest } from '../../redux/actions/ActionsCart';
+import { actionCartRequest } from '../../redux/actions/ActionsCart';
 
 
 const Header = () => {
@@ -22,8 +22,8 @@ const Header = () => {
     const cart = useSelector(state => state.cart)
 
     useEffect(() => {
-        dispatch(actFetchProductsRequest())
-    }, [])
+        dispatch(actionCartRequest())
+    }, [dispatch])
 
     // Open menu User infor
     const handleClickUserInfo = (event) => {
@@ -162,10 +162,13 @@ const Header = () => {
                     </button>
                 </div>
                 <div className='login-register-cart-user'>
-                    <div style={{ cursor: 'pointer' }} onClick={() => navigatePage('/cart')} className='cart-header'>
-                        <i className='fas fa-shopping-cart icon-cart'></i>
-                        <span className='cart-quantity'>{cart?.numberCart || 0}</span>
-                    </div>
+                    {
+                        info?.name &&
+                        <div style={{ cursor: 'pointer' }} onClick={() => navigatePage('/cart')} className='cart-header'>
+                            <i className='fas fa-shopping-cart icon-cart'></i>
+                            <span className='cart-quantity'>{cart?.numberCart || 0}</span>
+                        </div>
+                    }
                     {
                         !info?.name
                             ?

@@ -4,9 +4,11 @@ import Header from "../../components/Header/Header";
 import '../ProductDetail/ProductDetail.css'
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
 import { getProductDetailById } from "../../apis/product.api";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { addProductToCart } from "../../apis/cart.api";
 import { Loader } from "../../components/Loader/Loader";
+import { useDispatch } from "react-redux";
+import { actionCartRequest } from "../../redux/actions/ActionsCart";
 
 const ProductDetail = () => {
     const [srcImg, setSrcImg] = useState('')
@@ -15,6 +17,10 @@ const ProductDetail = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const [productDetail, setProductDetail] = useState({})
+
+    const dispatch = useDispatch()
+
+    const navigate = useNavigate()
 
     let { id } = useParams()
 
@@ -69,7 +75,8 @@ const ProductDetail = () => {
         addProductToCart(id, 1)
             .then((res) => {
                 if (res?.data?.success === true) {
-                    window.location.reload()
+                    dispatch(actionCartRequest())
+                    getProductDetail(id)
                     setIsLoading(false)
                 }
             })
@@ -87,6 +94,12 @@ const ProductDetail = () => {
             {
                 isLoading === true && <Loader></Loader>
             }
+            <div className="container-product-detail">
+                <button style={{ background: 'var(--main-color)', border: 'none', padding: '10px', color: '#FFFFFF', borderRadius: '5px' }}
+                     onClick={() => navigate(-1)} className="add-to-cart">
+                    <i style={{ marginRight: '10px' }} className="fas fa-arrow-left"></i>Tiếp tục mua hàng
+                </button>
+            </div>
             <div className="container-product-detail">
                 <div className="product-detail">
                     <div className="imgae-product">

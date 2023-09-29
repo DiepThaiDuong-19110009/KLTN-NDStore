@@ -12,6 +12,7 @@ import Cart from '../pages/Cart/Cart';
 import Payment from '../pages/Payment/Payment';
 import ForgotPassword from '../pages/ForgotPassword/ForgotPassword';
 import AuthGoogle from '../pages/AuthGoogle/AuthGoogle';
+import CheckOut from '../pages/Payment/CheckOut/CheckOut';
 
 const ClientRouter = () => {
   return (
@@ -24,12 +25,13 @@ const ClientRouter = () => {
           <Route path='/register' element={<Register />} />
           <Route path='/user-detail' element={<UserDetail />} />
           <Route path='/verify/:email' element={<Verify />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
           <Route path='/order-history' element={<OrderHistory />} />
           <Route path='/product' element={<Product />} />
           <Route path='/product/:id' element={<ProductDetail />} />
           <Route path='/cart' element={<Cart />} />
           <Route path='/payment' element={<Payment />} />
-          <Route path='/forgot-password' element={<ForgotPassword />} />
+          <Route path='/checkout/order/payment' element={<CheckOut />} />
         </Routes>
       </main>
     </>

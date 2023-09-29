@@ -196,7 +196,7 @@ const Cart = () => {
                             <strong style={{ color: 'var(--main-color)' }}>{numberWithCommas(parseInt(totalPrice))} VNĐ</strong>
                         </div>
                     </div>
-                    <button onClick={() => navigate('/payment')} className='btn-payment-for-cart'>THANH TOÁN</button>
+                    <button onClick={() => navigate('/payment')} className='btn-payment-for-cart'>Tiến hành thanh toán</button>
                 </div>
             </div>
             <Footer></Footer>

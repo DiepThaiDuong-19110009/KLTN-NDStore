@@ -235,10 +235,10 @@ const Payment = () => {
             return;
         } 
         console.log(name, phone, address, provinceId, districtId, wardId, note, fee, leadTime, idCart, chooseMethod)
-        checkout(name, phone, address, provinceId, districtId, wardId, note, fee, leadTime, idCart, chooseMethod)
+        checkout(name, phone, address, provinceId, districtId, wardId, note, Math.floor(fee / 1000) * 1000, leadTime, idCart, chooseMethod)
             .then((res) => {
-                if (res?.data?.code === 200) {
-                    console.log(res)
+                if (res?.data) {
+                    window.location.href = res?.data?.data;
                 }
             })
             .catch((err) => {

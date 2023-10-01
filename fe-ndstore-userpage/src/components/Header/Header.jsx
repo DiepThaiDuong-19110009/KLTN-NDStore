@@ -123,15 +123,14 @@ const Header = () => {
                     <div className='btn-catergory'>
                         <div>
                             <Button
-                                id="basic-button"
+                                className='btn-show-category'
                                 aria-controls={openCategory ? 'basic-menu' : undefined}
                                 aria-haspopup="true"
                                 aria-expanded={openCategory ? 'true' : undefined}
                                 onClick={handleClickCategory}
-                                style={{ textTransform: 'none', fontSize: '13px' }}
                             >
-                                <i style={{ marginRight: '8px', color: 'var(--main-color)' }} className='fas fa-list'></i>
-                                <span style={{ marginRight: '5px', color: 'black' }}>Danh mục sản phẩm</span>
+                                <i className='fas fa-list'></i>
+                                <span className='title-category'>Danh mục sản phẩm</span>
                             </Button>
                             <Menu
                                 style={{ display: 'flex', flexDirection: 'column' }}
@@ -188,8 +187,10 @@ const Header = () => {
                                     style={{ textTransform: 'none', fontSize: '13px' }}
                                 >
                                     <img style={{ width: '25px', height: '25px', marginRight: '10px', borderRadius: '50%' }} alt='' src={info.avatar}></img>
-                                    <span style={{ marginRight: '5px', color: 'black' }}>Xin chào,</span>
-                                    <span className='name-user' style={{ fontSize: '16px' }}>{info?.name}</span>
+                                    <div className='link-user-info'>
+                                        <span style={{ marginRight: '5px', color: 'black' }}>Xin chào,</span>
+                                        <span className='name-user' style={{ fontSize: '16px' }}>{info?.name}</span>
+                                    </div>
                                 </Button>
                                 <Menu
                                     style={{ display: 'flex', flexDirection: 'column' }}

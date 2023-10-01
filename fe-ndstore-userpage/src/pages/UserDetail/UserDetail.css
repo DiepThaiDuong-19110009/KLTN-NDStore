@@ -27,6 +27,8 @@
 }
 
 .avatar {
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     overflow: hidden;
     border: 3px solid rgb(190, 190, 190);
@@ -70,4 +72,20 @@
 
 .disable-edit {
     background-color: rgb(229, 229, 229);
+}
+
+@media only screen and (max-width: 800px) {
+    .user-detail {
+        width: 90%;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .user-detail-left {
+        width: 100%;
+        border-right: none;
+    }
+    .user-detail-right {
+        width: 100%;
+    }
 }

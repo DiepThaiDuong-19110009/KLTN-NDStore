@@ -21,6 +21,7 @@ const OrderHistory = () => {
                         }}
                     >
                         <Tab label="Chờ xác nhận" />
+                        <Tab label="Chờ thanh toán" />
                         <Tab label="Đang giao hàng" />
                         <Tab label="Đã giao" />
                         <Tab label="Đã hủy" />
@@ -42,7 +43,7 @@ const OrderHistory = () => {
                             </div>
                         </div>
                     }
-                    {
+                     {
                         value === 1 &&
                         <div className="content-order-history">
                             <div className="row-item-order">
@@ -72,6 +73,20 @@ const OrderHistory = () => {
                     }
                     {
                         value === 3 &&
+                        <div className="content-order-history">
+                            <div className="row-item-order">
+                                <h5 style={{ marginBottom: '15px' }}>Laptop Gaming ASUS</h5>
+                                <p>Số lượng: <strong>1</strong></p>
+                                <p>Tên người nhận: <strong>Diệp Thái Dương</strong></p>
+                                <p>Số điện thoại: <strong>0939816390</strong></p>
+                                <p>Địa chỉ nhận hàng: <strong>234 Lê Văn Việt, TP Thủ Đức, TP.HCM</strong></p>
+                                <p>Ngày đặt hàng: <strong>20/09/2023</strong></p>
+                                <h5>Tổng thanh toán: <span style={{ color: 'var(--main-color)' }}>24.000.000 VNĐ</span></h5>
+                            </div>
+                        </div>
+                    }
+                    {
+                        value === 4 &&
                         <div className="content-order-history">
                             <div className="row-item-order">
                                 <div className="top">

@@ -233,16 +233,23 @@ const Payment = () => {
         if (!name || !phone || !address || !provinceId || !districtId || !wardId) {
             setMessage('Vui lòng cung cấp đầy đủ thông tin');
             return;
-        } 
+        }
         console.log(name, phone, address, provinceId, districtId, wardId, note, fee, leadTime, idCart, chooseMethod)
         checkout(name, phone, address, provinceId, districtId, wardId, note, Math.floor(fee / 1000) * 1000, leadTime, idCart, chooseMethod)
             .then((res) => {
-                if (res?.data) {
-                    window.location.href = res?.data?.data;
+                console.log(res?.data)
+                if (res?.data?.success === true) {
+                    if (res?.data?.data !== '') {
+                        window.location.href = res?.data?.data;
+                    } else if (res?.data?.data === '') {
+                        window.location.href = 'http://localhost:3000/checkout/order/payment?complete=true&cancel=false';
+                    }
                 }
             })
             .catch((err) => {
-                return err;
+                if (err) {
+                    window.location.href = 'http://localhost:3000/checkout/order/payment?complete=false&cancel=false';
+                }
             })
     }
 

@@ -101,7 +101,7 @@ const UserDetail = () => {
 
     useEffect(() => {
         getUserDetail(userId)
-    }, [userId])
+    }, [disableEdit])
 
     const getUserDetail = (userId) => {
         if (!userId) {
@@ -251,7 +251,11 @@ const UserDetail = () => {
                 <div className="user-detail">
                     <div className="user-detail-left">
                         <div className="avatar">
-                            <img alt="avatar" src={avatar}></img>
+                            {
+                                avatar ?
+                                    <img alt="avatar" src={avatar}></img> :
+                                    <img alt="avatar" src='https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Faenza-avatar-default-symbolic.svg/800px-Faenza-avatar-default-symbolic.svg.png'></img>
+                            }
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
                             <p htmlFor='file-avatar' style={{ marginTop: '10px', color: 'var(--main-color)', cursor: 'pointer' }}>
@@ -276,7 +280,7 @@ const UserDetail = () => {
                         }
                     </div>
                     <div className="user-detail-right">
-                        <h4 style={{ color: 'var(--main-color)', textAlign: 'center', padding: '5px 0 15px 0' }}>Thông tin giao hàng</h4>
+                        <h4 style={{ color: 'var(--main-color)', textAlign: 'center', padding: '5px 0 15px 0' }}>Thông tin người dùng</h4>
                         <div className="delivery-info">
                             <div className="row-info">
                                 <label htmlFor="">Tên người dùng</label>
@@ -326,7 +330,7 @@ const UserDetail = () => {
                                 <span style={{ height: '26px' }}></span>
                             </div>
                         </div>
-                        <p style={{ color: 'red', textAlign: 'center', marginTop: '20px' }}>{message}</p>
+                        <p style={{ color: 'red', textAlign: 'center' }}>{message}</p>
                         <div>
                             {
                                 disableEdit &&

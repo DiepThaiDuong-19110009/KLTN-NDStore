@@ -7,7 +7,6 @@ import { Loader } from '../../components/Loader/Loader'
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { actionCartRequest } from '../../redux/actions/ActionsCart';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 
 const Cart = () => {
 
@@ -99,6 +98,13 @@ const Cart = () => {
             })
     }
 
+    const goToPayment = () => {
+        if (cart?.length === 0) {
+            return;
+        }
+        navigate('/payment')
+    }
+
     return (
         <div>
             <Header></Header>
@@ -188,15 +194,17 @@ const Cart = () => {
                     <h5 style={{ marginBottom: '20px' }}>Thanh toán</h5>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            <strong>Tổng tạm tính:</strong>
                             <strong>Thành tiền:</strong>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'end', gap: '10px' }}>
-                            <span>16.000.000 VNĐ</span>
                             <strong style={{ color: 'var(--main-color)' }}>{numberWithCommas(parseInt(totalPrice))} VNĐ</strong>
                         </div>
                     </div>
-                    <button onClick={() => navigate('/payment')} className='btn-payment-for-cart'>Tiến hành thanh toán</button>
+                    <button
+                        disabled={(cart?.length === 0)}
+                        onClick={() => goToPayment()}
+                        style={{ background: (cart?.length === 0) ? '#009ed469' : 'var(--main-color)' }}
+                        className='btn-payment-for-cart'>Tiến hành thanh toán</button>
                 </div>
             </div>
             <Footer></Footer>

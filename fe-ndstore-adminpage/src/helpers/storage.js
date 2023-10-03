@@ -13,3 +13,7 @@ export const getLocalItem = (key) => {
 export const removeLocalItem = (key) => {
     localStorage.removeItem(key);
 };
+
+export const clearLocal = () => {
+    localStorage.clear()
+}

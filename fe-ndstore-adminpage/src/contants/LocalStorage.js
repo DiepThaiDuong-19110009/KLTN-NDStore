@@ -1,3 +1,4 @@
 export const LOCAL_STORAGE = {
     ACCESS_TOKEN: 'ACCECC_TOKEN',
+    USER_INFOR: 'USER_INFOR',
 }

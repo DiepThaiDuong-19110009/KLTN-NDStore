@@ -1,0 +1,20 @@
+#header {
+    background-color: white;
+    height: 60px;
+    padding: 10px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 1px 2px 10px rgb(227, 227, 227);
+}
+
+#header .logo-header {
+    display: flex;
+    align-items: center;
+}
+
+#header .user-infor {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}

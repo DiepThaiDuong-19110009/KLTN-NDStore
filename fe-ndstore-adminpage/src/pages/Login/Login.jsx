@@ -1,18 +1,19 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
+import '../Login/Login.css'
 
 import {
-  Paper,
-  Box,
-  Grid,
   TextField,
-  Typography,
-  Button,
   Checkbox,
-  FormControlLabel
+  FormControlLabel,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button
 } from '@mui/material';
 import Loading from '../../components/Loading/Loading';
 import authApis from '../../apis/auth.api';
@@ -22,8 +23,14 @@ import { PATH } from '../../contants/Path';
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [openPopup, setOpenPopup] = useState(false);
   const [message, setMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  const handleClosePopup = () => {
+    setOpenPopup(false);
+  };
+
   const navigate = useNavigate();
 
   const validationSchema = Yup.object().shape({
@@ -47,90 +54,116 @@ const Login = () => {
   });
 
   const onSubmit = (data) => {
+    setIsLoading(true)
     authApis
       .loginAdminApi(data)
       .then((res) => {
-        setIsLoading(false);
         if (res.data?.accessToken) {
-          setLocalItem(LOCAL_STORAGE.ACCESS_TOKEN, res?.data.accessToken)
-          navigate({ pathname: PATH.HOME })
+          if (res.data?.role === 'Role_Admin') {
+            setLocalItem(LOCAL_STORAGE.ACCESS_TOKEN, res?.data.accessToken)
+            setLocalItem(LOCAL_STORAGE.USER_INFOR, {
+              id: res?.data?.id, email: res?.data?.email,
+              name: res?.data?.name, avatar: res?.data?.avatar
+            })
+            setIsLoading(false);
+            navigate(PATH.HOME)
+          } else if (res.data?.role === 'Role_User') {
+            setMessage('Vui lòng kiểm tra lại tài khoản');
+            setOpenPopup(true);
+            setIsLoading(false);
+          }
         }
       })
       .catch((err) => {
-        setIsLoading(false);
-        console.log(err)
+        if (err) {
+          setMessage('Vui lòng kiểm tra lại email hoặc mật khẩu');
+          setOpenPopup(true);
+          setIsLoading(false);
+          console.log(err);
+        }
       });
   };
 
   return (
-    <Grid container justify="center" spacing={3}>
+    <div className='login-admin'>
       {isLoading ? <Loading isLoading={isLoading} /> : undefined}
-      <Paper>
-        <Box>
-          <Typography variant="h6" align="center" margin="dense">
-            Admin
-          </Typography>
-
-          <Grid container justify="center" spacing={1}>
-            <Grid item xs={12}>
-              <TextField
-                required
-                id="email"
-                name="email"
-                label="Email"
-                fullWidth
-                margin="normal"
-                variant="outlined"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                {...register('email')}
-              />
-              <span style={{ color: 'red' }}>{errors.email?.message}</span>
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                required
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                name="password"
-                label="Password"
-                fullWidth
-                margin="normal"
-                variant="outlined"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                {...register('password')}
-              />
-              <span style={{ color: 'red' }}>{errors.password?.message}</span>
-            </Grid>
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showPassword}
-                    onChange={handleClickShowPassword}
-                    name="showPassword"
-                    color="primary"
-                  />
-                }
-                label="Hiển thị mật khẩu"
-              />
-            </Grid>
-          </Grid>
-          <Grid container justify="center" spacing={1}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSubmit(onSubmit)}
-            >
-              Login
-            </Button>
-          </Grid>
-        </Box>
-      </Paper>
-    </Grid>
+      <div className='box-login-admin'>
+        <h2 style={{ textAlign: 'center' }}>Admin</h2>
+        <div className='form-login'>
+          <div style={{ marginBottom: '20px' }}>
+            <TextField
+              required
+              id="email"
+              name="email"
+              label="Email"
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              {...register('email')}
+            />
+            <span style={{ color: 'red' }}>{errors.email?.message}</span>
+          </div>
+          <div>
+            <TextField
+              required
+              type={showPassword ? 'text' : 'password'}
+              id="password"
+              name="password"
+              label="Password"
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              {...register('password')}
+            />
+            <span style={{ color: 'red' }}>{errors.password?.message}</span>
+          </div>
+          <div>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={showPassword}
+                  onChange={handleClickShowPassword}
+                  name="showPassword"
+                  color="primary"
+                />
+              }
+              label="Hiển thị mật khẩu"
+            />
+          </div>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', margin: '20px 0' }}>
+          <button
+            className='btn-login'
+            onClick={handleSubmit(onSubmit)}
+          >
+            Đăng nhập
+          </button>
+        </div>
+      </div>
+      <div>
+        <Dialog
+          open={openPopup}
+          onClose={handleClosePopup}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              {message}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClosePopup}>Ok</Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+    </div>
   );
 };
 

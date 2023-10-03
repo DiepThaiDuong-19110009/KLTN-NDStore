@@ -1,0 +1,20 @@
+#menu {
+    background-color: rgb(253, 253, 253);
+    margin-top: 60px;
+    height: 100%;
+    width: 260px;
+}
+
+.active {
+    background-color: rgba(172, 193, 255, 0.221);
+    box-shadow: 1px 2px 8px rgb(224, 224, 224);
+    color: var(--main-color);
+}
+
+.active:hover {
+    background-color: rgba(172, 193, 255, 0.221);
+}
+
+.active-icon {
+    color: var(--main-color);
+}

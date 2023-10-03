@@ -1,5 +1,7 @@
-import { CircularProgress } from "@mui/material";
+
 import { useEffect, useState } from "react";
+import '../Loading/Loading.css'
+import { CircularProgress } from "@mui/material";
 
 const Loading = (props) => {
     const [loading, setLoading] = useState(false);
@@ -10,9 +12,12 @@ const Loading = (props) => {
 
     return (
         <>
-            <div className="lib-spin-wrapper">
-                <div className="lib-spin-content">
-                    <CircularProgress disableShrink />;
+            <div className="spin-wrapper">
+                <div className="spin-content">
+                    {
+                        loading === true &&
+                        <CircularProgress />
+                    }
                 </div>
             </div>
         </>

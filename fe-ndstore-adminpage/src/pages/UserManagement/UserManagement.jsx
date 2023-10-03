@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import managementUserApi from "../../apis/management-user.api";
 import Loading from "../../components/Loading/Loading";
 import {
-    Breadcrumbs, Drawer, FormControlLabel, Paper, Switch,
+    Breadcrumbs, Drawer, FormControlLabel, Modal, Paper, Switch,
     Table, TableBody, TableCell, TableContainer,
     TableHead, TablePagination, TableRow, Typography
 } from "@mui/material";
@@ -10,12 +10,14 @@ import Header from "../../components/Header/Header";
 import Menu from "../../components/Menu/Menu";
 import Footer from "../../components/Footer/Footer";
 import { useNavigate } from "react-router-dom";
-import EditIcon from '@material-ui/icons/Edit';
 import VisibilityIcon from '@material-ui/icons/Visibility';
+import UserDetailManagement from "./UserDetailManagement/UserDetailManagement";
 
 const UserManagement = () => {
 
     const [isLoading, setIsLoading] = useState(false);
+    const [openDetail, setOpenDetail] = useState(false);
+    const [userIdDetail, setUsetIdDetail] = useState('')
     // data for call api get all
     const [size, setSize] = useState(5)
     const [page, setPage] = useState(0)
@@ -54,7 +56,7 @@ const UserManagement = () => {
                 if (res?.success === true) {
                     setTotalAmount(res?.data?.allQuantity)
                     setTotalPage(res?.data?.allPage)
-                    setListUser(res?.data?.list)
+                    setListUser(res?.data?.listUser)
                     setIsLoading(false);
                 }
             })
@@ -64,30 +66,54 @@ const UserManagement = () => {
             })
     }
 
-    const updateStatusUser = (event) => {
-        console.log(event.target.checked)
+    const updateStatusUser = (id, role) => {
+        if (!id || role === 'Role_Admin') {
+            return;
+        }
+        setIsLoading(true)
+        managementUserApi
+            .setStatusUser(id)
+            .then((res) => {
+                if (res?.success === true) {
+                    getAllUser(page, size);
+                    setIsLoading(false);
+                }
+            })
+            .catch((err) => {
+                setIsLoading(false);
+                console.log(err)
+            })
+    }
+
+    const showDetailUser = (id) => {
+        setUsetIdDetail(id)
+        setOpenDetail(true)
+    }
+
+    const handleClose = () => {
+        setOpenDetail(false)
     }
 
     return (
         <div style={{ minHeight: '100vh', paddingLeft: '260px' }}>
             {isLoading ? <Loading isLoading={isLoading} /> : undefined}
-            <div style={{ position: 'fixed', top: '0', left: '0', width: '100%', zIndex: '9999' }}>
+            <div style={{ position: 'fixed', top: '0', left: '0', width: '100%', zIndex: '1300' }}>
                 <Header />
             </div>
             <Drawer
                 variant="permanent"
                 open
                 anchor="left">
-                <Menu selected='home' />
+                <Menu selected='user' />
             </Drawer>
             <div style={{ backgroundColor: '#f3f3f3', padding: '70px 15px 15px 15px', height: '100vh' }}>
                 <Breadcrumbs aria-label="breadcrumb">
                     <Typography onClick={() => handleClick('/home')} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Trang chủ</Typography>
                     <Typography color="var(--main-color)" fontSize='14px'>Quản lý người dùng</Typography>
                 </Breadcrumbs>
-                <div className="content">
-                    <div style={{ marginBottom: '15px' }}>
-                        <h3 style={{ marginBottom: '10px' }}>Quản lý người dùng</h3>
+                <div>
+                    <div style={{ margin: '15px 0' }}>
+                        <h3 style={{ marginBottom: '15px' }}>Quản lý người dùng</h3>
                         <span>Tổng số người dùng: <strong>{totalAmount}</strong></span>
                     </div>
                     <Paper style={{ width: '100%' }}>
@@ -99,7 +125,7 @@ const UserManagement = () => {
                                         <TableCell style={{ fontWeight: 'bold' }} align="left">Tên người dùng</TableCell>
                                         <TableCell style={{ fontWeight: 'bold' }} align="left">Email</TableCell>
                                         <TableCell style={{ fontWeight: 'bold' }} align="right">Số điện thoại</TableCell>
-                                        <TableCell style={{ fontWeight: 'bold' }} align="left">Địa chỉ</TableCell>
+                                        <TableCell style={{ fontWeight: 'bold' }} align="left">Vai trò</TableCell>
                                         <TableCell style={{ fontWeight: 'bold' }} align="left">Trạng thái</TableCell>
                                         <TableCell style={{ fontWeight: 'bold' }} align="right"></TableCell>
                                     </TableRow>
@@ -111,13 +137,15 @@ const UserManagement = () => {
                                             <TableCell align="left">{user?.name}</TableCell>
                                             <TableCell align="left">{user?.email}</TableCell>
                                             <TableCell align="right">{user?.phone}</TableCell>
-                                            <TableCell align="left">{user?.address}</TableCell>
+                                            <TableCell align="left">{user?.role === 'Role_Admin' ?
+                                             <span style={{color: 'red'}}>Quản trị viên</span> : 'Người dùng'}</TableCell>
                                             <TableCell align="left">
                                                 <FormControlLabel
                                                     control={
                                                         <Switch
+                                                            disabled={user?.role === 'Role_Admin'}
                                                             checked={user.state === 'activated'}
-                                                            onChange={updateStatusUser}
+                                                            onChange={() => updateStatusUser(user?.id, user?.role)}
                                                             name="checkedB"
                                                             color="primary"
                                                         />
@@ -125,13 +153,14 @@ const UserManagement = () => {
                                                 />
                                             </TableCell>
                                             <TableCell align="right">
-                                                <EditIcon
+                                                {/* <EditIcon
                                                     style={{
                                                         fontSize: '28px', background: 'transparent', padding: '5px',
                                                         borderRadius: '50%', border: '1px solid var(--main-color)',
                                                         color: 'var(--main-color)', cursor: 'pointer', marginRight: '7px'
-                                                    }} />
+                                                    }} /> */}
                                                 <VisibilityIcon
+                                                    onClick={() => showDetailUser(user?.id)}
                                                     style={{
                                                         fontSize: '28px', background: 'transparent', padding: '5px',
                                                         borderRadius: '50%', border: '1px solid var(--main-color)',
@@ -146,6 +175,7 @@ const UserManagement = () => {
                         <TablePagination
                             rowsPerPageOptions={[5, 10, 15]}
                             component="div"
+                            labelRowsPerPage='Hiển thị:'
                             count={totalAmount}
                             rowsPerPage={size}
                             page={page}
@@ -158,6 +188,17 @@ const UserManagement = () => {
             <div style={{ position: 'fixed', bottom: '0', left: '0', width: 'calc(100% - 260px)', marginLeft: '260px' }}>
                 <Footer />
             </div>
+
+            {/* detail modal */}
+            <Modal
+                open={openDetail}
+                onClose={handleClose}
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description">
+                <div>
+                    <UserDetailManagement id={userIdDetail} handleClose={handleClose}></UserDetailManagement>
+                </div>
+            </Modal>
         </div>
     )
 }

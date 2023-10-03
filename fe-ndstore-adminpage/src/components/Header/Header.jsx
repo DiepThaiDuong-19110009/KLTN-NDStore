@@ -54,11 +54,15 @@ const Header = () => {
             })
     }
 
+    const clickLogo = () => {
+        window.location.reload()
+    }
+
     return (
         <div id="header">
             {isLoading ? <Loading isLoading={isLoading} /> : undefined}
             <div className="logo-header">
-                <h3 style={{ color: "var(--main-color)" }}>NDStore</h3>
+                <h3 onClick={() => clickLogo()} style={{ color: "var(--main-color)", cursor: 'pointer' }}>NDStore</h3>
                 <div style={{ borderLeft: '2px solid gray', height: '20px', margin: '0 15px' }}></div>
                 <h3>Admin</h3>
             </div>

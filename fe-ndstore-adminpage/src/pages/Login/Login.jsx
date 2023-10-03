@@ -88,7 +88,7 @@ const Login = () => {
     <div className='login-admin'>
       {isLoading ? <Loading isLoading={isLoading} /> : undefined}
       <div className='box-login-admin'>
-        <h2 style={{ textAlign: 'center' }}>Admin</h2>
+        <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Admin</h2>
         <div className='form-login'>
           <div style={{ marginBottom: '20px' }}>
             <TextField

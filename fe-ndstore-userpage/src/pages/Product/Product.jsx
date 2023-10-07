@@ -97,7 +97,7 @@ const Product = () => {
                 </div>
                 <div className="list-product">
                     <div className="name-category">
-                        <h3>Laptop <span>(120 sản phẩm)</span></h3>
+                        <h4>Tìm thấy: <span>{totalAmount} sản phẩm</span></h4>
                     </div>
                     <div className="filter-by">
                         <strong>Sắp xếp theo</strong>

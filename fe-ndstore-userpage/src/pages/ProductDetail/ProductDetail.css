@@ -101,3 +101,12 @@
     height: 4%;
     border-radius: 50%;
 }
+
+@media only screen and (max-width: 801px) {
+    .product-detail {
+        width: 100%;
+    }
+    .policy {
+        display: none;
+    }
+}

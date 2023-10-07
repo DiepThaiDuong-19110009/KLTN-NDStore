@@ -125,8 +125,8 @@ const Cart = () => {
                         <table className='cart'>
                             <tr className='header-cart-table'>
                                 <th>Tên sản phẩm</th>
-                                <th style={{ textAlign: 'center' }}>Hình ảnh</th>
-                                <th>Đơn giá</th>
+                                <th className='img-product' style={{ textAlign: 'center' }}>Hình ảnh</th>
+                                <th className='unit-price'>Đơn giá</th>
                                 <th style={{ textAlign: 'center' }}>Số lượng</th>
                                 <th style={{ textAlign: 'right' }}>Thành tiền</th>
                                 <th></th>
@@ -137,11 +137,11 @@ const Cart = () => {
                                         <td style={{ wordBreak: 'break-word', maxWidth: '40px' }}>
                                             <span>{item?.productName}</span>
                                         </td>
-                                        <td style={{ textAlign: 'center' }}>
+                                        <td className='img-product' style={{ textAlign: 'center' }}>
                                             <img style={{ width: '80px', height: '80px', border: '1px solid rgb(224, 224, 224)', borderRadius: '5px' }} alt=''
                                                 src={item?.image ? item?.image[0]?.url : ''}></img>
                                         </td>
-                                        <td style={{ display: 'flex', flexDirection: 'column', marginTop: '20px' }}>
+                                        <td className='unit-price'>
                                             <strong>{numberWithCommas(parseInt(item?.discountPrice))} VNĐ</strong>
                                             <div style={{ display: 'flex' }}>
                                                 <small style={{ textDecoration: 'line-through', marginRight: '6px' }}>{numberWithCommas(parseInt(item?.productPrice))} VNĐ</small>

@@ -96,7 +96,7 @@ const ProductDetail = () => {
             }
             <div className="container-product-detail">
                 <button style={{ background: 'var(--main-color)', border: 'none', padding: '10px', color: '#FFFFFF', borderRadius: '5px' }}
-                     onClick={() => navigate(-1)} className="add-to-cart">
+                    onClick={() => navigate(-1)} className="add-to-cart">
                     <i style={{ marginRight: '10px' }} className="fas fa-arrow-left"></i>Tiếp tục mua hàng
                 </button>
             </div>
@@ -136,14 +136,26 @@ const ProductDetail = () => {
                         <hr />
                         <div>
                             <h5>Thông số sản phẩm</h5>
-                            <ul>
-                                <li>CPU: Intel Core i3-1115G4</li>
-                                <li>Màn hình: 14" (1920 x 1080)</li>
-                                <li>RAM: 1 x 4GB Onboard DDR4 2666MHz</li>
-                                <li style={{ listStyle: 'none', marginTop: '10px' }}>. . . <span style={{ marginLeft: '10px', color: 'var(--main-color)', cursor: 'pointer' }}>Xem thông tin chi tiết</span></li>
-                            </ul>
+                            <div style={{ display: 'flex' }}>
+                                <div>
+                                    {
+                                        productDetail?.productConfiguration[0] &&
+                                        Object.keys(productDetail?.productConfiguration[0]).map((key, index) => (
+                                            <p style={{marginRight: '5px'}} key={index}>- {key}:</p>
+                                        ))
+                                    }
+                                </div>
+                                <div>
+                                    {
+                                        productDetail?.productConfiguration[0] &&
+                                        Object.values(productDetail?.productConfiguration[0]).map((key, index) => (
+                                            <p key={index}>{key || ''}</p>
+                                        ))
+                                    }
+                                </div>
+                            </div>
                         </div>
-                        <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'space-between', gap: '30px' }}>
+                        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', gap: '30px' }}>
                             <button className="view-comment" onClick={handleClickOpen}>Xem đánh giá sản phẩm</button>
                             <button style={{ background: productDetail?.stock === 0 ? '#009ed469' : 'var(--main-color)' }}
                                 disabled={productDetail?.stock === 0} onClick={() => addToCart(productDetail?.stock)} className="add-to-cart">
@@ -162,20 +174,7 @@ const ProductDetail = () => {
             <div className="container-product-detail">
                 <div className="detail-infor-product">
                     <h4>Mô tả sản phẩm</h4>
-                    <p>
-                        Laptop Asus X415EA-EK675W gọn nhẹ sẵn sàng đồng hành cùng bạn trong công việc và học tập. Kết hợp hiệu năng mạnh mẽ từ chip Intel Core i3 thế hệ thứ 11, chiếc laptop trên sẽ là lựa chọn tuyệt vời trong phân khúc giá rẻ, đáp ứng tốt nhu cầu của học sinh, sinh viên, nhân viên văn phòng...
-                    </p>
-                    <strong>
-                        Kiểu dáng nhỏ gọn thanh lịch, trải nghiệm màn hình Full HD sắc nét
-                        Asus X415EA-EK675W khoác lên vẻ ngoài mỏng gọn với trọng lượng 1.6 kg và độ dày 1.99 cm, dễ dàng nằm gọn trong balo, túi xách của người dùng, Tính di động cao cho phép chiếc laptop sẵn sàng theo chân bạn đến bất kỳ đâu. Thiết kế màu bạc sang trọng tôn lên nét đẹp thanh lịch tinh tế.
-                    </strong><br />
-                    <img style={{ margin: '20px 0' }} alt="" src="https://storage.googleapis.com/teko-gae.appspot.com/media/image/2022/7/4/20220704_87e3dfd7-03c0-4d78-87d2-9f5c9400f2de.jpg"></img>
-                    <br />
-                    <strong>
-                        Màn hình 14 inch mang đến trải nghiệm xem chân thực hơn nhờ thiết kế viền mỏng. Độ phân giải Full HD (1920 x 1080P), mang đến khung hình sắc nét và sống động. Tính năng chống lóa cho phép bạn thoải mái làm việc và học tập với chiếc laptop ngay cả trong điều kiện ánh sáng mạnh.
-                    </strong>
-                    <img style={{ margin: '20px 0' }} alt="" src="https://storage.googleapis.com/teko-gae.appspot.com/media/image/2022/7/4/20220704_87e3dfd7-03c0-4d78-87d2-9f5c9400f2de.jpg"></img>
-                    <br />
+                    <p>{productDetail?.description}</p>
                 </div>
             </div>
             <Dialog fullWidth open={openComment} onClose={handleClose}>

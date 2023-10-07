@@ -82,7 +82,10 @@ const ProductDetail = () => {
             })
             .catch((err) => {
                 if (err) {
-                    console.log(err)
+                    if (err?.request?.status === 401)
+                    {
+                        navigate('/login')
+                    }
                     setIsLoading(false)
                 }
             })
@@ -139,7 +142,7 @@ const ProductDetail = () => {
                             <div style={{ display: 'flex' }}>
                                 <div>
                                     {
-                                        productDetail?.productConfiguration[0] &&
+                                        productDetail?.productConfiguration &&
                                         Object.keys(productDetail?.productConfiguration[0]).map((key, index) => (
                                             <p style={{marginRight: '5px'}} key={index}>- {key}:</p>
                                         ))
@@ -147,7 +150,7 @@ const ProductDetail = () => {
                                 </div>
                                 <div>
                                     {
-                                        productDetail?.productConfiguration[0] &&
+                                        productDetail?.productConfiguration &&
                                         Object.values(productDetail?.productConfiguration[0]).map((key, index) => (
                                             <p key={index}>{key || ''}</p>
                                         ))

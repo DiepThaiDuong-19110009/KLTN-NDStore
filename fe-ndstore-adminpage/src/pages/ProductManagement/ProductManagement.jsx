@@ -11,9 +11,9 @@ import Menu from "../../components/Menu/Menu";
 import Footer from "../../components/Footer/Footer";
 import { useNavigate } from "react-router-dom";
 import VisibilityIcon from '@material-ui/icons/Visibility';
-import UserDetailManagement from "./UserDetailManagement/UserDetailManagement";
+import managementProductApi from "../../apis/management-product.api";
 
-const UserManagement = () => {
+const ProductManagement = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [openDetail, setOpenDetail] = useState(false);
     const [userIdDetail, setUsetIdDetail] = useState('')
@@ -24,17 +24,17 @@ const UserManagement = () => {
     // set datar response
     const [totalAmount, setTotalAmount] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
-    const [listUser, setListUser] = useState([]);
+    const [listProduct, setListProduct] = useState([]);
 
     const navigate = useNavigate()
 
     const handleChangePage = (e, newPage) => {
         setPage(newPage)
-        getAllUser(newPage, size);
+        getAllProduct(newPage, size);
     };
 
     const handleChangeSize = (event) => {
-        getAllUser(0, event.target.value);
+        getAllProduct(0, event.target.value);
         setSize(parseInt(+event.target.value));
         setPage(0);
     };
@@ -44,18 +44,18 @@ const UserManagement = () => {
     }
 
     useEffect(() => {
-        getAllUser(page, size);
+        getAllProduct(page, size);
     }, [])
 
-    const getAllUser = (page, size) => {
+    const getAllProduct = (page, size) => {
         setIsLoading(true)
-        managementUserApi
-            .getUserList(page, size)
+        managementProductApi
+            .getProductList(page, size)
             .then((res) => {
                 if (res?.success === true) {
                     setTotalAmount(res?.data?.allQuantity)
                     setTotalPage(res?.data?.allPage)
-                    setListUser(res?.data?.listUser)
+                    setListProduct(res?.data?.listUser)
                     setIsLoading(false);
                 }
             })
@@ -74,7 +74,7 @@ const UserManagement = () => {
             .setStatusUser(id)
             .then((res) => {
                 if (res?.success === true) {
-                    getAllUser(page, size);
+                    getAllProduct(page, size);
                     setIsLoading(false);
                 }
             })
@@ -103,20 +103,20 @@ const UserManagement = () => {
                 variant="permanent"
                 open
                 anchor="left">
-                <Menu selected='user' />
+                <Menu selected='product' />
             </Drawer>
             <div style={{ backgroundColor: '#f3f3f3', padding: '70px 15px 15px 15px', height: '100vh' }}>
                 <Breadcrumbs aria-label="breadcrumb">
                     <Typography onClick={() => handleClickBreadcrumb('/home')} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Trang chủ</Typography>
-                    <Typography color="var(--main-color)" fontSize='14px'>Quản lý người dùng</Typography>
+                    <Typography color="var(--main-color)" fontSize='14px'>Quản lý sản phẩm</Typography>
                 </Breadcrumbs>
                 <div>
                     <div style={{ margin: '15px 0' }}>
-                        <h3 style={{ marginBottom: '15px' }}>Quản lý người dùng</h3>
-                        <span>Tổng số người dùng: <strong>{totalAmount}</strong></span>
+                        <h3 style={{ marginBottom: '15px' }}>Quản lý sản phẩm</h3>
+                        <span>Tổng số sản phẩm: <strong>{totalAmount}</strong></span>
                     </div>
                     <Paper style={{ width: '100%' }}>
-                        <TableContainer style={{ maxHeight: '400px' }}>
+                        <TableContainer style={{ maxHeight: '400px' }} component={Paper}>
                             <Table stickyHeader aria-label="sticky table" style={{ width: '100%' }}>
                                 <TableHead>
                                     <TableRow>
@@ -130,7 +130,7 @@ const UserManagement = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {listUser?.map((user, index) => (
+                                    {listProduct?.map((user, index) => (
                                         <TableRow key={user?.id} hover role="checkbox" tabIndex={-1}>
                                             <TableCell align="center">{index + 1}</TableCell>
                                             <TableCell align="left">{user?.name}</TableCell>
@@ -189,7 +189,7 @@ const UserManagement = () => {
             </div>
 
             {/* detail modal */}
-            <Modal
+            {/* <Modal
                 open={openDetail}
                 onClose={handleClose}
                 aria-labelledby="simple-modal-title"
@@ -197,9 +197,9 @@ const UserManagement = () => {
                 <div>
                     <UserDetailManagement id={userIdDetail} handleClose={handleClose}></UserDetailManagement>
                 </div>
-            </Modal>
+            </Modal> */}
         </div>
     )
 }
 
-export default UserManagement;
+export default ProductManagement;

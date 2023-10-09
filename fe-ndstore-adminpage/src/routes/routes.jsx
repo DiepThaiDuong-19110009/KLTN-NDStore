@@ -13,6 +13,8 @@ const BrandManagementPage = React.lazy(() => import('../pages/BrandManagement/Br
 const BrandCreateManagementPage = React.lazy(() => import('../pages/BrandManagement/BrandCreateManagement/BrandCreateManagement'));
 const BrandEditManagementPage = React.lazy(() => import('../pages/BrandManagement/BrandEditManagement/BrandEditManagement'));
 const CategoryManagementPage = React.lazy(() => import('../pages/CategoryManagement/CategoryManagement'));
+const CategoryCreateManagementPage = React.lazy(() => import('../pages/CategoryManagement/CategoryCreateManagement/CategoryCreateManagement'));
+const CategoryEditManagementPage = React.lazy(() => import('../pages/CategoryManagement/CategoryEditManagement/CategoryEditManagement'));
 const ProductManagementPage = React.lazy(() => import('../pages/ProductManagement/ProductManagement'));
 
 const AppRoutes = () => {
@@ -47,6 +49,12 @@ const AppRoutes = () => {
                     {/* Category */}
                     <Route element={<AuthenticatedRoute />}>
                         <Route path={PATH.CATEGORY} element={<CategoryManagementPage />} />
+                    </Route>
+                    <Route element={<AuthenticatedRoute />}>
+                        <Route path={PATH.CATEGORY_CREATE} element={<CategoryCreateManagementPage />} />
+                    </Route>
+                    <Route element={<AuthenticatedRoute />}>
+                        <Route path={PATH.CATEGORY_EDIT} element={<CategoryEditManagementPage />} />
                     </Route>
                     {/* Product */}
                     <Route element={<AuthenticatedRoute />}>

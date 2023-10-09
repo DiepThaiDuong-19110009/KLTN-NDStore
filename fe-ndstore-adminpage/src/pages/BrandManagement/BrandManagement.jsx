@@ -154,7 +154,7 @@ const BrandManagement = () => {
                                             <TableCell align="center">{index + 1}</TableCell>
                                             <TableCell align="left">{brand?.name}</TableCell>
                                             <TableCell align="left">
-                                                <img style={{ width: '100px' }} alt={brand?.name} src={brand?.imageBrand}></img>
+                                                <img style={{ width: '70px' }} alt={brand?.name} src={brand?.imageBrand}></img>
                                             </TableCell>
                                             <TableCell align="left">
                                                 <FormControlLabel

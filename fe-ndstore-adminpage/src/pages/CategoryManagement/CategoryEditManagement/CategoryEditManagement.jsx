@@ -9,15 +9,15 @@ import * as Yup from 'yup';
 import Menu from "../../../components/Menu/Menu";
 import Footer from "../../../components/Footer/Footer";
 import PublishIcon from '@material-ui/icons/Publish';
-import managementBrandApi from "../../../apis/management-brand.api";
 import { PATH } from "../../../contants/Path";
+import managementCategoryApi from "../../../apis/management-category.api";
 
-const BrandEditManagement = () => {
+const CategoryEditManagement = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [openConfirmClose, setOpenConfirmClose] = useState(false);
-    const [imageBrand, setImageBrand] = useState('')
+    const [imageCategory, setImageCategory] = useState('')
     const [state, setState] = useState('')
-    const [messageImageBrand, setMessageImageBrand] = useState('')
+    const [messageImageCategory, setMessageImagecategory] = useState('')
 
     let { id } = useParams()
 
@@ -28,12 +28,12 @@ const BrandEditManagement = () => {
     }
 
     useEffect(() => {
-        getBrandDetail(id)
+        getCategoryDetail(id)
     }, [id])
 
     const validationSchema = Yup.object().shape({
         name: Yup.string()
-            .required('Vui lòng cung cấp tên thương hiệu')
+            .required('Vui lòng cung cấp tên danh mục')
     });
 
     const {
@@ -45,14 +45,14 @@ const BrandEditManagement = () => {
         resolver: yupResolver(validationSchema),
     });
 
-    const getBrandDetail = (id) => {
-        managementBrandApi
-            .getDetailBrand(id)
+    const getCategoryDetail = (id) => {
+        managementCategoryApi
+            .getDetailCategory(id)
             .then((res) => {
                 if (res?.success === true) {
-                    setImageBrand(res?.data?.imageBrand)
+                    setImageCategory(res?.data?.imageCategory)
                     setState(res?.data?.state)
-                    setValue('name', res?.data?.name)
+                    setValue('name', res?.data?.titleCategory)
                     setIsLoading(false);
                 }
             })
@@ -63,9 +63,9 @@ const BrandEditManagement = () => {
     }
 
     const handleSelectFile = (e) => {
-        setMessageImageBrand('')
+        setMessageImagecategory('')
         const fileLoaded = URL.createObjectURL(e.target.files[0]);
-        setImageBrand(fileLoaded);
+        setImageCategory(fileLoaded);
         updateImage(e.target.files[0])
     };
 
@@ -75,12 +75,12 @@ const BrandEditManagement = () => {
 
     const onSubmit = (data) => {
         setIsLoading(true)
-        managementBrandApi
-            .editBrand(data, state, id)
+        managementCategoryApi
+            .editCategory(data, state, id)
             .then((res) => {
                 if (res?.success === true) {
                     setIsLoading(false)
-                    navigate(PATH.BRAND)
+                    navigate(PATH.CATEGORY)
                 }
             })
             .catch((err) => {
@@ -91,16 +91,16 @@ const BrandEditManagement = () => {
 
     const updateImage = (img) => {
         if (img === '') {
-            setMessageImageBrand('Vui lòng cung cấp hình ảnh thương hiệu');
+            setMessageImagecategory('Vui lòng cung cấp hình ảnh danh mục');
             return;
         }
         setIsLoading(true)
-        managementBrandApi
-            .editImageBrand(img, id)
+        managementCategoryApi
+            .editImageCategory(img, id)
             .then((res) => {
                 if (res?.success === true) {
                     setIsLoading(false)
-                    navigate(PATH.BRAND)
+                    navigate(PATH.CATEGORY)
                 }
             })
             .catch((err) => {
@@ -120,20 +120,20 @@ const BrandEditManagement = () => {
                 variant="permanent"
                 open
                 anchor="left">
-                <Menu selected='brand' />
+                <Menu selected='category' />
             </Drawer>
             <div style={{ backgroundColor: '#f3f3f3', padding: '70px 15px 70px 15px' }}>
                 <Breadcrumbs aria-label="breadcrumb">
                     <Typography onClick={() => handleClickBreadcrumb(PATH.HOME)} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Trang chủ</Typography>
-                    <Typography onClick={() => handleClickBreadcrumb(PATH.BRAND)} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Thương hiệu</Typography>
-                    <Typography color="var(--main-color)" fontSize='14px'>Chỉnh sửa thương hiệu</Typography>
+                    <Typography onClick={() => handleClickBreadcrumb(PATH.CATEGORY)} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Danh mục</Typography>
+                    <Typography color="var(--main-color)" fontSize='14px'>Chỉnh sửa danh mục</Typography>
                 </Breadcrumbs>
                 <div style={{
                     display: 'flex', flexDirection: 'column', gap: '20px',
                     backgroundColor: '#FFFFFF', padding: '20px', marginTop: '20px', borderRadius: '5px'
                 }}>
                     <div>
-                        <h3 style={{ marginBottom: '20px' }}>Chỉnh sửa thương hiệu</h3>
+                        <h3 style={{ marginBottom: '20px' }}>Chỉnh sửa danh mục</h3>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', flexDirection: 'column' }}>
                             <h5 style={{
                                 color: 'white', background: 'var(--main-color)',
@@ -144,18 +144,18 @@ const BrandEditManagement = () => {
                                 border: '1px solid #BABABA', padding: '15px', borderRadius: '5px'
                             }}>
                                 {
-                                    imageBrand ?
+                                    imageCategory ?
                                         <img style={{
                                             width: '150px', minHeight: '150px',
                                             background: '#f2f2f2', boxShadow: '1px 2px 8px gray'
                                         }}
-                                            alt="image_brand" src={imageBrand}></img>
+                                            alt="image_category" src={imageCategory}></img>
                                         :
                                         <img style={{
                                             width: '150px', minHeight: '150px',
                                             background: '#f2f2f2', boxShadow: '1px 2px 8px gray'
                                         }}
-                                            alt="image_brand" src='https://headhuntvietnam.com/images/default.jpg'></img>
+                                            alt="image_category" src='https://headhuntvietnam.com/images/default.jpg'></img>
                                 }
                                 <button style={{
                                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
@@ -179,7 +179,7 @@ const BrandEditManagement = () => {
                                     type="file"
                                     multiple={false}
                                 />
-                                <small style={{ color: 'red', marginTop: '10px', width: '150px', textAlign: 'center' }}>{messageImageBrand}</small>
+                                <small style={{ color: 'red', marginTop: '10px', width: '150px', textAlign: 'center' }}>{messageImageCategory}</small>
                             </div>
                             <h5 style={{
                                 color: 'white', background: 'var(--main-color)',
@@ -196,8 +196,8 @@ const BrandEditManagement = () => {
                                         id="name"
                                         name="name"
                                         type="text"
-                                        label="Tên thương hiệu"
-                                        placeholder="Tên thương hiệu"
+                                        label="Tên danh mục"
+                                        placeholder="Tên danh mục"
                                         fullWidth
                                         margin="normal"
                                         variant="outlined"
@@ -240,7 +240,7 @@ const BrandEditManagement = () => {
                 }}>
                     <p>Bạn có chắc chắn muốn hủy các thay đổi không?</p>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '20px', justifyContent: 'end', marginTop: '50px' }}>
-                        <button onClick={() => navigate(PATH.BRAND)} style={{
+                        <button onClick={() => navigate(PATH.CATEGORY)} style={{
                             backgroundColor: 'var(--main-color)', border: 'none',
                             outline: 'none', padding: '10px 20px', color: 'white',
                             borderRadius: '5px', cursor: 'pointer'
@@ -257,4 +257,4 @@ const BrandEditManagement = () => {
     )
 }
 
-export default BrandEditManagement;
+export default CategoryEditManagement;

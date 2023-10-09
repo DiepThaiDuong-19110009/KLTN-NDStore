@@ -4,7 +4,6 @@ import { LOCAL_STORAGE } from '../contants/LocalStorage';
 import { PATH } from '../contants/Path';
 import { AuthenticatedRoute, UnauthenticatedRoute } from '../components/RestrictedRoutes/ProtectedRoute';
 import React from 'react';
-import BrandManagement from '../pages/BrandManagement/BrandManagement';
 
 const CommonLayout = React.lazy(() => import('../components/CommonLayout/CommonLayout'));
 const HomePage = React.lazy(() => import('../pages/Home/Home'));
@@ -12,6 +11,7 @@ const LoginPage = React.lazy(() => import('../pages/Login/Login'));
 const UserManagementPage = React.lazy(() => import('../pages/UserManagement/UserManagement'));
 const BrandManagementPage = React.lazy(() => import('../pages/BrandManagement/BrandManagement'));
 const BrandCreateManagementPage = React.lazy(() => import('../pages/BrandManagement/BrandCreateManagement/BrandCreateManagement'));
+const BrandEditManagementPage = React.lazy(() => import('../pages/BrandManagement/BrandEditManagement/BrandEditManagement'));
 const CategoryManagementPage = React.lazy(() => import('../pages/CategoryManagement/CategoryManagement'));
 const ProductManagementPage = React.lazy(() => import('../pages/ProductManagement/ProductManagement'));
 
@@ -34,6 +34,7 @@ const AppRoutes = () => {
                     <Route element={<AuthenticatedRoute />}>
                         <Route path={PATH.USER} element={<UserManagementPage />} />
                     </Route>
+                    {/* Brand */}
                     <Route element={<AuthenticatedRoute />}>
                         <Route path={PATH.BRAND} element={<BrandManagementPage />} />
                     </Route>
@@ -41,8 +42,13 @@ const AppRoutes = () => {
                         <Route path={PATH.BRAND_CREATE} element={<BrandCreateManagementPage />} />
                     </Route>
                     <Route element={<AuthenticatedRoute />}>
+                        <Route path={PATH.BRAND_EDIT} element={<BrandEditManagementPage />} />
+                    </Route>
+                    {/* Category */}
+                    <Route element={<AuthenticatedRoute />}>
                         <Route path={PATH.CATEGORY} element={<CategoryManagementPage />} />
                     </Route>
+                    {/* Product */}
                     <Route element={<AuthenticatedRoute />}>
                         <Route path={PATH.PRODUCT} element={<ProductManagementPage />} />
                     </Route>

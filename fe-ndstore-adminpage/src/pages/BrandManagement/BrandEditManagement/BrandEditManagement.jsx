@@ -3,21 +3,23 @@ import Loading from "../../../components/Loading/Loading";
 import Header from "../../../components/Header/Header";
 import { Breadcrumbs, Drawer, Modal, TextField, Typography } from "@mui/material";
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import Menu from "../../../components/Menu/Menu";
 import Footer from "../../../components/Footer/Footer";
-import managementBrandApi from "../../../apis/management-brand.api";
 import PublishIcon from '@material-ui/icons/Publish';
+import managementBrandApi from "../../../apis/management-brand.api";
 import { PATH } from "../../../contants/Path";
 
-const BrandCreateManagement = () => {
+const BrandEditManagement = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [openConfirmClose, setOpenConfirmClose] = useState(false);
     const [imageBrand, setImageBrand] = useState('')
-    const [imageBrandData, setImageBrandData] = useState('')
+    const [state, setState] = useState('')
     const [messageImageBrand, setMessageImageBrand] = useState('')
+
+    let { id } = useParams()
 
     const navigate = useNavigate()
 
@@ -26,7 +28,8 @@ const BrandCreateManagement = () => {
     }
 
     useEffect(() => {
-    }, [])
+        getBrandDetail(id)
+    }, [id])
 
     const validationSchema = Yup.object().shape({
         name: Yup.string()
@@ -37,21 +40,20 @@ const BrandCreateManagement = () => {
         register,
         handleSubmit,
         formState: { errors },
+        setValue
     } = useForm({
         resolver: yupResolver(validationSchema),
     });
 
-    const onSubmit = (data) => {
-        if (imageBrand === '') {
-            setMessageImageBrand('Vui lòng cung cấp hình ảnh thương hiệu');
-            return;
-        }
-        setIsLoading(true)
+    const getBrandDetail = (id) => {
         managementBrandApi
-            .createNewBrand({ ...data, file: imageBrandData })
+            .getDetailBrand(id)
             .then((res) => {
                 if (res?.success === true) {
-                    navigate(PATH.BRAND)
+                    setImageBrand(res?.data?.imageBrand)
+                    setState(res?.data?.state)
+                    setValue('name', res?.data?.name)
+                    setIsLoading(false);
                 }
             })
             .catch((err) => {
@@ -64,11 +66,47 @@ const BrandCreateManagement = () => {
         setMessageImageBrand('')
         const fileLoaded = URL.createObjectURL(e.target.files[0]);
         setImageBrand(fileLoaded);
-        setImageBrandData(e.target.files[0])
+        updateImage(e.target.files[0])
     };
 
     const handleCloseConfirm = () => {
         setOpenConfirmClose(false)
+    }
+
+    const onSubmit = (data) => {
+        setIsLoading(true)
+        managementBrandApi
+            .editBrand(data, state, id)
+            .then((res) => {
+                if (res?.success === true) {
+                    setIsLoading(false)
+                    navigate(PATH.BRAND)
+                }
+            })
+            .catch((err) => {
+                setIsLoading(false);
+                console.log(err)
+            })
+    }
+
+    const updateImage = (img) => {
+        if (img === '') {
+            setMessageImageBrand('Vui lòng cung cấp hình ảnh thương hiệu');
+            return;
+        }
+        setIsLoading(true)
+        managementBrandApi
+            .editImageBrand(img, id)
+            .then((res) => {
+                if (res?.success === true) {
+                    setIsLoading(false)
+                    navigate(PATH.BRAND)
+                }
+            })
+            .catch((err) => {
+                setIsLoading(false);
+                console.log(err)
+            })
     }
 
 
@@ -84,21 +122,25 @@ const BrandCreateManagement = () => {
                 anchor="left">
                 <Menu selected='brand' />
             </Drawer>
-            <div style={{ backgroundColor: '#f3f3f3', padding: '70px 15px 15px 15px', height: '100vh' }}>
+            <div style={{ backgroundColor: '#f3f3f3', padding: '70px 15px 70px 15px' }}>
                 <Breadcrumbs aria-label="breadcrumb">
                     <Typography onClick={() => handleClickBreadcrumb(PATH.HOME)} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Trang chủ</Typography>
                     <Typography onClick={() => handleClickBreadcrumb(PATH.BRAND)} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Thương hiệu</Typography>
-                    <Typography color="var(--main-color)" fontSize='14px'>Thêm mới thương hiệu</Typography>
+                    <Typography color="var(--main-color)" fontSize='14px'>Chỉnh sửa thương hiệu</Typography>
                 </Breadcrumbs>
                 <div style={{
                     display: 'flex', flexDirection: 'column', gap: '20px',
                     backgroundColor: '#FFFFFF', padding: '20px', marginTop: '20px', borderRadius: '5px'
                 }}>
                     <div>
-                        <h3 style={{ marginBottom: '20px' }}>Thêm mới thương hiệu</h3>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+                        <h3 style={{ marginBottom: '20px' }}>Chỉnh sửa thương hiệu</h3>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', flexDirection: 'column' }}>
+                            <h5 style={{
+                                color: 'white', background: 'var(--main-color)',
+                                padding: '6px 10px', borderRadius: '5px'
+                            }}>Chỉnh sửa hình ảnh</h5>
                             <div style={{
-                                display: 'flex', flexDirection: 'column',
+                                display: 'flex', flexDirection: 'column', alignItems: 'center',
                                 border: '1px solid #BABABA', padding: '15px', borderRadius: '5px'
                             }}>
                                 {
@@ -121,7 +163,7 @@ const BrandCreateManagement = () => {
                                     backgroundColor: 'var(--main-color)', marginTop: '15px', borderRadius: '5px'
                                 }}>
                                     <PublishIcon />
-                                    Tải ảnh lên
+                                    Cập nhật ảnh
                                 </button>
                                 <input
                                     onChange={handleSelectFile}
@@ -139,8 +181,12 @@ const BrandCreateManagement = () => {
                                 />
                                 <small style={{ color: 'red', marginTop: '10px', width: '150px', textAlign: 'center' }}>{messageImageBrand}</small>
                             </div>
+                            <h5 style={{
+                                color: 'white', background: 'var(--main-color)',
+                                padding: '6px 10px', borderRadius: '5px'
+                            }}>Chỉnh sửa thông tin</h5>
                             <div style={{
-                                display: 'flex', flexDirection: 'column', width: '80%',
+                                display: 'flex', flexDirection: 'column',
                                 border: '1px solid #BABABA', padding: '15px', borderRadius: '5px'
                             }}>
 
@@ -211,4 +257,4 @@ const BrandCreateManagement = () => {
     )
 }
 
-export default BrandCreateManagement;
+export default BrandEditManagement;

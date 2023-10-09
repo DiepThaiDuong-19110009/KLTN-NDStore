@@ -32,13 +32,39 @@ class ManegementBrandApis {
         }
         const config = {
             headers: {
-              'Content-Type': 'multipart/form-data',
+                'Content-Type': 'multipart/form-data',
             },
-          }
+        }
         let formData = new FormData()
         formData.append('file', data.file);
         formData.append('name', data.name);
         return httpClient.httpPost(`api/admin/manage/brands/add/new`, formData, config)
+    }
+
+    async editImageBrand(file, id) {
+        console.log(file, id)
+        if (!id || !file) {
+            return;
+        }
+        const config = {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        }
+        let formData = new FormData()
+        formData.append('file', file);
+        return httpClient.httpPost(`api/admin/manage/brand/update/new/image/${id}`, formData, config)
+    }
+
+    async editBrand(data, state, id) {
+        console.log(data.name, state, id)
+        if (!data || !state || !id) {
+            return;
+        }
+        return httpClient.httpPut(`api/admin/manage/brands/update/detail/${id}`, {
+            name: data.name,
+            state: state
+        })
     }
 }
 

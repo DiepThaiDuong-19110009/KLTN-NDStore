@@ -120,7 +120,7 @@ const BrandManagement = () => {
                 anchor="left">
                 <Menu selected='brand' />
             </Drawer>
-            <div style={{ backgroundColor: '#f3f3f3', padding: '70px 15px 15px 15px', height: '100vh' }}>
+            <div style={{ backgroundColor: '#f3f3f3', padding: '70px 15px 70px 15px', height: '100vh' }}>
                 <Breadcrumbs aria-label="breadcrumb">
                     <Typography onClick={() => handleClickBreadcrumb('/home')} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Trang chủ</Typography>
                     <Typography color="var(--main-color)" fontSize='14px'>Quản lý thương hiệu</Typography>
@@ -170,6 +170,7 @@ const BrandManagement = () => {
                                             </TableCell>
                                             <TableCell align="right">
                                                 <EditIcon
+                                                onClick={() => navigate(PATH.BRAND + '/' + brand?.id)}
                                                     style={{
                                                         fontSize: '28px', background: 'transparent', padding: '5px',
                                                         borderRadius: '50%', border: '1px solid var(--main-color)',

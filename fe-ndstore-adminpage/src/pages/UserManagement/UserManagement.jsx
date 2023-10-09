@@ -105,9 +105,10 @@ const UserManagement = () => {
                 anchor="left">
                 <Menu selected='user' />
             </Drawer>
-            <div style={{ backgroundColor: '#f3f3f3', padding: '70px 15px 15px 15px', height: '100vh' }}>
+            <div style={{ backgroundColor: '#f3f3f3', padding: '70px 15px 70px 15px' }}>
                 <Breadcrumbs aria-label="breadcrumb">
-                    <Typography onClick={() => handleClickBreadcrumb('/home')} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Trang chủ</Typography>
+                    <Typography onClick={() => handleClickBreadcrumb('/home')} color="gray" fontSize='14px'
+                        style={{ cursor: 'pointer' }}>Trang chủ</Typography>
                     <Typography color="var(--main-color)" fontSize='14px'>Quản lý người dùng</Typography>
                 </Breadcrumbs>
                 <div>
@@ -116,7 +117,7 @@ const UserManagement = () => {
                         <span>Tổng số người dùng: <strong>{totalAmount}</strong></span>
                     </div>
                     <Paper style={{ width: '100%' }}>
-                        <TableContainer style={{ maxHeight: '400px' }}>
+                        <TableContainer>
                             <Table stickyHeader aria-label="sticky table" style={{ width: '100%' }}>
                                 <TableHead>
                                     <TableRow>
@@ -137,7 +138,7 @@ const UserManagement = () => {
                                             <TableCell align="left">{user?.email}</TableCell>
                                             <TableCell align="right">{user?.phone}</TableCell>
                                             <TableCell align="left">{user?.role === 'Role_Admin' ?
-                                             <span style={{color: 'red'}}>Quản trị viên</span> : 'Người dùng'}</TableCell>
+                                                <span style={{ color: 'red' }}>Quản trị viên</span> : 'Người dùng'}</TableCell>
                                             <TableCell align="left">
                                                 <FormControlLabel
                                                     control={
@@ -152,12 +153,6 @@ const UserManagement = () => {
                                                 />
                                             </TableCell>
                                             <TableCell align="right">
-                                                {/* <EditIcon
-                                                    style={{
-                                                        fontSize: '28px', background: 'transparent', padding: '5px',
-                                                        borderRadius: '50%', border: '1px solid var(--main-color)',
-                                                        color: 'var(--main-color)', cursor: 'pointer', marginRight: '7px'
-                                                    }} /> */}
                                                 <VisibilityIcon
                                                     onClick={() => showDetailUser(user?.id)}
                                                     style={{

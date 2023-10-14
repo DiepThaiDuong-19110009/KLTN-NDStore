@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import managementUserApi from "../../apis/management-user.api";
 import Loading from "../../components/Loading/Loading";
 import {
     Breadcrumbs, Drawer, FormControlLabel, Modal, Paper, Switch,
@@ -11,12 +10,15 @@ import Menu from "../../components/Menu/Menu";
 import Footer from "../../components/Footer/Footer";
 import { useNavigate } from "react-router-dom";
 import VisibilityIcon from '@material-ui/icons/Visibility';
+import EditIcon from '@material-ui/icons/Edit';
 import managementProductApi from "../../apis/management-product.api";
+import { PATH } from "../../contants/Path";
+import ProductDetailManagement from "./ProductDetailManagement/ProductDetailManagement";
 
 const ProductManagement = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [openDetail, setOpenDetail] = useState(false);
-    const [userIdDetail, setUsetIdDetail] = useState('')
+    const [productIdDetail, setProductIdDetail] = useState('')
     // data for call api get all
     const [size, setSize] = useState(5)
     const [page, setPage] = useState(0)
@@ -53,9 +55,9 @@ const ProductManagement = () => {
             .getProductList(page, size)
             .then((res) => {
                 if (res?.success === true) {
-                    setTotalAmount(res?.data?.allQuantity)
-                    setTotalPage(res?.data?.allPage)
-                    setListProduct(res?.data?.listUser)
+                    setTotalAmount(res?.data?.totalQuantity)
+                    setTotalPage(res?.data?.totalPage)
+                    setListProduct(res?.data?.list)
                     setIsLoading(false);
                 }
             })
@@ -65,13 +67,18 @@ const ProductManagement = () => {
             })
     }
 
-    const updateStatusUser = (id, role) => {
+    const updateStatusProduct = (id, role, images) => {
+        console.log(images)
         if (!id || role === 'Role_Admin') {
             return;
         }
+        if (images?.length === 0) {
+            console.log('Vui lòng cập nhật')
+            return;
+        }
         setIsLoading(true)
-        managementUserApi
-            .setStatusUser(id)
+        managementProductApi
+            .setStatusProduct(id)
             .then((res) => {
                 if (res?.success === true) {
                     getAllProduct(page, size);
@@ -84,8 +91,8 @@ const ProductManagement = () => {
             })
     }
 
-    const showDetailUser = (id) => {
-        setUsetIdDetail(id)
+    const showDetailProduct = (id) => {
+        setProductIdDetail(id)
         setOpenDetail(true)
     }
 
@@ -113,7 +120,13 @@ const ProductManagement = () => {
                 <div>
                     <div style={{ margin: '15px 0' }}>
                         <h3 style={{ marginBottom: '15px' }}>Quản lý sản phẩm</h3>
-                        <span>Tổng số sản phẩm: <strong>{totalAmount}</strong></span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span>Tổng số sản phẩm: <strong>{totalAmount}</strong></span>
+                            <button onClick={() => navigate(PATH.PRODUCT_CREATE)} style={{
+                                backgroundColor: 'var(--main-color)', border: 'none',
+                                outline: 'none', padding: '10px 20px', color: 'white', borderRadius: '5px', cursor: 'pointer'
+                            }}>Thêm mới</button>
+                        </div>
                     </div>
                     <Paper style={{ width: '100%' }}>
                         <TableContainer style={{ maxHeight: '400px' }} component={Paper}>
@@ -121,30 +134,42 @@ const ProductManagement = () => {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell style={{ fontWeight: 'bold' }} align="center">#</TableCell>
-                                        <TableCell style={{ fontWeight: 'bold' }} align="left">Tên người dùng</TableCell>
-                                        <TableCell style={{ fontWeight: 'bold' }} align="left">Email</TableCell>
-                                        <TableCell style={{ fontWeight: 'bold' }} align="right">Số điện thoại</TableCell>
-                                        <TableCell style={{ fontWeight: 'bold' }} align="left">Vai trò</TableCell>
+                                        <TableCell style={{ fontWeight: 'bold' }} align="left">Tên sản phẩm</TableCell>
+                                        <TableCell style={{ fontWeight: 'bold' }} align="center">Hình ảnh</TableCell>
+                                        <TableCell style={{ fontWeight: 'bold' }} align="left">Danh mục</TableCell>
+                                        <TableCell style={{ fontWeight: 'bold' }} align="left">Thương hiệu</TableCell>
+                                        <TableCell style={{ fontWeight: 'bold' }} align="left">Giá gốc</TableCell>
+                                        <TableCell style={{ fontWeight: 'bold' }} align="left">Giảm giá</TableCell>
+                                        <TableCell style={{ fontWeight: 'bold' }} align="left">Kho</TableCell>
                                         <TableCell style={{ fontWeight: 'bold' }} align="left">Trạng thái</TableCell>
                                         <TableCell style={{ fontWeight: 'bold' }} align="right"></TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {listProduct?.map((user, index) => (
-                                        <TableRow key={user?.id} hover role="checkbox" tabIndex={-1}>
+                                    {listProduct?.map((product, index) => (
+                                        <TableRow key={product?.id} hover role="checkbox" tabIndex={-1}>
                                             <TableCell align="center">{index + 1}</TableCell>
-                                            <TableCell align="left">{user?.name}</TableCell>
-                                            <TableCell align="left">{user?.email}</TableCell>
-                                            <TableCell align="right">{user?.phone}</TableCell>
-                                            <TableCell align="left">{user?.role === 'Role_Admin' ?
-                                             <span style={{color: 'red'}}>Quản trị viên</span> : 'Người dùng'}</TableCell>
+                                            <TableCell align="left">{product?.name}</TableCell>
+                                            <TableCell align="center">
+                                                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                                    <img style={{ width: '70px' }} alt={product?.name} src={product?.images && product?.images[0] ? product?.images[0] : 'https://static.vecteezy.com/system/resources/thumbnails/011/537/824/small/picture-image-empty-state-single-isolated-icon-with-outline-style-free-vector.jpg'}></img>
+                                                    {
+                                                        product?.images && product?.images[0] ? '' :
+                                                            <span style={{marginTop: '5px', color: 'red'}}>Chưa cập nhật</span>
+                                                    }
+                                                </div>
+                                            </TableCell>
+                                            <TableCell align="left">{product?.nameCategory}</TableCell>
+                                            <TableCell align="left">{product?.nameBrand}</TableCell>
+                                            <TableCell align="left">{product?.originPrice}</TableCell>
+                                            <TableCell align="left">{product?.discount}%</TableCell>
+                                            <TableCell align="left">{product?.stock}</TableCell>
                                             <TableCell align="left">
                                                 <FormControlLabel
                                                     control={
                                                         <Switch
-                                                            disabled={user?.role === 'Role_Admin'}
-                                                            checked={user.state === 'activated'}
-                                                            onChange={() => updateStatusUser(user?.id, user?.role)}
+                                                            checked={product.state === 'enable'}
+                                                            onChange={() => updateStatusProduct(product?.id, product?.state, product?.images)}
                                                             name="checkedB"
                                                             color="primary"
                                                         />
@@ -152,14 +177,15 @@ const ProductManagement = () => {
                                                 />
                                             </TableCell>
                                             <TableCell align="right">
-                                                {/* <EditIcon
+                                                <EditIcon
+                                                    onClick={() => navigate(PATH.PRODUCT_EDIT + '/' + product?.id)}
                                                     style={{
                                                         fontSize: '28px', background: 'transparent', padding: '5px',
                                                         borderRadius: '50%', border: '1px solid var(--main-color)',
                                                         color: 'var(--main-color)', cursor: 'pointer', marginRight: '7px'
-                                                    }} /> */}
+                                                    }} />
                                                 <VisibilityIcon
-                                                    onClick={() => showDetailUser(user?.id)}
+                                                    onClick={() => showDetailProduct(product?.id)}
                                                     style={{
                                                         fontSize: '28px', background: 'transparent', padding: '5px',
                                                         borderRadius: '50%', border: '1px solid var(--main-color)',
@@ -189,15 +215,15 @@ const ProductManagement = () => {
             </div>
 
             {/* detail modal */}
-            {/* <Modal
+            <Modal
                 open={openDetail}
                 onClose={handleClose}
                 aria-labelledby="simple-modal-title"
                 aria-describedby="simple-modal-description">
                 <div>
-                    <UserDetailManagement id={userIdDetail} handleClose={handleClose}></UserDetailManagement>
+                    <ProductDetailManagement id={productIdDetail} handleClose={handleClose}></ProductDetailManagement>
                 </div>
-            </Modal> */}
+            </Modal>
         </div>
     )
 }

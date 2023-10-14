@@ -2,21 +2,21 @@ import httpClient from "./http-client.api";
 
 class ManegementProductApis {
     async getProductList(page, size) {
-        return httpClient.httpGet(`api/admin/manage/products/get/list?page=${page}&size=${size}&state=all`);
+        return httpClient.httpGet(`api/admin/manage/products/get/all/list?page=${page}&size=${size}`);
     }
 
-    async setStatusProduct(userId) {
-        if (!userId) {
+    async setStatusProduct(productId) {
+        if (!productId) {
             return;
         }
-        return httpClient.httpPut(`api/admin/manage/users/change/state/${userId}`)
+        return httpClient.httpPut(`api/admin/manage/products/change/state/${productId}`)
     }
 
-    async getDetailProduct(userId) {
-        if (!userId) {
+    async getDetailProduct(productId) {
+        if (!productId) {
             return;
         }
-        return httpClient.httpGet(`api/admin/manage/users/find/profile/${userId}`)
+        return httpClient.httpGet(`api/admin/manage/products/get/detail/${productId}`)
     }
 }
 

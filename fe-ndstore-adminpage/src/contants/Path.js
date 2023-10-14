@@ -9,6 +9,8 @@ export const PATH = {
     CATEGORY_CREATE: '/category-create-management',
     CATEGORY_EDIT: '/category-management/:id',
     PRODUCT: '/product-management',
+    PRODUCT_CREATE: '/product-create-management',
+    PRODUCT_EDIT: '/product-management/:id',
     ORDER: '/order-management',
     STATISTIC: '/statistic',
 }

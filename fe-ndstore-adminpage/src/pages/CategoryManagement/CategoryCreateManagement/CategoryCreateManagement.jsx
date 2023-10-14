@@ -95,7 +95,7 @@ const CategoryCreateManagement = () => {
                     backgroundColor: '#FFFFFF', padding: '20px', marginTop: '20px', borderRadius: '5px'
                 }}>
                     <div>
-                        <h3 style={{ marginBottom: '20px' }}>Thêm mới thương hiệu</h3>
+                        <h3 style={{ marginBottom: '20px' }}>Thêm mới danh mục</h3>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
                             <div style={{
                                 display: 'flex', flexDirection: 'column',

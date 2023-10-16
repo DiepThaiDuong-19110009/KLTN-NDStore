@@ -49,7 +49,7 @@ const BrandManagement = () => {
     const getAllBrand = (page, size) => {
         setIsLoading(true)
         managementBrandApi
-            .getBrandList(page, size)
+            .getBrandList(page, size, '')
             .then((res) => {
                 if (res?.success === true) {
                     setTotalAmount(res?.data?.totalBrand)

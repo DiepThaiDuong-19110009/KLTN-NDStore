@@ -152,7 +152,7 @@ const ProductManagement = () => {
                                             <TableCell align="left">{product?.name}</TableCell>
                                             <TableCell align="center">
                                                 <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                                                    <img style={{ width: '70px' }} alt={product?.name} src={product?.images && product?.images[0] ? product?.images[0] : 'https://static.vecteezy.com/system/resources/thumbnails/011/537/824/small/picture-image-empty-state-single-isolated-icon-with-outline-style-free-vector.jpg'}></img>
+                                                    <img style={{ width: '70px' }} alt={product?.name} src={product?.images && product?.images[0] ? product?.images[0]?.url : 'https://static.vecteezy.com/system/resources/thumbnails/011/537/824/small/picture-image-empty-state-single-isolated-icon-with-outline-style-free-vector.jpg'}></img>
                                                     {
                                                         product?.images && product?.images[0] ? '' :
                                                             <span style={{marginTop: '5px', color: 'red'}}>Chưa cập nhật</span>
@@ -178,7 +178,7 @@ const ProductManagement = () => {
                                             </TableCell>
                                             <TableCell align="right">
                                                 <EditIcon
-                                                    onClick={() => navigate(PATH.PRODUCT_EDIT + '/' + product?.id)}
+                                                    onClick={() => navigate(PATH.PRODUCT + '/' + product?.id)}
                                                     style={{
                                                         fontSize: '28px', background: 'transparent', padding: '5px',
                                                         borderRadius: '50%', border: '1px solid var(--main-color)',

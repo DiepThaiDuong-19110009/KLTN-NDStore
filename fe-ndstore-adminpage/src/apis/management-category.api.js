@@ -1,8 +1,8 @@
 import httpClient from "./http-client.api";
 
 class ManegementCategoryApis {
-    async getCategoryList(page, size) {
-        return httpClient.httpGet(`api/admin/manage/categories/get/list/all?page=${page}&size=${size}`);
+    async getCategoryList(page, size, state) {
+        return httpClient.httpGet(`api/admin/manage/categories/get/list/all?page=${page}&size=${size}&state=${state}`);
     }
 
     async setStatusCategoryToEnable(categoryId) {

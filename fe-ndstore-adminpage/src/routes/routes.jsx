@@ -17,6 +17,7 @@ const CategoryCreateManagementPage = React.lazy(() => import('../pages/CategoryM
 const CategoryEditManagementPage = React.lazy(() => import('../pages/CategoryManagement/CategoryEditManagement/CategoryEditManagement'));
 const ProductManagementPage = React.lazy(() => import('../pages/ProductManagement/ProductManagement'));
 const ProductCreateManagement = React.lazy(() => import('../pages/ProductManagement/ProductCreateManagement/ProductCreateManagement'))
+const ProductEditManagement = React.lazy(() => import('../pages/ProductManagement/ProductEditManagement/ProductEditManagement'))
 
 const AppRoutes = () => {
     const isAuthenticated = getLocalItem(LOCAL_STORAGE.ACCESS_TOKEN);
@@ -65,7 +66,7 @@ const AppRoutes = () => {
                         <Route path={PATH.PRODUCT_CREATE} element={<ProductCreateManagement />} />
                     </Route>
                     <Route element={<AuthenticatedRoute />}>
-                        <Route path={PATH.PRODUCT_EDIT} />
+                        <Route path={PATH.PRODUCT_EDIT} element={<ProductEditManagement />} />
                     </Route>
                 </Route>
             </Routes>

@@ -49,7 +49,7 @@ const CategoryManagement = () => {
     const getAllCategory = (page, size) => {
         setIsLoading(true)
         managementCategoryApi
-            .getCategoryList(page, size)
+            .getCategoryList(page, size, '')
             .then((res) => {
                 if (res?.success === true) {
                     setTotalAmount(res?.data?.totalCategory)

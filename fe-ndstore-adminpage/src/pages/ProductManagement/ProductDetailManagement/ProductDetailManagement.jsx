@@ -44,7 +44,7 @@ const ProductDetailManagement = (props) => {
                 <h4 style={{ textAlign: 'center' }}>Chi tiết sản phẩm</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', padding: '10px 20px' }}>
                     <div style={{ textAlign: 'center' }}>
-                        <img style={{ width: '150px' }} alt={productDetail?.name} src={productDetail?.images && productDetail?.images[0] ? productDetail?.images[0] : 'https://static.vecteezy.com/system/resources/thumbnails/011/537/824/small/picture-image-empty-state-single-isolated-icon-with-outline-style-free-vector.jpg'}></img>
+                        <img style={{ width: '150px' }} alt={productDetail?.name} src={productDetail?.images && productDetail?.images[0] ? productDetail?.images[0]?.url : 'https://static.vecteezy.com/system/resources/thumbnails/011/537/824/small/picture-image-empty-state-single-isolated-icon-with-outline-style-free-vector.jpg'}></img>
                     </div>
                     <span>Tên sản phẩm: <strong>{productDetail?.name}</strong></span>
                     <span>Trạng thái: <strong>{productDetail?.state === 'enable' ?

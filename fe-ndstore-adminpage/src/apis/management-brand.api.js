@@ -1,8 +1,8 @@
 import httpClient from "./http-client.api";
 
 class ManegementBrandApis {
-    async getBrandList(page, size) {
-        return httpClient.httpGet(`api/admin/manage/brands/get/list/all?page=${page}&size=${size}`);
+    async getBrandList(page, size, state) {
+        return httpClient.httpGet(`api/admin/manage/brands/get/list/all?page=${page}&size=${size}&state=${state}`);
     }
 
     async setStatusBrandToEnable(brandId) {
@@ -42,7 +42,6 @@ class ManegementBrandApis {
     }
 
     async editImageBrand(file, id) {
-        console.log(file, id)
         if (!id || !file) {
             return;
         }
@@ -57,7 +56,6 @@ class ManegementBrandApis {
     }
 
     async editBrand(data, state, id) {
-        console.log(data.name, state, id)
         if (!data || !state || !id) {
             return;
         }

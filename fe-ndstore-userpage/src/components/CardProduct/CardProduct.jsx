@@ -2,7 +2,7 @@ import '../CardProduct/CardProduct.css'
 
 const CardProduct = (drops) => {
     const numberWithCommas = (x) => {
-        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
     const getPercent = (n1, n2) => {

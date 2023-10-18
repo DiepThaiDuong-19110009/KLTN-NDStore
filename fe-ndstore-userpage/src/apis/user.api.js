@@ -109,6 +109,7 @@ export const updateAvatar = (userId, selectedFile) => {
   if (!token || !userId) {
     return;
   }
+  console.log(selectedFile)
   let formData = new FormData()
   formData.append('file', selectedFile);
   const config = {

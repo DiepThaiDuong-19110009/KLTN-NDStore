@@ -37,7 +37,7 @@ const Payment = () => {
     let navigate = useNavigate();
 
     const numberWithCommas = (x) => {
-        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
     useEffect(() => {
@@ -109,6 +109,36 @@ const Payment = () => {
         setWardId(e)
         getFeeShipment(provinceId, districtId, e)
         getServiceId(districtId)
+    }
+
+    const getNameProvinceById = (ProvinceId) => {
+        let provinceName = ''
+        province?.forEach((item) => {
+            if(item?.ProvinceID === parseInt(ProvinceId)) {
+                provinceName = item?.ProvinceName
+            }
+        })
+        return provinceName;
+    }
+
+    const getNameDistrictById = (DistrictID) => {
+        let DistrictName = ''
+        district?.forEach((item) => {
+            if(item?.DistrictID === parseInt(DistrictID)) {
+                DistrictName = item?.DistrictName
+            }
+        })
+        return DistrictName;
+    }
+
+    const getNameWardById = (WardID) => {
+        let WardName = ''
+        ward?.forEach((item) => {
+            if(item?.WardCode === WardID.toString()) {
+                WardName = item?.WardName
+            }
+        })
+        return WardName;
     }
 
     // Get user info
@@ -234,8 +264,8 @@ const Payment = () => {
             setMessage('Vui lòng cung cấp đầy đủ thông tin');
             return;
         }
-        console.log(name, phone, address, provinceId, districtId, wardId, note, fee, leadTime, idCart, chooseMethod)
-        checkout(name, phone, address, provinceId, districtId, wardId, note, Math.floor(fee / 1000) * 1000, leadTime, idCart, chooseMethod)
+        console.log(name, phone, address, getNameProvinceById(provinceId), getNameDistrictById(districtId), getNameWardById(wardId), note, fee, leadTime, idCart, chooseMethod)
+        checkout(name, phone, address, getNameProvinceById(provinceId), getNameDistrictById(districtId), getNameWardById(wardId), note, Math.floor(fee / 1000) * 1000, leadTime, idCart, chooseMethod)
             .then((res) => {
                 console.log(res?.data)
                 if (res?.data?.success === true) {
@@ -343,7 +373,7 @@ const Payment = () => {
                             <option value=''>Xã / Phường</option>
                             {
                                 ward.map((item, index) =>
-                                    <option value={item.WardCode} key={index}>{item?.WardName}</option>
+                                    <option value={item.WardID} key={index}>{item?.WardName}</option>
                                 )
                             }
                         </select>

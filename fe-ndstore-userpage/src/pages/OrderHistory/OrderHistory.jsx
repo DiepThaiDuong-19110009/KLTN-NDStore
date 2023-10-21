@@ -2,109 +2,309 @@ import React, { useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import '../OrderHistory/OrderHistory.css'
-import { Paper, Tab, Tabs } from "@mui/material";
+import { Box, Button, FormControl, InputLabel, MenuItem, Modal, Paper, Select, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tabs } from "@mui/material";
+import { cancelOrderUser, getHistoryOrderUser, remakelOrderUser } from "../../apis/order.api";
+import { useEffect } from "react";
+import { Loader } from "../../components/Loader/Loader";
 
 const OrderHistory = () => {
-    const [value, setValue] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(5);
+    const [state, setState] = useState('');
+    const [totalAmount, setTotalAmount] = useState(0);
+    const [openSetStatus, setOpenSetStatus] = useState(false);
+    const [orderIdDetail, setOrderIdDetail] = useState('')
+    const [currentState, setCurrentState] = useState('')
+    const [orderDetail, setOrderDetail] = useState({})
+    const [listOrder, setListOrder] = useState([])
+
+    const handleChange = (event) => {
+        setState(event.target.value);
+    };
+
+    const handleChangePage = (e, newPage) => {
+        setPage(newPage)
+        getOrderHistory(newPage, size, state);
+    };
+
+    const handleChangeSize = (event) => {
+        getOrderHistory(0, event.target.value, state);
+        setSize(parseInt(+event.target.value));
+        setPage(0);
+    };
+
+    useEffect(() => {
+        getOrderHistory(page, size, state)
+    }, [page, size, state])
+
+    const handleUpdateStatus = () => {
+        if (!currentState) {
+            return;
+        }
+        if (currentState === 'process') {
+            remakeOrder(orderDetail);
+        }
+        if (currentState === 'cancel') {
+            cancelOrder(orderDetail);
+        }
+    }
+
+    // Cancel Order
+    const cancelOrder = (orderDetail) => {
+        if (!orderDetail) {
+            return;
+        }
+        setIsLoading(true)
+        cancelOrderUser(orderDetail?.id)
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    setIsLoading(false);
+                    getOrderHistory(page, size, state)
+                    setOpenSetStatus(false)
+                }
+            })
+            .catch((err) => {
+                setIsLoading(false)
+                console.log(err)
+            })
+    }
+
+    // Remake Order
+    const remakeOrder = (orderDetail) => {
+        setIsLoading(true)
+        remakelOrderUser(orderDetail?.id, orderDetail?.paymentType?.toLowerCase())
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    setIsLoading(false)
+                    console.log(res?.data?.data)
+                    if (res?.data?.data !== '') {
+                        window.location.href = res?.data?.data;
+                    } else if (res?.data?.data === '') {
+                        window.location.href = 'http://localhost:3000/checkout/order/payment?complete=&cancel=&cod=true';
+                    }
+                }
+            })
+            .catch((err) => {
+                if (err) {
+                    setIsLoading(false)
+                    window.location.href = 'http://localhost:3000/checkout/order/payment?complete=true&cancel=true';
+                }
+            })
+    }
+
+
+    // Get list order user
+    const getOrderHistory = (page, size, state) => {
+        setIsLoading(true)
+        getHistoryOrderUser(page, size, state)
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    setIsLoading(false);
+                    setTotalAmount(res?.data?.data?.totalOrder)
+                    if (res?.data?.data?.listOrder) {
+                        setListOrder(res?.data?.data?.listOrder)
+                    }
+                }
+            })
+            .catch((err) => {
+                setIsLoading(false)
+                setListOrder([])
+                return err;
+            })
+    }
+
+    const numberWithCommas = (x) => {
+        return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    const showSetStatus = (order, currentState) => {
+        setOpenSetStatus(true)
+        setCurrentState(currentState)
+        setOrderDetail(order)
+    }
+
+    const handleCloseSetStatus = () => {
+        setOpenSetStatus(false)
+    }
 
     return (
         <div>
             <Header></Header>
+            {
+                isLoading === true && <Loader></Loader>
+            }
             <div className="order-history">
-                <Paper square>
-                    <Tabs
-                        value={value}
-                        textColor="primary"
-                        indicatorColor="primary"
-                        onChange={(event, newValue) => {
-                            setValue(newValue);
-                        }}
-                    >
-                        <Tab label="Chờ xác nhận" />
-                        <Tab label="Chờ thanh toán" />
-                        <Tab label="Đang giao hàng" />
-                        <Tab label="Đã giao" />
-                        <Tab label="Đã hủy" />
-                    </Tabs>
-                    {
-                        value === 0 &&
-                        <div className="content-order-history">
-                            <div className="row-item-order">
-                                <div className="top">
-                                    <h5 style={{ marginBottom: '15px' }}>Laptop Gaming ASUS</h5>
-                                    <button className="btn-cancel-order">Hủy đơn hàng</button>
+                <Box sx={{ minWidth: 120 }}>
+                    <FormControl fullWidth style={{ marginBottom: '30px' }}>
+                        <Select
+                            value={state}
+                            displayEmpty
+                            onChange={handleChange}
+                            inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                            <MenuItem value=''>Tất cả</MenuItem>
+                            <MenuItem value='waiting'>Chờ giao hàng</MenuItem>
+                            <MenuItem value='process'>Chờ thanh toán</MenuItem>
+                            <MenuItem value='delivery'>Đang giao hàng</MenuItem>
+                            <MenuItem value='success'>Giao hàng thành công</MenuItem>
+                            <MenuItem value='cancel'>Đã hủy</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <Paper style={{ width: '100%' }}>
+                        {
+                            listOrder?.length !== 0 ?
+                                <>
+                                    <TableContainer style={{ minHeight: '60vh' }} component={Paper}>
+                                        <Table stickyHeader aria-label="sticky table" style={{ width: '100%' }}>
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell style={{ fontWeight: 'bold' }} align="center">#</TableCell>
+                                                    <TableCell style={{ fontWeight: 'bold' }} align="left">Tên người nhận</TableCell>
+                                                    <TableCell style={{ fontWeight: 'bold' }} align="left">Số điện thoại</TableCell>
+                                                    <TableCell style={{ fontWeight: 'bold' }} align="left">Địa chỉ nhận hàng</TableCell>
+                                                    <TableCell style={{ fontWeight: 'bold' }} align="left">Ngày đặt hàng</TableCell>
+                                                    <TableCell style={{ fontWeight: 'bold' }} align="left">Phương thức thanh toán</TableCell>
+                                                    <TableCell style={{ fontWeight: 'bold', minWidth: '150px', textAlign: 'right' }} align="left">Tổng tiền</TableCell>
+                                                    <TableCell style={{ fontWeight: 'bold' }} align="left">Trạng thái</TableCell>
+                                                    <TableCell style={{ fontWeight: 'bold' }} align="center">Cập nhật trạng thái</TableCell>
+                                                    <TableCell style={{ fontWeight: 'bold' }} align="left"></TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {listOrder?.map((order, index) => (
+                                                    <TableRow key={order?.id} hover role="checkbox" tabIndex={-1}>
+                                                        <TableCell align="center">{index + 1}</TableCell>
+                                                        <TableCell align="left">{order?.shipment?.customerName}</TableCell>
+                                                        <TableCell align="left">{order?.shipment?.customerPhone}</TableCell>
+                                                        <TableCell style={{ maxWidth: '200px' }} align="left">{order?.shipment?.customerAddress}{', '}
+                                                            {order?.shipment?.customerWard}{', '}
+                                                            {order?.shipment?.customerDistrict}{', '}
+                                                            {order?.shipment?.customerProvince}</TableCell>
+                                                        <TableCell align="left">{order?.createdDate}</TableCell>
+                                                        <TableCell align="left">{order?.paymentType === 'COD' ? 'Tiền mặt' : order?.paymentType}</TableCell>
+                                                        <TableCell style={{ minWidth: '150px', color: 'var(--main-color)' }} align="right">{numberWithCommas(order?.totalPrice)} VNĐ</TableCell>
+                                                        <TableCell style={{ minWidth: '150px' }} align="left">
+                                                            {
+                                                                order?.state === 'waiting' && <strong style={{ color: '#FFD700' }}>Chờ xác nhận</strong>
+                                                            }
+                                                            {
+                                                                order?.state === 'cancel' && <strong style={{ color: 'red' }}>Đã hủy</strong>
+                                                            }
+                                                            {
+                                                                order?.state === 'process' && <strong style={{ color: 'blue' }}>Chờ thanh toán</strong>
+                                                            }
+                                                            {
+                                                                order?.state === 'delivery' && <strong style={{ color: '#f26522' }}>Đang giao hàng</strong>
+                                                            }
+                                                            {
+                                                                order?.state === 'success' && <strong style={{ color: 'green' }}>Đã giao</strong>
+                                                            }
+                                                        </TableCell>
+                                                        <TableCell align="center">
+                                                            <div>
+                                                                {
+                                                                    order?.state === 'waiting' &&
+                                                                    <button onClick={() => showSetStatus(order, 'cancel')} style={{
+                                                                        width: '150px', backgroundColor: 'red',
+                                                                        border: 'none', padding: '10px 0', cursor: 'pointer',
+                                                                        color: 'white', boxShadow: '1px 2px 8px #BABABA', borderRadius: '5px'
+                                                                    }}>
+                                                                        Hủy đơn hàng
+                                                                    </button>
+                                                                }
+                                                                {
+                                                                    order?.state === 'process' &&
+                                                                    <div>
+                                                                        <button onClick={() => showSetStatus(order, 'process')} style={{
+                                                                            width: '150px', backgroundColor: 'green', marginBottom: '20px',
+                                                                            border: 'none', padding: '10px 0', cursor: 'pointer',
+                                                                            color: 'white', boxShadow: '1px 2px 8px #BABABA', borderRadius: '5px'
+                                                                        }}>
+                                                                            Thanh toán lại
+                                                                        </button>
+                                                                        <button onClick={() => showSetStatus(order, 'cancel')} style={{
+                                                                            width: '150px', backgroundColor: 'red',
+                                                                            border: 'none', padding: '10px 0', cursor: 'pointer',
+                                                                            color: 'white', boxShadow: '1px 2px 8px #BABABA', borderRadius: '5px'
+                                                                        }}>
+                                                                            Hủy đơn hàng
+                                                                        </button>
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell align="right">
+                                                            {/* <VisibilityIcon
+                                                    onClick={() => showDetailOrder(order?.id)}
+                                                    style={{
+                                                        fontSize: '28px', background: 'transparent', padding: '5px',
+                                                        borderRadius: '50%', border: '1px solid var(--main-color)',
+                                                        color: 'var(--main-color)', cursor: 'pointer'
+                                                    }} /> */}
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                    <TablePagination
+                                        rowsPerPageOptions={[5, 10, 15]}
+                                        component="div"
+                                        labelRowsPerPage='Hiển thị:'
+                                        count={totalAmount}
+                                        rowsPerPage={size}
+                                        page={page}
+                                        onPageChange={handleChangePage}
+                                        onRowsPerPageChange={handleChangeSize}
+                                    />
+                                </> :
+                                <div style={{ height: '60vh', textAlign: 'center', paddingTop: '10vh' }}>
+                                    <p style={{ fontSize: '20px' }}>Không có đơn hàng</p>
                                 </div>
-                                <p>Số lượng: <strong>1</strong></p>
-                                <p>Tên người nhận: <strong>Diệp Thái Dương</strong></p>
-                                <p>Số điện thoại: <strong>0939816390</strong></p>
-                                <p>Địa chỉ nhận hàng: <strong>234 Lê Văn Việt, TP Thủ Đức, TP.HCM</strong></p>
-                                <p>Ngày đặt hàng: <strong>20/09/2023</strong></p>
-                                <h5>Tổng thanh toán: <span style={{ color: 'var(--main-color)' }}>24.000.000 VNĐ</span></h5>
-                            </div>
-                        </div>
-                    }
-                     {
-                        value === 1 &&
-                        <div className="content-order-history">
-                            <div className="row-item-order">
-                                <h5 style={{ marginBottom: '15px' }}>Laptop Gaming ASUS</h5>
-                                <p>Số lượng: <strong>1</strong></p>
-                                <p>Tên người nhận: <strong>Diệp Thái Dương</strong></p>
-                                <p>Số điện thoại: <strong>0939816390</strong></p>
-                                <p>Địa chỉ nhận hàng: <strong>234 Lê Văn Việt, TP Thủ Đức, TP.HCM</strong></p>
-                                <p>Ngày đặt hàng: <strong>20/09/2023</strong></p>
-                                <h5>Tổng thanh toán: <span style={{ color: 'var(--main-color)' }}>24.000.000 VNĐ</span></h5>
-                            </div>
-                        </div>
-                    }
-                    {
-                        value === 2 &&
-                        <div className="content-order-history">
-                            <div className="row-item-order">
-                                <h5 style={{ marginBottom: '15px' }}>Laptop Gaming ASUS</h5>
-                                <p>Số lượng: <strong>1</strong></p>
-                                <p>Tên người nhận: <strong>Diệp Thái Dương</strong></p>
-                                <p>Số điện thoại: <strong>0939816390</strong></p>
-                                <p>Địa chỉ nhận hàng: <strong>234 Lê Văn Việt, TP Thủ Đức, TP.HCM</strong></p>
-                                <p>Ngày đặt hàng: <strong>20/09/2023</strong></p>
-                                <h5>Tổng thanh toán: <span style={{ color: 'var(--main-color)' }}>24.000.000 VNĐ</span></h5>
-                            </div>
-                        </div>
-                    }
-                    {
-                        value === 3 &&
-                        <div className="content-order-history">
-                            <div className="row-item-order">
-                                <h5 style={{ marginBottom: '15px' }}>Laptop Gaming ASUS</h5>
-                                <p>Số lượng: <strong>1</strong></p>
-                                <p>Tên người nhận: <strong>Diệp Thái Dương</strong></p>
-                                <p>Số điện thoại: <strong>0939816390</strong></p>
-                                <p>Địa chỉ nhận hàng: <strong>234 Lê Văn Việt, TP Thủ Đức, TP.HCM</strong></p>
-                                <p>Ngày đặt hàng: <strong>20/09/2023</strong></p>
-                                <h5>Tổng thanh toán: <span style={{ color: 'var(--main-color)' }}>24.000.000 VNĐ</span></h5>
-                            </div>
-                        </div>
-                    }
-                    {
-                        value === 4 &&
-                        <div className="content-order-history">
-                            <div className="row-item-order">
-                                <div className="top">
-                                    <h5 style={{ marginBottom: '15px' }}>Laptop Gaming ASUS</h5>
-                                    <img style={{ width: '100px' }} alt="" src='https://static.vecteezy.com/system/resources/previews/021/433/014/non_2x/cancelled-rubber-stamp-free-png.png'></img>
-                                </div>
-                                <p>Số lượng: <strong>1</strong></p>
-                                <p>Tên người nhận: <strong>Diệp Thái Dương</strong></p>
-                                <p>Số điện thoại: <strong>0939816390</strong></p>
-                                <p>Địa chỉ nhận hàng: <strong>234 Lê Văn Việt, TP Thủ Đức, TP.HCM</strong></p>
-                                <p>Ngày đặt hàng: <strong>20/09/2023</strong></p>
-                                <h5>Tổng thanh toán: <span style={{ color: 'var(--main-color)' }}>24.000.000 VNĐ</span></h5>
-                            </div>
-                        </div>
-                    }
-                </Paper>
+                        }
+                    </Paper>
+                </Box>
             </div>
             <Footer></Footer>
+            {/* Set status */}
+            <Modal
+                open={openSetStatus}
+                onClose={handleCloseSetStatus}
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description">
+                <div style={{
+                    width: '500px', height: 'auto', margin: '30px auto',
+                    background: 'white', overflowY: 'auto', padding: '20px',
+                    borderRadius: '5px'
+                }}>
+                    {
+                        currentState === 'cancel' &&
+                        <div>
+                            <h4 style={{ marginBottom: '20px' }}>Hủy đơn hàng</h4>
+                            <p style={{ lineHeight: '35px' }}>
+                                Lưu ý: Đơn hàng sau khi HỦY sẽ không thể hoàn tác!
+                            </p>
+                            <p>Bạn có chắc chắn muốn hủy đơn hàng không?</p>
+                        </div>
+                    }
+                    {
+                        currentState === 'process' &&
+                        <div>
+                            <h4 style={{ marginBottom: '20px' }}>Thanh toán lại đơn hàng</h4>
+                            <p>Đơn hàng sẽ được tiến hành thanh toán lại!</p>
+                        </div>
+                    }
+                    <div style={{ display: 'flex', justifyContent: 'end', gap: '30px', marginTop: '40px' }}>
+                        <Button autoFocus onClick={handleCloseSetStatus}>
+                            Không
+                        </Button>
+                        <Button autoFocus onClick={handleUpdateStatus}>
+                            Xác nhận
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
         </div>
     );
 };

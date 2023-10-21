@@ -63,9 +63,12 @@ const Login = () => {
                     if (res?.data?.message === 'Your account is unconfirm') {
                         setIsLoading(false);
                         navigate(`/verify/${email}`)
-                    };
+                    } else if (res?.data?.message === 'Your account is block') {
+                        setMessage('Tài khoản đã bị vô hiệu hóa')
+                    } else {
+                        setMessage('Đã xảy ra lỗi')
+                    }
                     setIsLoading(false);
-                    setMessage('Email hoặc mật khẩu không đúng')
                     return;
                 }
             })

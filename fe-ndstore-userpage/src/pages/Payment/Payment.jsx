@@ -10,6 +10,8 @@ import { getProfileUser } from "../../apis/user.api";
 import { Loader } from "../../components/Loader/Loader";
 import getCartProductUser from "../../apis/cart.api";
 import { checkout } from "../../apis/checkout.api";
+import { getHistoryOrderUser } from "../../apis/order.api";
+import { Button, Modal } from "@mui/material";
 const Payment = () => {
     const userId = JSON.parse(localStorage.getItem('user-infor'))?.id
     const [chooseMethod, setChooseMethod] = useState('')
@@ -17,6 +19,8 @@ const Payment = () => {
     const [cart, setCart] = useState([])
     const [totalPrice, setTotalrice] = useState(0)
     const [idCart, setIdCart] = useState('')
+    const [orderInProcess, setOrderInProcess] = useState(false)
+    const [openModal, setOpenModal] = useState(false)
 
     // Get Address
     const [province, setProvince] = useState([])
@@ -49,6 +53,7 @@ const Payment = () => {
             navigate('/');
         } else {
             getAllCart();
+            getOrderHistory();
             getUserDetail(userId)
         }
     }, [userId])
@@ -114,7 +119,7 @@ const Payment = () => {
     const getNameProvinceById = (ProvinceId) => {
         let provinceName = ''
         province?.forEach((item) => {
-            if(item?.ProvinceID === parseInt(ProvinceId)) {
+            if (item?.ProvinceID === parseInt(ProvinceId)) {
                 provinceName = item?.ProvinceName
             }
         })
@@ -124,7 +129,7 @@ const Payment = () => {
     const getNameDistrictById = (DistrictID) => {
         let DistrictName = ''
         district?.forEach((item) => {
-            if(item?.DistrictID === parseInt(DistrictID)) {
+            if (item?.DistrictID === parseInt(DistrictID)) {
                 DistrictName = item?.DistrictName
             }
         })
@@ -134,7 +139,7 @@ const Payment = () => {
     const getNameWardById = (WardID) => {
         let WardName = ''
         ward?.forEach((item) => {
-            if(item?.WardCode === WardID.toString()) {
+            if (item?.WardCode === WardID.toString()) {
                 WardName = item?.WardName
             }
         })
@@ -255,6 +260,29 @@ const Payment = () => {
             })
     }
 
+    // Get order user
+    const getOrderHistory = () => {
+        setIsLoading(true)
+        getHistoryOrderUser(0, 20, '')
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    setIsLoading(false);
+                    if (res?.data?.data?.listOrder) {
+                        res?.data?.data?.listOrder?.forEach((order) => {
+                            if (order?.state === 'process') {
+                                setOrderInProcess(true)
+                            }
+                        })
+                    }
+                }
+            })
+            .catch((err) => {
+                setIsLoading(false)
+                return err;
+            })
+    }
+
+    // Event Payment
     const payment = () => {
         if (!chooseMethod) {
             setMessage('Vui lòng chọn phương thức thanh toán');
@@ -264,20 +292,28 @@ const Payment = () => {
             setMessage('Vui lòng cung cấp đầy đủ thông tin');
             return;
         }
+        if (orderInProcess === true) {
+            setOpenModal(true)
+            return;
+        }
+        setIsLoading(true)
         console.log(name, phone, address, getNameProvinceById(provinceId), getNameDistrictById(districtId), getNameWardById(wardId), note, fee, leadTime, idCart, chooseMethod)
         checkout(name, phone, address, getNameProvinceById(provinceId), getNameDistrictById(districtId), getNameWardById(wardId), note, Math.floor(fee / 1000) * 1000, leadTime, idCart, chooseMethod)
             .then((res) => {
                 console.log(res?.data)
                 if (res?.data?.success === true) {
                     if (res?.data?.data !== '') {
+                        setIsLoading(false);
                         window.location.href = res?.data?.data;
                     } else if (res?.data?.data === '') {
-                        window.location.href = 'http://localhost:3000/checkout/order/payment?complete=true&cancel=false';
+                        setIsLoading(false);
+                        window.location.href = 'http://localhost:3000/checkout/order/payment?complete=&cancel=&cod=true';
                     }
                 }
             })
             .catch((err) => {
                 if (err) {
+                    setIsLoading(false);
                     window.location.href = 'http://localhost:3000/checkout/order/payment?complete=false&cancel=false';
                 }
             })
@@ -373,7 +409,7 @@ const Payment = () => {
                             <option value=''>Xã / Phường</option>
                             {
                                 ward.map((item, index) =>
-                                    <option value={item.WardID} key={index}>{item?.WardName}</option>
+                                    <option value={item.WardCode} key={index}>{item?.WardName}</option>
                                 )
                             }
                         </select>
@@ -394,6 +430,28 @@ const Payment = () => {
                 </div>
             </div>
             <Footer></Footer>
+            <Modal
+                open={openModal}
+                onClose={() => setOpenModal(false)}
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description">
+                <div style={{
+                    width: '500px', height: 'auto', margin: '30px auto',
+                    background: 'white', overflowY: 'auto', padding: '20px',
+                    borderRadius: '5px'
+                }}>
+                    <div>
+                        <h4 style={{ marginBottom: '20px' }}>Thông báo</h4>
+                        <p>Bạn còn đơn hàng đang chờ thanh toán. Vui lòng thanh toán để có thể tiếp tục đặt hàng.</p>
+                        <p style={{color: 'var(--main-color)', cursor: 'pointer'}} onClick={() => navigate('/order-history')}>Đến lịch sử đơn hàng</p>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'end', gap: '30px', marginTop: '40px' }}>
+                        <Button autoFocus onClick={() => setOpenModal(false)}>
+                            OK
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
         </div>
     )
 }

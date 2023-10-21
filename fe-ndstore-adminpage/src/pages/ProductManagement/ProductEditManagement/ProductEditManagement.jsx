@@ -139,7 +139,7 @@ const ProductEditManagement = () => {
             .then((res) => {
                 if (res?.success === true) {
                     setIsLoading(false)
-                    window.location.reload()
+                    getProductDetail(id)
                 }
             })
             .catch((err) => {
@@ -154,12 +154,13 @@ const ProductEditManagement = () => {
     };
 
     const deleteImage = (idImage) => {
+        setIsLoading(true)
         managementProductApi
             .deleteImageProduct(idImage, id)
             .then((res) => {
                 if (res?.success === true) {
                     setIsLoading(false)
-                    window.location.reload()
+                    getProductDetail(id)
                 }
             })
             .catch((err) => {

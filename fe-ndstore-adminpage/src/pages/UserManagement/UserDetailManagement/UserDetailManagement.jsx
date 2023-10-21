@@ -38,6 +38,9 @@ const UserDetailManagement = (props) => {
                     <CloseIcon style={{ cursor: 'pointer' }} onClick={props?.handleClose} />
                 </div>
                 <h4 style={{ textAlign: 'center', marginBottom: '20px' }}>Chi tiết người dùng</h4>
+                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '20px'}}>
+                    <img style={{ width: '150px' }} src={userDetail?.avatar} alt="avatar"></img>
+                </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                     <span>Tên người dùng: <strong>{userDetail?.name}</strong></span>
                     <span>Email: <strong style={{ color: 'var(--main-color)' }}>{userDetail?.email}</strong></span>

@@ -1,8 +1,6 @@
-import axios from "axios";
 import httpClient from "./http-client.api";
-import { API_URL } from "../environment";
 
-class ManegementProductApis {
+class ManagementProductApis {
     async getProductList(page, size) {
         return httpClient.httpGet(`api/admin/manage/products/get/all/list?page=${page}&size=${size}`);
     }
@@ -66,4 +64,4 @@ class ManegementProductApis {
     }
 }
 
-export default new ManegementProductApis();
+export default new ManagementProductApis();

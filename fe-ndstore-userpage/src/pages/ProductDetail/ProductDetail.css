@@ -109,4 +109,12 @@
     .policy {
         display: none;
     }
+
+    .product-detail .imgae-product {
+        width: 100%;
+    }
+
+    .product-detail .image-info-detail {
+        padding: 20px 0;
+    }
 }

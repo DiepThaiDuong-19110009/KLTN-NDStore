@@ -90,15 +90,50 @@ const Home = () => {
             }
             <div className="container-home" style={{ marginTop: '30px' }}>
                 {/* Banner */}
-                <div className="product-row" style={{
-                    justifyContent: 'space-between',
-                    padding: '10px', alignItems: 'center', marginBottom: '20px'
-                }}>
-                    <div style={{ width: '30%', height: '200px' }}>
+                <div className="banner-row">
+                    <div className="banner-item" onClick={() => navigate(`/product/${listProductLaptop[0]?.id}`)}>
+                        <div style={{ height: '40%' }}>
+                            <h3 style={{ color: 'white' }}>Laptop giảm giá</h3>
+                        </div>
+                        <div className="btn-buy-now">
+                            Mua ngay
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'end', height: '60%' }}>
+                            <img src={listProductLaptop[0]?.images[0]?.url} alt="" />
+                        </div>
                     </div>
-                    <div style={{ width: '30%' }}>
+                    <div className="banner-item" onClick={() => navigate(`/product/${listProductLaptop[3]?.id}`)}>
+                        <div style={{ height: '40%' }}>
+                            <h3 style={{ color: 'white' }}>Laptop giảm giá</h3>
+                        </div>
+                        <div className="btn-buy-now">
+                            Mua ngay
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'end', height: '60%' }}>
+                            <img src={listProductLaptop[3]?.images[0]?.url} alt="" />
+                        </div>
                     </div>
-                    <div style={{ width: '30%' }}>
+                    <div className="banner-item" onClick={() => navigate(`/product/${listProductLaptop[4]?.id}`)}>
+                        <div style={{ height: '40%' }}>
+                            <h3 style={{ color: 'white' }}>Laptop giảm giá</h3>
+                        </div>
+                        <div className="btn-buy-now">
+                            Mua ngay
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'end', height: '60%' }}>
+                            <img src={listProductLaptop[4]?.images[0]?.url} alt="" />
+                        </div>
+                    </div>
+                    <div className="banner-item" onClick={() => navigate(`/product/${listProductLaptop[1]?.id}`)}>
+                        <div style={{ height: '40%' }}>
+                            <h3 style={{ color: 'white' }}>Laptop giảm giá</h3>
+                        </div>
+                        <div className="btn-buy-now">
+                            Mua ngay
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'end', height: '60%' }}>
+                            <img src={listProductLaptop[1]?.images[0]?.url} alt="" />
+                        </div>
                     </div>
                 </div>
                 {/* row product */}
@@ -140,7 +175,7 @@ const Home = () => {
                     <a style={{ color: 'var(--main-color)', marginRight: '10px' }} href="/product">Xem tất cả</a>
                 </div>
                 <div style={{ borderBottom: '3px dotted white', width: '80%', margin: '0 auto', overflow: 'hidden' }}></div>
-                <div className="product-row">
+                <div className="product-row" style={{ marginBottom: '20px' }}>
                     <Slider {...settings}>
                         {
                             listProductLaptop?.map((item) => (

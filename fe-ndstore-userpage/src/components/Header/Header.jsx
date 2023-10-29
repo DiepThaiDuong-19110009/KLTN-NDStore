@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import '../Header/Header.css'
 import { useNavigate } from 'react-router-dom';
-import { Button, Menu, MenuItem } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Menu, MenuItem } from '@mui/material';
 import { getProfileUser } from '../../apis/user.api';
 import { getCategoryAll } from '../../apis/category.api';
 import { useDispatch, useSelector } from 'react-redux'
@@ -14,10 +14,13 @@ const Header = () => {
     const [listCategory, setListCategory] = useState([])
     const [openMenuUserInfo, setOpenMenuUserInfo] = useState(null);
     const [openMenuCategory, setOpenMenuCategory] = useState(null);
+    const [open, setOpen] = useState(false);
     const openUserInfo = Boolean(openMenuUserInfo);
     const openCategory = Boolean(openMenuCategory);
 
     const dispatch = useDispatch()
+
+    let navigate = useNavigate();
 
     const cart = useSelector(state => state.cart)
 
@@ -41,7 +44,10 @@ const Header = () => {
         setOpenMenuCategory(null);
     };
 
-    let navigate = useNavigate();
+    // redirect to login
+    const handleRedirect = () => {
+        navigate('/login')
+    }
 
     // Scroll page
     const [sticky, setSticky] = useState("");
@@ -162,11 +168,14 @@ const Header = () => {
                 </div>
                 <div className='login-register-cart-user'>
                     {
-                        info?.name &&
-                        <div style={{ cursor: 'pointer' }} onClick={() => navigatePage('/cart')} className='cart-header'>
-                            <i className='fas fa-shopping-cart icon-cart'></i>
-                            <span className='cart-quantity'>{cart?.numberCart || 0}</span>
-                        </div>
+                        info?.name ?
+                            <div style={{ cursor: 'pointer' }} onClick={() => navigatePage('/cart')} className='cart-header'>
+                                <i className='fas fa-shopping-cart icon-cart'></i>
+                                <span className='cart-quantity'>{cart?.numberCart || 0}</span>
+                            </div> :
+                            <div style={{ cursor: 'pointer' }} onClick={() => setOpen(true)} className='cart-header'>
+                                <i className='fas fa-shopping-cart icon-cart'></i>
+                            </div>
                     }
                     {
                         !info?.name
@@ -212,6 +221,25 @@ const Header = () => {
                             </div>
                     }
                 </div>
+                <Dialog
+                    open={open}
+                    onClose={() => setOpen(false)}
+                    aria-labelledby="responsive-dialog-title"
+                >
+                    <DialogTitle id="responsive-dialog-title">
+                        {"Thông báo"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Vui lòng đăng nhập để tiến hành mua hàng
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleRedirect}>
+                            Đăng nhập
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </div>
         </div>
     )

@@ -1,4 +1,4 @@
-*{
+* {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
@@ -6,6 +6,10 @@
 
 html {
   font-size: 14px;
+}
+
+body {
+  background-color: rgb(243, 249, 255);
 }
 
 .is-sticky {
@@ -31,4 +35,59 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #009ed4;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #009ed4;
+}
+
+.slick-slider {
+  width: 100%;
+  overflow: hidden;
+}
+.slick-list {
+  position: relative;
+  display: block !important;
+  width: 100%;
+}
+.slick-slide div {
+  width: auto;
+  margin-right: 10px;
+}
+.slick-slide img {
+  width: calc(100% - 10px) !important;
+}
+
+/* For the demo */
+.slick-prev,
+.slick-next {
+  z-index: 999 !important;
+}
+.slick-prev {
+  left: 25px !important;
+}
+.slick-next {
+  right: 25px !important;
+}
+
+.slick-prev:before,
+.slick-next:before {
+  color: var(--main-color);
 }

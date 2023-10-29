@@ -1,6 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import '../CardProduct/CardProduct.css'
 
 const CardProduct = (drops) => {
+    const navigate = useNavigate()
+
     const numberWithCommas = (x) => {
         return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
@@ -10,17 +13,26 @@ const CardProduct = (drops) => {
     }
 
     return (
-        <div className="card-product">
-            <div style={{ width: '160px', height: '160px', margin: '0 auto' }}>
+        <div className="card-product" onClick={() => navigate(`/product/${drops?.id}`)}>
+            <div style={{ width: '95%', height: '95%', margin: '0 auto' }}>
                 <img alt={drops.name} src={drops.src}></img>
             </div>
             <div className='content-card'>
                 <strong>{drops.brand}</strong><br />
-                <p>{drops.name}</p>
+                <p style={{ textAlign: 'left', height: '40px', overflow: 'hidden' }}>{drops.name}</p>
                 <h5 className='price' style={{ marginTop: '5px' }}>{numberWithCommas(drops.price)} VNĐ</h5>
                 <div className='discount'>
                     <p style={{ textDecoration: 'line-through' }}>{numberWithCommas(drops.discount)} VNĐ</p>
-                    <p style={{ color: 'var(--main-color)' }}>{drops.discountPercent}%</p>
+                    {
+                        drops.checkDiscount ?
+                            <p style={{
+                                color: '#f2f2f2', backgroundColor: 'red', display: 'flex', borderRadius: '4px',
+                                width: '40px', fontSize: '16px', alignItems: 'center', justifyContent: 'center'
+                            }}>
+                                {drops.discountPercent}%
+                            </p> :
+                            <p style={{ color: 'var(--main-color)' }}>{drops.discountPercent}%</p>
+                    }
                 </div>
             </div>
         </div>

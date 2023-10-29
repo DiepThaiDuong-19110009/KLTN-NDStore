@@ -13,6 +13,7 @@ import { actionCartRequest } from "../../redux/actions/ActionsCart";
 const ProductDetail = () => {
     const [srcImg, setSrcImg] = useState('')
     const [openComment, setOpenComment] = useState(false);
+    const [open, setOpen] = useState(false);
     const [contentComment, setContentComment] = useState('')
     const [isLoading, setIsLoading] = useState(false);
 
@@ -49,6 +50,11 @@ const ProductDetail = () => {
         console.log(contentComment)
     }
 
+    // redirect to login
+    const handleRedirect = () => {
+        navigate('/login')
+    }
+
     const getProductDetail = (id) => {
         setIsLoading(true)
         getProductDetailById(id)
@@ -82,9 +88,8 @@ const ProductDetail = () => {
             })
             .catch((err) => {
                 if (err) {
-                    if (err?.request?.status === 401)
-                    {
-                        navigate('/login')
+                    if (err?.request?.status === 401) {
+                        setOpen(true)
                     }
                     setIsLoading(false)
                 }
@@ -99,7 +104,7 @@ const ProductDetail = () => {
             }
             <div className="container-product-detail">
                 <button style={{ background: 'var(--main-color)', border: 'none', padding: '10px', color: '#FFFFFF', borderRadius: '5px' }}
-                    onClick={() => navigate(-1)} className="add-to-cart">
+                    onClick={() => navigate('/product')} className="add-to-cart">
                     <i style={{ marginRight: '10px' }} className="fas fa-arrow-left"></i>Tiếp tục mua hàng
                 </button>
             </div>
@@ -118,9 +123,8 @@ const ProductDetail = () => {
                         </div>
                     </div>
                     <div className="image-info-detail">
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <h3 style={{ marginRight: '10px' }}>{productDetail?.name}</h3><span>(Đã bán {productDetail?.sold} sản phẩm)</span>
-                        </div>
+                        <h3 style={{ marginRight: '10px', wordBreak: 'break-all' }}>{productDetail?.name}</h3>
+                        <span>(Đã bán {productDetail?.sold} sản phẩm)</span>
                         <div>
                             {
                                 productDetail?.stock === 0 ?
@@ -144,7 +148,7 @@ const ProductDetail = () => {
                                     {
                                         productDetail?.productConfiguration &&
                                         Object.keys(productDetail?.productConfiguration[0]).map((key, index) => (
-                                            <p style={{marginRight: '5px'}} key={index}>- {key}:</p>
+                                            <p style={{ margin: '0 5px 0 0' }} key={index}>- {key}:</p>
                                         ))
                                     }
                                 </div>
@@ -152,7 +156,7 @@ const ProductDetail = () => {
                                     {
                                         productDetail?.productConfiguration &&
                                         Object.values(productDetail?.productConfiguration[0]).map((key, index) => (
-                                            <p key={index}>{key || ''}</p>
+                                            <p style={{margin: '0'}} key={index}>{key || ''}</p>
                                         ))
                                     }
                                 </div>
@@ -235,6 +239,25 @@ const ProductDetail = () => {
                         </div>
                     </div>
                 </DialogContent>
+            </Dialog>
+            <Dialog
+                open={open}
+                onClose={() => setOpen(false)}
+                aria-labelledby="responsive-dialog-title"
+            >
+                <DialogTitle id="responsive-dialog-title">
+                    {"Thông báo"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Vui lòng đăng nhập để tiến hành mua hàng
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleRedirect}>
+                        Đăng nhập
+                    </Button>
+                </DialogActions>
             </Dialog>
             <Footer></Footer>
         </div>

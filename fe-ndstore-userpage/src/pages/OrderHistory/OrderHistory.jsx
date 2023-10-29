@@ -6,6 +6,7 @@ import { Box, Button, FormControl, InputLabel, MenuItem, Modal, Paper, Select, T
 import { cancelOrderUser, getHistoryOrderUser, remakelOrderUser } from "../../apis/order.api";
 import { useEffect } from "react";
 import { Loader } from "../../components/Loader/Loader";
+import { useNavigate } from "react-router-dom";
 
 const OrderHistory = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -18,6 +19,8 @@ const OrderHistory = () => {
     const [currentState, setCurrentState] = useState('')
     const [orderDetail, setOrderDetail] = useState({})
     const [listOrder, setListOrder] = useState([])
+
+    let navigate = useNavigate();
 
     const handleChange = (event) => {
         setState(event.target.value);
@@ -37,6 +40,12 @@ const OrderHistory = () => {
     useEffect(() => {
         getOrderHistory(page, size, state)
     }, [page, size, state])
+
+    useEffect(() => {
+        if (!localStorage.getItem('access-token')) {
+            navigate('/');
+        }
+    }, [navigate])
 
     const handleUpdateStatus = () => {
         if (!currentState) {
@@ -96,6 +105,9 @@ const OrderHistory = () => {
 
     // Get list order user
     const getOrderHistory = (page, size, state) => {
+        if (!localStorage.getItem('access-token')) {
+            return;
+        }
         setIsLoading(true)
         getHistoryOrderUser(page, size, state)
             .then((res) => {

@@ -8,11 +8,12 @@
     align-items: center;
     overflow: hidden;
     gap: 15px;
-    padding: 10px 20px;
+    padding: 20px 10px;
     width: 80%;
     margin: 0 auto;
     border-radius: 5px;
-    background-color: rgb(255, 72, 72);
+    background-color: rgb(255, 255, 255);
+    box-shadow: 1px 2px 8px rgb(231, 231, 231);
 }
 
 .top-category {

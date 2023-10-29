@@ -115,10 +115,14 @@ const Cart = () => {
                 <div className='cart-left'>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                         <h4>Giỏ hàng</h4>
-                        {
+                        {/* {
                             (cart?.length !== 0) &&
                             <span style={{ color: 'red', fontWeight: 'bold' }}>Xóa tất cả</span>
-                        }
+                        } */}
+                        <button style={{ background: 'var(--main-color)', border: 'none', padding: '10px', color: '#FFFFFF', borderRadius: '5px' }}
+                            onClick={() => navigate('/product')} className="add-to-cart">
+                            <i style={{ marginRight: '10px' }} className="fas fa-arrow-left"></i>Tiếp tục mua hàng
+                        </button>
                     </div>
                     {
                         (cart?.length !== 0 || !cart) &&
@@ -135,7 +139,7 @@ const Cart = () => {
                                 cart?.map((item) => (
                                     <tr key={item?.itemCartId} className='body-cart-table'>
                                         <td style={{ wordBreak: 'break-word', maxWidth: '40px' }}>
-                                            <span>{item?.productName}</span>
+                                            <span style={{cursor: 'pointer', color: 'var(--main-color)'}} onClick={() => navigate(`/product/${item?.productId}`)}>{item?.productName}</span>
                                         </td>
                                         <td className='img-product' style={{ textAlign: 'center' }}>
                                             <img style={{ width: '80px', height: '80px', border: '1px solid rgb(224, 224, 224)', borderRadius: '5px' }} alt=''

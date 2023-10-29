@@ -12,6 +12,17 @@ export const getProductByPage = (page, size) => {
   return axios.get(API_URL + `/api/products/get/enable/list/all?page=${page}?size=${size}`, config)
 }
 
+// Find all product (no page)
+export const getAllProductNoPage = () => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }
+
+  return axios.get(API_URL + `/api/products/get/enable/list/find/all`, config)
+}
+
 // Find all product (page)
 export const getProductByCategoryId = (page, size) => {
   const config = {

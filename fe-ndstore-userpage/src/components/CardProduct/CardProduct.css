@@ -1,10 +1,12 @@
 .card-product {
-    width: 180px;
+    width: 200px;
     height: auto;
     background-color: rgb(255, 255, 255);
     padding: 10px 5px;
     cursor: pointer;
     text-align: center;
+    border-radius: 5px;
+    border: 1px solid #eaeaea;
 }
 
 .card-product img {
@@ -13,7 +15,7 @@
 }
 
 .card-product img:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .content-card {
@@ -29,6 +31,7 @@
 
 .content-card .discount {
     display: flex;
+    align-items: center;
     gap: 10px;
     font-size: 12px;
 }

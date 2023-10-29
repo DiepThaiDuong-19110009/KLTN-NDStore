@@ -121,7 +121,7 @@ const Login = () => {
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'center', margin: '15px 0px 25px 0px' }}>
                             <span style={{ marginRight: '6px' }}>Bạn chưa có tài khoản?</span>
-                            <a style={{ color: 'var(--main-color)', fontWeight: 'bold' }} href='/register'>Đăng ký</a>
+                            <a style={{ color: 'var(--main-color)', fontWeight: 'bold' }} href='/register'>Đăng ký ngay</a>
                         </div>
                     </div>
                 </div>

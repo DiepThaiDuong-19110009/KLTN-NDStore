@@ -20,6 +20,7 @@ const ProductCreateManagement = React.lazy(() => import('../pages/ProductManagem
 const ProductEditManagement = React.lazy(() => import('../pages/ProductManagement/ProductEditManagement/ProductEditManagement'))
 const OrderManagementPage = React.lazy(() => import('../pages/OrderManagement/OrderManagement'));
 const StatisticManagement = React.lazy(() => import('../pages/StatisticMangement/StatisticManagement'));
+const NotFound = React.lazy(() => import('../pages/NotFoundPage/NotFoundPage'));
 
 const AppRoutes = () => {
     const isAuthenticated = getLocalItem(LOCAL_STORAGE.ACCESS_TOKEN);
@@ -78,6 +79,8 @@ const AppRoutes = () => {
                     <Route element={<AuthenticatedRoute />}>
                         <Route path={PATH.STATISTIC} element={<StatisticManagement />} />
                     </Route>
+                    {/* Not Found page */}
+                    <Route path="*" element={<NotFound />}></Route>
                 </Route>
             </Routes>
         </BrowserRouter>

@@ -3,6 +3,7 @@ import '../Header/Header.css'
 import authApi from "../../apis/auth.api";
 import { clearLocal } from "../../helpers/storage";
 import Loading from "../Loading/Loading";
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { Button, ClickAwayListener, Grow, MenuItem, MenuList, Paper, Popper } from "@mui/material";
 
 const Header = () => {
@@ -74,7 +75,7 @@ const Header = () => {
                 onClick={handleToggle}
             >
                 <span style={{ textTransform: 'none', color: 'black' }}>{name}</span>
-                <img style={{ width: '30px', height: '30px' }} src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="admin" />
+                <AccountCircleIcon style={{ width: '30px', height: '30px' }} />
             </Button>
             <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
                 {({ TransitionProps, placement }) => (

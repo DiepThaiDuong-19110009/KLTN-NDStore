@@ -101,7 +101,7 @@ const ProductManagement = () => {
     }
 
     return (
-        <div style={{ minHeight: '100vh', paddingLeft: '260px' }}>
+        <div style={{ paddingLeft: '260px' }}>
             {isLoading ? <Loading isLoading={isLoading} /> : undefined}
             <div style={{ position: 'fixed', top: '0', left: '0', width: '100%', zIndex: '1300' }}>
                 <Header />
@@ -112,9 +112,10 @@ const ProductManagement = () => {
                 anchor="left">
                 <Menu selected='product' />
             </Drawer>
-            <div style={{ backgroundColor: '#f3f3f3', padding: '70px 15px 15px 15px', height: '100vh' }}>
+            <div style={{ padding: '70px 15px 70px 15px', height: 'auto' }}>
                 <Breadcrumbs aria-label="breadcrumb">
-                    <Typography onClick={() => handleClickBreadcrumb('/home')} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Trang chủ</Typography>
+                    <Typography onClick={() => handleClickBreadcrumb('/home')} color="gray" fontSize='14px'
+                        style={{ cursor: 'pointer' }}>Trang chủ</Typography>
                     <Typography color="var(--main-color)" fontSize='14px'>Quản lý sản phẩm</Typography>
                 </Breadcrumbs>
                 <div>
@@ -129,7 +130,7 @@ const ProductManagement = () => {
                         </div>
                     </div>
                     <Paper style={{ width: '100%' }}>
-                        <TableContainer style={{ maxHeight: '400px' }} component={Paper}>
+                        <TableContainer>
                             <Table stickyHeader aria-label="sticky table" style={{ width: '100%' }}>
                                 <TableHead>
                                     <TableRow>
@@ -151,11 +152,11 @@ const ProductManagement = () => {
                                             <TableCell align="center">{index + 1}</TableCell>
                                             <TableCell align="left">{product?.name}</TableCell>
                                             <TableCell align="center">
-                                                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                                     <img style={{ width: '70px' }} alt={product?.name} src={product?.images && product?.images[0] ? product?.images[0]?.url : 'https://static.vecteezy.com/system/resources/thumbnails/011/537/824/small/picture-image-empty-state-single-isolated-icon-with-outline-style-free-vector.jpg'}></img>
                                                     {
                                                         product?.images && product?.images[0] ? '' :
-                                                            <span style={{marginTop: '5px', color: 'red'}}>Chưa cập nhật</span>
+                                                            <span style={{ marginTop: '5px', color: 'red' }}>Chưa cập nhật</span>
                                                     }
                                                 </div>
                                             </TableCell>

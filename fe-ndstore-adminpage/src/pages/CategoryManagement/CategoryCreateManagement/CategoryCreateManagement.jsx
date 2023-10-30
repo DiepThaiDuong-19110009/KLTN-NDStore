@@ -73,7 +73,7 @@ const CategoryCreateManagement = () => {
 
 
     return (
-        <div style={{ minHeight: '100vh', paddingLeft: '260px' }}>
+        <div style={{ paddingLeft: '260px' }}>
             {isLoading ? <Loading isLoading={isLoading} /> : undefined}
             <div style={{ position: 'fixed', top: '0', left: '0', width: '100%', zIndex: '1300' }}>
                 <Header />
@@ -84,7 +84,7 @@ const CategoryCreateManagement = () => {
                 anchor="left">
                 <Menu selected='category' />
             </Drawer>
-            <div style={{ backgroundColor: '#f3f3f3', padding: '70px 15px 15px 15px', height: '100vh' }}>
+            <div style={{ padding: '70px 15px 15px 15px', height: 'auto' }}>
                 <Breadcrumbs aria-label="breadcrumb">
                     <Typography onClick={() => handleClickBreadcrumb(PATH.HOME)} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Trang chủ</Typography>
                     <Typography onClick={() => handleClickBreadcrumb(PATH.CATEGORY_CREATE)} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Thương hiệu</Typography>

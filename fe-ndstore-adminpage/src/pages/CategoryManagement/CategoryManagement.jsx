@@ -109,7 +109,7 @@ const CategoryManagement = () => {
 
 
     return (
-        <div style={{ minHeight: '100vh', paddingLeft: '260px' }}>
+        <div style={{ paddingLeft: '260px' }}>
             {isLoading ? <Loading isLoading={isLoading} /> : undefined}
             <div style={{ position: 'fixed', top: '0', left: '0', width: '100%', zIndex: '1300' }}>
                 <Header />
@@ -120,7 +120,7 @@ const CategoryManagement = () => {
                 anchor="left">
                 <Menu selected='category' />
             </Drawer>
-            <div style={{ backgroundColor: '#f3f3f3', padding: '70px 15px 70px 15px', height: '100vh' }}>
+            <div style={{ padding: '70px 15px 70px 15px', height: 'auto' }}>
                 <Breadcrumbs aria-label="breadcrumb">
                     <Typography onClick={() => handleClickBreadcrumb('/home')} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Trang chủ</Typography>
                     <Typography color="var(--main-color)" fontSize='14px'>Quản lý danh mục</Typography>
@@ -137,7 +137,7 @@ const CategoryManagement = () => {
                         </div>
                     </div>
                     <Paper style={{ width: '100%' }}>
-                        <TableContainer style={{ maxHeight: '400px' }}>
+                        <TableContainer>
                             <Table stickyHeader aria-label="sticky table" style={{ width: '100%' }}>
                                 <TableHead>
                                     <TableRow>

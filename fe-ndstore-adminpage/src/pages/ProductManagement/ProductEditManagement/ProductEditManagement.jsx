@@ -240,7 +240,7 @@ const ProductEditManagement = () => {
 
 
     return (
-        <div style={{ minHeight: '100vh', paddingLeft: '260px' }}>
+        <div style={{ paddingLeft: '260px' }}>
             {isLoading ? <Loading isLoading={isLoading} /> : undefined}
             <div style={{ position: 'fixed', top: '0', left: '0', width: '100%', zIndex: '1300' }}>
                 <Header />
@@ -251,7 +251,7 @@ const ProductEditManagement = () => {
                 anchor="left">
                 <Menu selected='product' />
             </Drawer>
-            <div style={{ backgroundColor: '#f3f3f3', padding: '70px 15px 15px 15px', height: 'auto' }}>
+            <div style={{ padding: '70px 15px 15px 15px', height: 'auto' }}>
                 <Breadcrumbs aria-label="breadcrumb">
                     <Typography onClick={() => handleClickBreadcrumb(PATH.HOME)} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Trang chủ</Typography>
                     <Typography onClick={() => handleClickBreadcrumb(PATH.PRODUCT)} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Sản phẩm</Typography>
@@ -363,7 +363,7 @@ const ProductEditManagement = () => {
                                         fullWidth
                                         margin="normal"
                                         multiline
-                                        rows={3}
+                                        rows={10}
                                         variant="outlined"
                                         InputLabelProps={{
                                             shrink: true,
@@ -564,7 +564,7 @@ const ProductEditManagement = () => {
                     </div>
                 </div>
             </div>
-            <div style={{ position: 'fixed', bottom: '0', left: '0', width: 'calc(100% - 260px)', marginLeft: '260px' }}>
+            <div style={{ position: 'fixed', bottom: '0', left: '0', width: 'calc(100% - 260px)', marginLeft: '260px', zIndex: '1000' }}>
                 <Footer />
             </div>
             <Modal

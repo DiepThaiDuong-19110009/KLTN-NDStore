@@ -111,7 +111,7 @@ const BrandEditManagement = () => {
 
 
     return (
-        <div style={{ minHeight: '100vh', paddingLeft: '260px' }}>
+        <div style={{ paddingLeft: '260px' }}>
             {isLoading ? <Loading isLoading={isLoading} /> : undefined}
             <div style={{ position: 'fixed', top: '0', left: '0', width: '100%', zIndex: '1300' }}>
                 <Header />
@@ -122,7 +122,7 @@ const BrandEditManagement = () => {
                 anchor="left">
                 <Menu selected='brand' />
             </Drawer>
-            <div style={{ backgroundColor: '#f3f3f3', padding: '70px 15px 70px 15px' }}>
+            <div style={{ padding: '70px 15px 70px 15px', height: 'auto' }}>
                 <Breadcrumbs aria-label="breadcrumb">
                     <Typography onClick={() => handleClickBreadcrumb(PATH.HOME)} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Trang chủ</Typography>
                     <Typography onClick={() => handleClickBreadcrumb(PATH.BRAND)} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Thương hiệu</Typography>

@@ -43,15 +43,15 @@ const OrderDetailManagement = (props) => {
                 </div>
                 <h4 style={{ textAlign: 'center', marginBottom: '20px' }}>Chi tiết đơn hàng</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                    <span>Người nhận: <strong>{orderDetail?.shippingDetail?.customerName || ''}</strong></span>
-                    <span>Số điện thoại: <strong>{orderDetail?.shippingDetail?.customerPhone || ''}</strong></span>
-                    <span>Địa chỉ: <strong>{orderDetail?.shippingDetail?.customerAddress}{', '}
-                        {orderDetail?.shippingDetail?.customerWard}{', '}
-                        {orderDetail?.shippingDetail?.customerDistrict}{', '}
-                        {orderDetail?.shippingDetail?.customerProvince}</strong></span>
+                    <span>Người nhận: <strong>{orderDetail?.shipment?.customerName || ''}</strong></span>
+                    <span>Số điện thoại: <strong>{orderDetail?.shipment?.customerPhone || ''}</strong></span>
+                    <span>Địa chỉ: <strong>{orderDetail?.shipment?.customerAddress}{', '}
+                        {orderDetail?.shipment?.customerWard}{', '}
+                        {orderDetail?.shipment?.customerDistrict}{', '}
+                        {orderDetail?.shipment?.customerProvince}</strong></span>
                     <span>Tổng thanh toán: <strong style={{ color: 'var(--main-color)' }}>{numberWithCommas(orderDetail?.totalPrice)} VNĐ</strong></span>
                     <span>Phí vận chuyển: <strong style={{ color: 'var(--main-color)' }}>
-                        {numberWithCommas(orderDetail?.shippingDetail?.serviceShipDetail?.totalFeeShip)} VNĐ
+                        {numberWithCommas(orderDetail?.shipment?.serviceShipDetail?.totalFeeShip)} VNĐ
                     </strong></span>
                     <span>Phương thức thanh toán: <strong>{orderDetail?.paymentType}</strong></span>
                     <span>Ngày tạo đơn hàng: <strong>{orderDetail?.createdDate}</strong></span>

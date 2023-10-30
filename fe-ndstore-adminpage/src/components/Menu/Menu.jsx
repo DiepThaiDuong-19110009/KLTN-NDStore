@@ -27,7 +27,7 @@ const Menu = (props) => {
                     </ListSubheader>
                 }
             >
-                <ListItem button onClick={() => selectItemMenu('statistic')} className={props.selected === 'statistic' ? 'active' : ''} >
+                <ListItem button onClick={() => selectItemMenu('/statistic')} className={props.selected === 'statistic' ? 'active' : ''} >
                     <ListItemIcon>
                         <BarChartIcon className={props.selected === 'statistic' ? 'active-icon' : ''} />
                     </ListItemIcon>

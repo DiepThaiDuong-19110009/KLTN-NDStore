@@ -8,6 +8,10 @@ html {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+body {
+  background-color: rgba(240, 248, 255, 0.555);
+}
+
 .is-sticky {
   position: fixed;
   top: 0;

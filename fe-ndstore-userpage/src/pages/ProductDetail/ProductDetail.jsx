@@ -104,7 +104,7 @@ const ProductDetail = () => {
             }
             <div className="container-product-detail">
                 <button style={{ background: 'var(--main-color)', border: 'none', padding: '10px', color: '#FFFFFF', borderRadius: '5px' }}
-                    onClick={() => navigate('/product')} className="add-to-cart">
+                    onClick={() => navigate(`/product?all=${true}`)} className="add-to-cart">
                     <i style={{ marginRight: '10px' }} className="fas fa-arrow-left"></i>Tiếp tục mua hàng
                 </button>
             </div>

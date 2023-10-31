@@ -15,6 +15,7 @@ const Header = () => {
     const [openMenuUserInfo, setOpenMenuUserInfo] = useState(null);
     const [openMenuCategory, setOpenMenuCategory] = useState(null);
     const [open, setOpen] = useState(false);
+    const [keySearch, setKeySearch] = useState('')
     const openUserInfo = Boolean(openMenuUserInfo);
     const openCategory = Boolean(openMenuCategory);
 
@@ -121,8 +122,19 @@ const Header = () => {
             })
     }
 
+    // Find product by category
     const findProductByCategory = (idCategory) => {
         navigate(`/product?categoryId=${idCategory}`)
+        setOpenMenuCategory(false)
+    }
+
+    // Search input to find product
+    const searchProduct = () => {
+        if (!keySearch) {
+            return;
+        }
+        navigate(`/product?keySearch=${keySearch}`)
+        // setKeySearch('')
     }
 
     return (
@@ -166,8 +178,11 @@ const Header = () => {
                     </div>
                 </div>
                 <div className='search-header'>
-                    <input className='input-search-header' placeholder='Tìm kiếm sản phẩm...'></input>
-                    <button className='btn-search'>
+                    <input
+                        value={keySearch} onChange={(e) => setKeySearch(e.target.value)}
+                        className='input-search-header' placeholder='Tìm kiếm sản phẩm...'>
+                    </input>
+                    <button onClick={searchProduct} className='btn-search'>
                         <i className='fas fa-search icon-search'></i>
                     </button>
                 </div>

@@ -5,32 +5,45 @@ import { Pagination } from "@mui/material";
 import '../Product/Product.css'
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getProductByCategoryId, getProductByPage } from "../../apis/product.api";
+import { getProductByBrandId, getProductByCategoryId, getProductByKeySearch, getProductByPage } from "../../apis/product.api";
 import { Loader } from "../../components/Loader/Loader";
+import { getAllBrandNoPage } from "../../apis/brand";
 
 const Product = () => {
     const [page, setPage] = useState(1);
     const [totalAmount, setTotalAmount] = useState(0)
     const [isLoading, setIsLoading] = useState(false);
+    const [listBrand, setListBrand] = useState([])
     const [searchParams, setSearchParams] = useSearchParams();
 
+    const navigate = useNavigate();
+
     const handleChangePage = (event, value) => {
-        console.log(listProduct)
         setPage(value);
     };
+
     const [listProduct, setListProduct] = useState([])
 
     useEffect(() => {
-        if (!searchParams.get("categoryId")) {
-            console.log('acb')
-            getProductAll(page);
+        getAllBrand()
+    }, [])
+
+    useEffect(() => {
+        if (searchParams.get("keySearch")) {
+            findProductByKeySearch(page, searchParams.get("keySearch"))
         }
         if (searchParams.get("categoryId")) {
-            console.log(searchParams.get("categoryId"))
             getProductByCategory(page, searchParams.get("categoryId"))
+        }
+        if (searchParams.get("brandId")) {
+            getProductByBrand(page, searchParams.get("brandId"))
+        }
+        if (searchParams.get("all")) {
+            getProductAll(page);
         }
     }, [page, searchParams])
 
+    // Get all products
     const getProductAll = (page) => {
         setIsLoading(true)
         getProductByPage(page - 1)
@@ -43,11 +56,13 @@ const Product = () => {
             })
             .catch((err) => {
                 setListProduct([])
+                setTotalAmount(0);
                 setIsLoading(false)
                 return err;
             })
     }
 
+    // Get product by category
     const getProductByCategory = (page, idCategory) => {
         setIsLoading(true)
         getProductByCategoryId(page - 1, idCategory)
@@ -60,6 +75,66 @@ const Product = () => {
             })
             .catch((err) => {
                 setListProduct([])
+                setTotalAmount(0);
+                setIsLoading(false)
+                return err;
+            })
+    }
+
+    // Get product by brand
+    const getProductByBrand = (page, idBrand) => {
+        setIsLoading(true)
+        getProductByBrandId(page - 1, idBrand)
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    setIsLoading(false);
+                    setTotalAmount(res?.data?.data?.totalQuantity);
+                    setListProduct(res?.data?.data?.list)
+                }
+            })
+            .catch((err) => {
+                setListProduct([])
+                setTotalAmount(0);
+                setIsLoading(false)
+                return err;
+            })
+    }
+
+    // Get All Brand
+    const getAllBrand = () => {
+        setIsLoading(true)
+        getAllBrandNoPage()
+            .then((res) => {
+                if (res?.data?.data) {
+                    setIsLoading(false)
+                    setListBrand(res?.data?.data)
+                }
+            })
+            .catch((err) => {
+                setIsLoading(false)
+                console.log(err)
+            })
+    }
+
+    // redirect filter by brand
+    const findProductByBrand = (idBrand) => {
+        navigate(`/product?brandId=${idBrand}`)
+    }
+
+    // get product by key search
+    const findProductByKeySearch = (page, content) => {
+        setIsLoading(true)
+        getProductByKeySearch(page - 1, content)
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    setIsLoading(false);
+                    setTotalAmount(res?.data?.data?.totalQuantity);
+                    setListProduct(res?.data?.data?.list)
+                }
+            })
+            .catch((err) => {
+                setListProduct([]);
+                setTotalAmount(0);
                 setIsLoading(false)
                 return err;
             })
@@ -118,6 +193,25 @@ const Product = () => {
                     <div className="name-category">
                         <h4>Tìm thấy: <span>{totalAmount} sản phẩm</span></h4>
                     </div>
+                    {/* row brand */}
+                    {
+                        searchParams.get("brandId") &&
+                        <div className="name-category" style={{
+                            justifyContent: 'space-between', padding: '10px', display: 'flex', gap: '20px',
+                            alignItems: 'center', marginBottom: '20px', overflow: 'auto'
+                        }}>
+                            {
+                                listBrand?.map((item) => (
+                                    <div key={item?.key}>
+                                        <img onClick={() => findProductByBrand(item?.id)} style={{
+                                            width: '80px', padding: '10px', borderRadius: '5px',
+                                            boxShadow: '1px 2px 8px rgb(231, 231, 231)', cursor: 'pointer'
+                                        }} src={item?.imageBrand} alt={item?.name} />
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    }
                     <div className="filter-by">
                         <strong>Sắp xếp theo</strong>
                         <button>Giá tăng dần</button>

@@ -8,7 +8,6 @@ import { getAllProductNoPage } from "../../apis/product.api";
 import { Loader } from "../../components/Loader/Loader";
 import Slider from "react-slick";
 import { getAllBrandNoPage } from "../../apis/brand";
-import { Grid } from "@mui/material";
 
 const Home = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -82,6 +81,10 @@ const Home = () => {
             })
     }
 
+    const findProductByBrand = (idBrand) => {
+        navigate(`/product?brandId=${idBrand}`)
+    }
+
     return (
         <div>
             <Header></Header>
@@ -136,6 +139,24 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* row brand */}
+                <div className="product-row" style={{
+                    justifyContent: 'space-between', padding: '20px',
+                    alignItems: 'center', flexWrap: 'wrap', marginBottom: '20px'
+                }}>
+                    {
+                        listBrand?.map((item) => (
+                            <div key={item?.key}>
+                                <img onClick={() => findProductByBrand(item?.id)} style={{
+                                    width: '80px', padding: '10px', borderRadius: '5px',
+                                    boxShadow: '1px 2px 8px rgb(231, 231, 231)', cursor: 'pointer'
+                                }} src={item?.imageBrand} alt={item?.name} />
+                            </div>
+                        ))
+                    }
+                </div>
+
                 {/* row product */}
                 <div className="product-row" style={{ justifyContent: 'space-between', padding: '10px', alignItems: 'center' }}>
                     <h4 style={{ color: 'black', margin: '0' }}>Giảm giá sốc</h4>
@@ -153,20 +174,6 @@ const Home = () => {
                             ))
                         }
                     </Slider>
-                </div>
-
-                {/* row brand */}
-                <div className="product-row" style={{
-                    justifyContent: 'space-between', padding: '20px',
-                    alignItems: 'center', flexWrap: 'wrap', marginBottom: '20px'
-                }}>
-                    {
-                        listBrand?.map((item) => (
-                            <div key={item?.key}>
-                                <img style={{ width: '80px' }} src={item?.imageBrand} alt={item?.name} />
-                            </div>
-                        ))
-                    }
                 </div>
 
                 {/* row product */}

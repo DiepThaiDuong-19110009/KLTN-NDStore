@@ -13,6 +13,7 @@ import Payment from '../pages/Payment/Payment';
 import ForgotPassword from '../pages/ForgotPassword/ForgotPassword';
 import AuthGoogle from '../pages/AuthGoogle/AuthGoogle';
 import CheckOut from '../pages/Payment/CheckOut/CheckOut';
+import NotFoundPage from '../pages/NotFoundPage/NotFoundPage';
 
 const ClientRouter = () => {
   return (
@@ -32,6 +33,7 @@ const ClientRouter = () => {
           <Route path='/cart' element={<Cart />} />
           <Route path='/payment' element={<Payment />} />
           <Route path='/checkout/order/payment' element={<CheckOut />} />
+          <Route path="*" element={<NotFoundPage />}></Route>
         </Routes>
       </main>
     </>

@@ -121,6 +121,10 @@ const Header = () => {
             })
     }
 
+    const findProductByCategory = (idCategory) => {
+        navigate(`/product?categoryId=${idCategory}`)
+    }
+
     return (
         <div className={classes} id='header'>
             <div className='container-header'>
@@ -150,7 +154,8 @@ const Header = () => {
                             >
                                 {
                                     listCategory.map((category) => (
-                                        <MenuItem style={{ width: '200px' }} key={category.id}>
+                                        <MenuItem onClick={() => findProductByCategory(category?.id)}
+                                            style={{ width: '200px' }} key={category?.id}>
                                             <img style={{ width: '30px', height: '30px', marginRight: '20px' }} src={category?.imageCategory} alt=''></img>
                                             <span>{category?.titleCategory}</span>
                                         </MenuItem>

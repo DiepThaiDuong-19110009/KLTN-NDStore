@@ -18,7 +18,6 @@
 .unit-price {
     display: flex;
     flex-direction: column;
-    margin-top: 20px;
 }
 
 .header-cart-table, .body-cart-table {

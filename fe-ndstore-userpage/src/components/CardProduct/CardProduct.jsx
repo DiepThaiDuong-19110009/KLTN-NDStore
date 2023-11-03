@@ -20,8 +20,8 @@ const CardProduct = (drops) => {
             <div className='content-card'>
                 <strong>{drops.brand}</strong><br />
                 <p style={{ textAlign: 'left', height: '40px', overflow: 'hidden' }}>{drops.name}</p>
-                <h5 className='price' style={{ marginTop: '5px' }}>{numberWithCommas(drops.price)} VNĐ</h5>
-                <div className='discount' style={{height: '40px'}}>
+                <h5 className='price' style={{ marginTop: '5px', textAlign: 'left' }}>{numberWithCommas(drops.price)} VNĐ</h5>
+                <div className='discount' style={{height: '40px', textAlign: 'left'}}>
                     <p style={{ textDecoration: 'line-through' }}>{numberWithCommas(drops.discount)} VNĐ</p>
                     {
                         drops.checkDiscount ?

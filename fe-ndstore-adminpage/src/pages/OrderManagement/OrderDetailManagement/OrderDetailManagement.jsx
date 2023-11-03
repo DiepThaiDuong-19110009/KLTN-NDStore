@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import Loading from "../../../components/Loading/Loading";
 import CloseIcon from '@material-ui/icons/Close';
 import managementOrderApi from "../../../apis/management-order.api";
+import imgPayPal from '../../../assets/images/paypal.png'
+import imgVNPay from '../../../assets/images/vnpay.png'
 
 const OrderDetailManagement = (props) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -53,7 +55,21 @@ const OrderDetailManagement = (props) => {
                     <span>Phí vận chuyển: <strong style={{ color: 'var(--main-color)' }}>
                         {numberWithCommas(orderDetail?.shipment?.serviceShipDetail?.totalFeeShip)} VNĐ
                     </strong></span>
-                    <span>Phương thức thanh toán: <strong>{orderDetail?.paymentType}</strong></span>
+                    <span style={{display: 'flex', alignItems: 'center', gap: '20px'}}>Phương thức thanh toán: <strong>
+                        {
+                            orderDetail?.paymentType === 'COD' ?
+                                <p style={{
+                                    width: '100px',
+                                    backgroundColor: 'green', color: '#FFF',
+                                    textAlign: 'center', padding: '10px 0',
+                                    borderRadius: '5px'
+                                }}>Tiền mặt</p>
+                                : orderDetail?.paymentType === 'VNPAY' ?
+                                    <img style={{ width: '100px' }} src={imgVNPay} /> : orderDetail?.paymentType === 'PAYPAL' ?
+                                        <img style={{ width: '100px' }} src={imgPayPal} /> : orderDetail?.paymentType
+                        }
+                    </strong>
+                    </span>
                     <span>Ngày tạo đơn hàng: <strong>{orderDetail?.createdDate}</strong></span>
                     <span>Trạng thái:
                         {

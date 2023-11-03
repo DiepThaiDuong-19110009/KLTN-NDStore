@@ -10,11 +10,12 @@ import Header from "../../components/Header/Header";
 import Menu from "../../components/Menu/Menu";
 import Footer from "../../components/Footer/Footer";
 import { useNavigate } from "react-router-dom";
-import { PATH } from "../../contants/Path";
 import managementOrderApi from "../../apis/management-order.api";
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import StoreIcon from '@material-ui/icons/Store';
 import OrderDetailManagement from "./OrderDetailManagement/OrderDetailManagement";
+import imgPayPal from '../../assets/images/paypal.png'
+import imgVNPay from '../../assets/images/vnpay.png'
 
 const OrderManagement = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -232,10 +233,10 @@ const OrderManagement = () => {
                             </a>
                         </div>
                     </div>
-                    <FormControl sx={{ minWidth: 300 }} style={{marginBottom: '20px', backgroundColor: 'white'}}>
+                    <FormControl sx={{ minWidth: 300 }} style={{ marginBottom: '20px', backgroundColor: 'white' }}>
                         <Select
                             value={state}
-                            onChange={(e) => {setState(e.target.value); setPage(0); setSize(5)}}
+                            onChange={(e) => { setState(e.target.value); setPage(0); setSize(5) }}
                             displayEmpty
                             inputProps={{ 'aria-label': 'Without label' }}
                         >
@@ -277,7 +278,20 @@ const OrderManagement = () => {
                                                 {order?.shipment?.customerDistrict}{', '}
                                                 {order?.shipment?.customerProvince}</TableCell>
                                             <TableCell align="left">{order?.createdDate}</TableCell>
-                                            <TableCell align="left">{order?.paymentType === 'COD' ? 'Tiền mặt' : order?.paymentType}</TableCell>
+                                            <TableCell align="left">
+                                                {
+                                                    order?.paymentType === 'COD' ?
+                                                        <p style={{
+                                                            width: '100px',
+                                                            backgroundColor: 'green', color: '#FFF',
+                                                            textAlign: 'center', padding: '10px 0',
+                                                            borderRadius: '5px'
+                                                        }}>Tiền mặt</p>
+                                                        : order?.paymentType === 'VNPAY' ?
+                                                            <img style={{ width: '100px' }} src={imgVNPay} /> : order?.paymentType === 'PAYPAL' ?
+                                                                <img style={{ width: '100px' }} src={imgPayPal} /> : order?.paymentType
+                                                }
+                                            </TableCell>
                                             <TableCell style={{ minWidth: '150px', color: 'var(--main-color)' }} align="right">{numberWithCommas(order?.totalPrice)} VNĐ</TableCell>
                                             <TableCell style={{ minWidth: '150px' }} align="left">
                                                 {

@@ -70,17 +70,17 @@ const BrandManagement = () => {
             })
     }
 
-    const updateStatusBrand = (id, state) => {
-        if (!id || !state) {
+    const updateStatusBrand = (id, status) => {
+        if (!id || !status) {
             return;
         }
         setIsLoading(true)
-        if (state === 'enable') {
+        if (status === 'enable') {
             managementBrandApi
                 .setStatusBrandToDisable(id)
                 .then((res) => {
                     if (res?.success === true) {
-                        getAllBrand(page, size);
+                        getAllBrand(page, size, state);
                         setIsLoading(false);
                     }
                 })
@@ -88,12 +88,12 @@ const BrandManagement = () => {
                     setIsLoading(false);
                     console.log(err?.status)
                 })
-        } else if (state === 'disable') {
+        } else if (status === 'disable') {
             managementBrandApi
                 .setStatusBrandToEnable(id)
                 .then((res) => {
                     if (res?.success === true) {
-                        getAllBrand(page, size);
+                        getAllBrand(page, size, state);
                         setIsLoading(false);
                     }
                 })

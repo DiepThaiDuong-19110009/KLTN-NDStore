@@ -87,7 +87,7 @@ const ProductManagement = () => {
             .setStatusProduct(id)
             .then((res) => {
                 if (res?.success === true) {
-                    getAllProduct(page, size);
+                    getAllProduct(page, size, state);
                     setIsLoading(false);
                 }
             })

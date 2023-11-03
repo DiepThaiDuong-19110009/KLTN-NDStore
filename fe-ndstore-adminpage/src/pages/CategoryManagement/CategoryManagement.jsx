@@ -70,17 +70,17 @@ const CategoryManagement = () => {
             })
     }
 
-    const updateStatusBrand = (id, state) => {
-        if (!id || !state) {
+    const updateStatusBrand = (id, status) => {
+        if (!id || !status) {
             return;
         }
         setIsLoading(true)
-        if (state === 'enable') {
+        if (status === 'enable') {
             managementCategoryApi
                 .setStatusCategoryToDisable(id)
                 .then((res) => {
                     if (res?.success === true) {
-                        getAllCategory(page, size);
+                        getAllCategory(page, size, state);
                         setIsLoading(false);
                     }
                 })
@@ -88,12 +88,12 @@ const CategoryManagement = () => {
                     setIsLoading(false);
                     console.log(err?.status)
                 })
-        } else if (state === 'disable') {
+        } else if (status === 'disable') {
             managementCategoryApi
                 .setStatusCategoryToEnable(id)
                 .then((res) => {
                     if (res?.success === true) {
-                        getAllCategory(page, size);
+                        getAllCategory(page, size, state);
                         setIsLoading(false);
                     }
                 })

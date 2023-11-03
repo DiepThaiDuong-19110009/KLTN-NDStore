@@ -18,12 +18,14 @@ ChartJS.register(...registerables);
 const StatisticManagement = () => {
     const [isLoading, setIsLoading] = useState(false);
     // Report sales
+    const today = new Date() // get today's date
+    const tomorrow = new Date(today)
     const [fromDayReportSales, setFromDayReportSales] = useState(dayjs('2023-09-01'))
-    const [toDayReportSales, setToDayReportSales] = useState(dayjs(new Date()))
+    const [toDayReportSales, setToDayReportSales] = useState(dayjs(tomorrow.setDate(today.getDate() + 1)))
     // const [dataChartReportSales, setDataChartReportSales] = useState()
     // Statistic
     const [fromDayStatistic, setFromDayStatistic] = useState(dayjs('2023-09-01'))
-    const [toDayStatistic, setToDayStatistic] = useState(dayjs(new Date()))
+    const [toDayStatistic, setToDayStatistic] = useState(dayjs(tomorrow.setDate(today.getDate() + 1)))
     const [type, setType] = useState('month')
 
     const [listStatistic, setListStatistic] = useState([])
@@ -51,6 +53,9 @@ const StatisticManagement = () => {
                 if (res?.success === true) {
                     setListReportSales(res?.data)
                     setIsLoading(false);
+                } else {
+                    setListReportSales([])
+                    setIsLoading(false);
                 }
             })
             .catch((err) => {
@@ -68,6 +73,9 @@ const StatisticManagement = () => {
                 if (res?.success === true) {
                     setListStatistic(res?.data);
                     setIsLoading(false);
+                } else {
+                    setListStatistic([]);
+                    setIsLoading(false);
                 }
             })
             .catch((err) => {
@@ -84,12 +92,12 @@ const StatisticManagement = () => {
                 label: 'Số lương bán',
                 data: listReportSales?.map((item) => { return item?.salable }),
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
                     'rgba(153, 102, 255, 0.6)',
                     'rgba(255, 159, 64, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
                     'rgba(255, 99, 132, 0.6)'
                 ]
             }

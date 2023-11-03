@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Loading from "../../components/Loading/Loading";
 import {
-    Breadcrumbs, Drawer, FormControlLabel, Modal, Paper, Switch,
+    Breadcrumbs, Drawer, FormControl, FormControlLabel, MenuItem, Modal, Paper, Select, Switch,
     Table, TableBody, TableCell, TableContainer,
     TableHead, TablePagination, TableRow, Typography
 } from "@mui/material";
@@ -23,6 +23,9 @@ const ProductManagement = () => {
     const [size, setSize] = useState(5)
     const [page, setPage] = useState(0)
 
+    // Option search
+    const [state, setState] = useState('')
+
     // set datar response
     const [totalAmount, setTotalAmount] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
@@ -32,11 +35,9 @@ const ProductManagement = () => {
 
     const handleChangePage = (e, newPage) => {
         setPage(newPage)
-        getAllProduct(newPage, size);
     };
 
     const handleChangeSize = (event) => {
-        getAllProduct(0, event.target.value);
         setSize(parseInt(+event.target.value));
         setPage(0);
     };
@@ -46,18 +47,23 @@ const ProductManagement = () => {
     }
 
     useEffect(() => {
-        getAllProduct(page, size);
-    }, [])
+        getAllProduct(page, size, state);
+    }, [page, size, state])
 
-    const getAllProduct = (page, size) => {
+    const getAllProduct = (page, size, state) => {
         setIsLoading(true)
         managementProductApi
-            .getProductList(page, size)
+            .getProductList(page, size, state)
             .then((res) => {
                 if (res?.success === true) {
                     setTotalAmount(res?.data?.totalQuantity)
                     setTotalPage(res?.data?.totalPage)
                     setListProduct(res?.data?.list)
+                    setIsLoading(false);
+                } else {
+                    setTotalAmount(0)
+                    setTotalPage(0)
+                    setListProduct([])
                     setIsLoading(false);
                 }
             })
@@ -129,6 +135,20 @@ const ProductManagement = () => {
                             }}>Thêm mới</button>
                         </div>
                     </div>
+                    <FormControl sx={{ minWidth: 300 }} style={{ marginBottom: '20px', backgroundColor: 'white' }}>
+                        <Select
+                            value={state}
+                            onChange={(e) => {setState(e.target.value); setPage(0); setSize(5)}}
+                            displayEmpty
+                            inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                            <MenuItem value="">
+                                <em>Tất cả trạng thái</em>
+                            </MenuItem>
+                            <MenuItem value={'enable'}>Đang hoạt động</MenuItem>
+                            <MenuItem value={'disable'}>Khóa</MenuItem>
+                        </Select>
+                    </FormControl>
                     <Paper style={{ width: '100%' }}>
                         <TableContainer>
                             <Table stickyHeader aria-label="sticky table" style={{ width: '100%' }}>

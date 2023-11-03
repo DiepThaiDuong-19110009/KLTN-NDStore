@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import Loading from "../../components/Loading/Loading";
 import {
-    Breadcrumbs, Button, Drawer, Modal, Paper,
+    Breadcrumbs, Button, Drawer, FormControl, MenuItem, Modal, Paper,
+    Select,
     Table, TableBody, TableCell, TableContainer,
     TableHead, TablePagination, TableRow, Typography
 } from "@mui/material";
@@ -42,11 +43,9 @@ const OrderManagement = () => {
 
     const handleChangePage = (e, newPage) => {
         setPage(newPage)
-        getAllOrder(newPage, size, state);
     };
 
     const handleChangeSize = (event) => {
-        getAllOrder(0, event.target.value, state);
         setSize(parseInt(+event.target.value));
         setPage(0);
     };
@@ -57,7 +56,7 @@ const OrderManagement = () => {
 
     useEffect(() => {
         getAllOrder(page, size, state);
-    }, [])
+    }, [page, size, state])
 
     // Get All Order for page
     const getAllOrder = (page, size, state) => {
@@ -233,6 +232,23 @@ const OrderManagement = () => {
                             </a>
                         </div>
                     </div>
+                    <FormControl sx={{ minWidth: 300 }} style={{marginBottom: '20px', backgroundColor: 'white'}}>
+                        <Select
+                            value={state}
+                            onChange={(e) => {setState(e.target.value); setPage(0); setSize(5)}}
+                            displayEmpty
+                            inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                            <MenuItem value="">
+                                <em>Tất cả trạng thái</em>
+                            </MenuItem>
+                            <MenuItem value={'waiting'}>Đang chờ xác nhận</MenuItem>
+                            <MenuItem value={'process'}>Chờ thanh toán</MenuItem>
+                            <MenuItem value={'delivery'}>Đang giao hàng</MenuItem>
+                            <MenuItem value={'success'}>Đã giao</MenuItem>
+                            <MenuItem value={'cancel'}>Đã hủy</MenuItem>
+                        </Select>
+                    </FormControl>
                     <Paper style={{ width: '100%' }}>
                         <TableContainer>
                             <Table stickyHeader aria-label="sticky table" style={{ width: '100%' }}>

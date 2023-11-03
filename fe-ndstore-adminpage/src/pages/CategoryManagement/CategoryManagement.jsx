@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Loading from "../../components/Loading/Loading";
 import Header from "../../components/Header/Header";
-import { Breadcrumbs, Drawer, FormControlLabel, Modal, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from "@mui/material";
+import { Breadcrumbs, Drawer, FormControl, FormControlLabel, MenuItem, Modal, Paper, Select, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Menu from "../../components/Menu/Menu";
 import Footer from "../../components/Footer/Footer";
@@ -20,6 +20,9 @@ const CategoryManagement = () => {
     const [size, setSize] = useState(5)
     const [page, setPage] = useState(0)
 
+    // Option search
+    const [state, setState] = useState('')
+
     // set datar response
     const [totalAmount, setTotalAmount] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
@@ -29,11 +32,9 @@ const CategoryManagement = () => {
 
     const handleChangePage = (e, newPage) => {
         setPage(newPage)
-        getAllCategory(newPage, size);
     };
 
     const handleChangeSize = (event) => {
-        getAllCategory(0, event.target.value);
         setSize(parseInt(+event.target.value));
         setPage(0);
     };
@@ -43,18 +44,23 @@ const CategoryManagement = () => {
     }
 
     useEffect(() => {
-        getAllCategory(page, size);
-    }, [])
+        getAllCategory(page, size, state);
+    }, [page, size, state])
 
-    const getAllCategory = (page, size) => {
+    const getAllCategory = (page, size, state) => {
         setIsLoading(true)
         managementCategoryApi
-            .getCategoryList(page, size, '')
+            .getCategoryList(page, size, state)
             .then((res) => {
                 if (res?.success === true) {
                     setTotalAmount(res?.data?.totalCategory)
                     setTotalPage(res?.data?.totalPage)
                     setListCategory(res?.data?.listCategory)
+                    setIsLoading(false);
+                } else {
+                    setTotalAmount(0)
+                    setTotalPage(0)
+                    setListCategory([])
                     setIsLoading(false);
                 }
             })
@@ -136,6 +142,20 @@ const CategoryManagement = () => {
                             }}>Thêm mới</button>
                         </div>
                     </div>
+                    <FormControl sx={{ minWidth: 300 }} style={{ marginBottom: '20px', backgroundColor: 'white' }}>
+                        <Select
+                            value={state}
+                            onChange={(e) => {setState(e.target.value); setPage(0); setSize(5)}}
+                            displayEmpty
+                            inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                            <MenuItem value="">
+                                <em>Tất cả trạng thái</em>
+                            </MenuItem>
+                            <MenuItem value={'enable'}>Đang hoạt động</MenuItem>
+                            <MenuItem value={'disable'}>Khóa</MenuItem>
+                        </Select>
+                    </FormControl>
                     <Paper style={{ width: '100%' }}>
                         <TableContainer>
                             <Table stickyHeader aria-label="sticky table" style={{ width: '100%' }}>

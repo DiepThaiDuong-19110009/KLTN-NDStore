@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Loading from "../../components/Loading/Loading";
 import Header from "../../components/Header/Header";
-import { Breadcrumbs, Drawer, FormControlLabel, Modal, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from "@mui/material";
+import { Breadcrumbs, Drawer, FormControl, FormControlLabel, MenuItem, Modal, Paper, Select, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Menu from "../../components/Menu/Menu";
 import Footer from "../../components/Footer/Footer";
@@ -20,6 +20,9 @@ const BrandManagement = () => {
     const [size, setSize] = useState(5)
     const [page, setPage] = useState(0)
 
+    // Option search
+    const [state, setState] = useState('')
+
     // set datar response
     const [totalAmount, setTotalAmount] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
@@ -28,12 +31,10 @@ const BrandManagement = () => {
     const navigate = useNavigate()
 
     const handleChangePage = (e, newPage) => {
-        setPage(newPage)
-        getAllBrand(newPage, size);
+        setPage(newPage);
     };
 
     const handleChangeSize = (event) => {
-        getAllBrand(0, event.target.value);
         setSize(parseInt(+event.target.value));
         setPage(0);
     };
@@ -43,18 +44,23 @@ const BrandManagement = () => {
     }
 
     useEffect(() => {
-        getAllBrand(page, size);
-    }, [])
+        getAllBrand(page, size, state);
+    }, [page, size, state])
 
-    const getAllBrand = (page, size) => {
+    const getAllBrand = (page, size, state) => {
         setIsLoading(true)
         managementBrandApi
-            .getBrandList(page, size, '')
+            .getBrandList(page, size, state)
             .then((res) => {
                 if (res?.success === true) {
                     setTotalAmount(res?.data?.totalBrand)
                     setTotalPage(res?.data?.totalPage)
                     setListBrand(res?.data?.listBrand)
+                    setIsLoading(false);
+                } else {
+                    setTotalAmount(0)
+                    setTotalPage(0)
+                    setListBrand([])
                     setIsLoading(false);
                 }
             })
@@ -136,6 +142,20 @@ const BrandManagement = () => {
                             }}>Thêm mới</button>
                         </div>
                     </div>
+                    <FormControl sx={{ minWidth: 300 }} style={{ marginBottom: '20px', backgroundColor: 'white' }}>
+                        <Select
+                            value={state}
+                            onChange={(e) => {setState(e.target.value); setPage(0); setSize(5)}}
+                            displayEmpty
+                            inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                            <MenuItem value="">
+                                <em>Tất cả trạng thái</em>
+                            </MenuItem>
+                            <MenuItem value={'enable'}>Đang hoạt động</MenuItem>
+                            <MenuItem value={'disable'}>Khóa</MenuItem>
+                        </Select>
+                    </FormControl>
                     <Paper style={{ width: '100%' }}>
                         <TableContainer>
                             <Table stickyHeader aria-label="sticky table" style={{ width: '100%' }}>

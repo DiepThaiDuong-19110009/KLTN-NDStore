@@ -1,8 +1,8 @@
 import httpClient from "./http-client.api";
 
 class ManagementProductApis {
-    async getProductList(page, size) {
-        return httpClient.httpGet(`api/admin/manage/products/get/all/list?page=${page}&size=${size}`);
+    async getProductList(page, size, state) {
+        return httpClient.httpGet(`api/admin/manage/products/get/all/list?page=${page}&size=${size}&state=${state}`);
     }
 
     async setStatusProduct(productId) {

@@ -43,8 +43,16 @@ const ProductDetailManagement = (props) => {
                 </div>
                 <h4 style={{ textAlign: 'center' }}>Chi tiết sản phẩm</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', padding: '10px 20px' }}>
-                    <div style={{ textAlign: 'center' }}>
-                        <img style={{ width: '150px' }} alt={productDetail?.name} src={productDetail?.images && productDetail?.images[0] ? productDetail?.images[0]?.url : 'https://static.vecteezy.com/system/resources/thumbnails/011/537/824/small/picture-image-empty-state-single-isolated-icon-with-outline-style-free-vector.jpg'}></img>
+                    <div style={{ textAlign: 'center', overflow: 'auto' }}>
+                        {
+                            productDetail?.images &&
+                            productDetail?.images?.map((item) => (
+                                <img key={item?.id_image} style={{ width: '150px' }}
+                                    alt={productDetail?.name}
+                                    src={item?.url}>
+                                </img>
+                            ))
+                        }
                     </div>
                     <span>Tên sản phẩm: <strong>{productDetail?.name}</strong></span>
                     <span>Trạng thái: <strong>{productDetail?.state === 'enable' ?
@@ -65,24 +73,24 @@ const ProductDetailManagement = (props) => {
                             <span style={{ marginRight: '10px' }}>Thông số sản phẩm: </span>
                             {
                                 (productDetail?.productConfiguration && productDetail?.productConfiguration?.length !== 0) ?
-                                <div style={{ display: 'flex' }}>
-                                    <div>
-                                        {
-                                            productDetail?.productConfiguration &&
-                                            Object.keys(productDetail?.productConfiguration[0]).map((key, index) => (
-                                                <p style={{ marginRight: '5px' }} key={index}>- {key}:</p>
-                                            ))
-                                        }
-                                    </div>
-                                    <strong>
-                                        {
-                                            productDetail?.productConfiguration &&
-                                            Object.values(productDetail?.productConfiguration[0]).map((key, index) => (
-                                                <p key={index}>{key || ''}</p>
-                                            ))
-                                        }
-                                    </strong>
-                                </div> : 'Chưa cập nhật'
+                                    <div style={{ display: 'flex' }}>
+                                        <div>
+                                            {
+                                                productDetail?.productConfiguration &&
+                                                Object.keys(productDetail?.productConfiguration[0]).map((key, index) => (
+                                                    <p style={{ marginRight: '5px' }} key={index}>- {key}:</p>
+                                                ))
+                                            }
+                                        </div>
+                                        <strong>
+                                            {
+                                                productDetail?.productConfiguration &&
+                                                Object.values(productDetail?.productConfiguration[0]).map((key, index) => (
+                                                    <p key={index}>{key || ''}</p>
+                                                ))
+                                            }
+                                        </strong>
+                                    </div> : 'Chưa cập nhật'
                             }
                         </div>
                     </div>

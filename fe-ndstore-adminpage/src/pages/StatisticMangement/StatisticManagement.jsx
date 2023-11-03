@@ -11,7 +11,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { Bar } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 import { Chart as ChartJS, registerables } from 'chart.js';
 ChartJS.register(...registerables);
 
@@ -102,15 +102,9 @@ const StatisticManagement = () => {
             {
                 label: 'Doanh thu',
                 data: listStatistic?.map((item) => { return item?.revenue }),
-                backgroundColor: [
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)',
-                    'rgba(255, 159, 64, 0.6)',
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)'
-                ]
+                fill: true,
+                backgroundColor: "rgba(75,192,192,0.2)",
+                borderColor: "rgba(75,192,192,1)"
             }
         ],
     }
@@ -137,7 +131,7 @@ const StatisticManagement = () => {
                     <div style={{ margin: '15px 0' }}>
                         <h3 style={{ marginBottom: '15px' }}>Thống kê</h3>
                     </div>
-                    <Paper style={{ width: '100%', padding: '10px' }}>
+                    <Paper style={{ width: '100%', padding: '20px' }}>
                         <h4 style={{ marginBottom: '20px' }}>Thống kê số lượng bán theo sản phẩm</h4>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DemoContainer components={['DatePicker', 'DatePicker']}>
@@ -182,7 +176,7 @@ const StatisticManagement = () => {
                                     onChange={(newValue) => setToDayStatistic(newValue)}
                                 />
                             </DemoContainer>
-                            <Bar
+                            <Line
                                 data={chartDataStatistic}
                                 options={{
                                     title: {

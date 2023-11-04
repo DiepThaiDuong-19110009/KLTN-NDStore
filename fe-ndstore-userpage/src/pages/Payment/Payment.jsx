@@ -326,40 +326,6 @@ const Payment = () => {
                 isLoading === true && <Loader></Loader>
             }
             <div className="container-payment">
-                {/* {
-                        (cart?.length !== 0 || !cart) &&
-                        <table className='cart'>
-                            <tr className='header-cart-table'>
-                                <th>Tên sản phẩm</th>
-                                <th style={{ textAlign: 'center' }}>Hình ảnh</th>
-                                <th>Đơn giá</th>
-                                <th style={{ textAlign: 'right' }}>Thành tiền</th>
-                            </tr>
-                            {
-                                cart?.map((item) => (
-                                    <tr key={item?.itemCartId} className='body-cart-table'>
-                                        <td style={{ wordBreak: 'break-word', maxWidth: '40px' }}>
-                                            <span>{item?.productName}</span>
-                                        </td>
-                                        <td style={{ textAlign: 'center' }}>
-                                            <img style={{ width: '80px', height: '80px', border: '1px solid rgb(224, 224, 224)', borderRadius: '5px' }} alt=''
-                                                src={item?.image ? item?.image[0]?.url : ''}></img>
-                                        </td>
-                                        <td style={{ display: 'flex', flexDirection: 'column', marginTop: '20px' }}>
-                                            <strong>{numberWithCommas(parseInt(item?.discountPrice))} VNĐ</strong>
-                                            <div style={{ display: 'flex' }}>
-                                                <small style={{ textDecoration: 'line-through', marginRight: '6px' }}>{numberWithCommas(parseInt(item?.productPrice))} VNĐ</small>
-                                                <small style={{ color: 'var(--main-color)' }}>{item?.discount} %</small>
-                                            </div>
-                                        </td>
-                                        <td style={{ textAlign: 'right' }}>
-                                            <strong style={{ color: 'var(--main-color)', textAlign: 'right' }}>{numberWithCommas(parseInt(item?.discountPrice) * parseInt(item?.quantity))} VNĐ</strong>
-                                        </td>
-                                    </tr>
-                                ))
-                            }
-                        </table>
-                    } */}
                 <div className="info-payment">
                     <h5>Phương thức thanh toán</h5>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginTop: '15px' }}>
@@ -443,7 +409,7 @@ const Payment = () => {
                     <div>
                         <h4 style={{ marginBottom: '20px' }}>Thông báo</h4>
                         <p>Bạn còn đơn hàng đang chờ thanh toán. Vui lòng thanh toán để có thể tiếp tục đặt hàng.</p>
-                        <p style={{color: 'var(--main-color)', cursor: 'pointer'}} onClick={() => navigate('/order-history')}>Đến lịch sử đơn hàng</p>
+                        <p style={{ color: 'var(--main-color)', cursor: 'pointer' }} onClick={() => navigate('/order-history')}>Đến lịch sử đơn hàng</p>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'end', gap: '30px', marginTop: '40px' }}>
                         <Button autoFocus onClick={() => setOpenModal(false)}>

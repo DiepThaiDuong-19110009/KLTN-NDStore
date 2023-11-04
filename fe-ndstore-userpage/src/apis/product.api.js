@@ -56,6 +56,32 @@ export const getProductByKeySearch = (page, content) => {
   return axios.get(API_URL + `/api/products/find/get/search?content=${content}&page=${page}`, config)
 }
 
+// Filter product with category id + brand id + price + config
+export const filterProductLaptop = (page, categoryId, brandId, priceMin, priceMax, RAM, CPU, PIN) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }
+
+  let paramsLaptop = {
+    "brandId": brandId,
+    "RAM": RAM,
+    "CPU": CPU,
+    "PIN": PIN,
+  };
+
+  let query = Object.keys(paramsLaptop).map((k) => {
+    if (paramsLaptop[k] !== "") {
+      return encodeURIComponent(k) + '=' + encodeURIComponent(paramsLaptop[k])
+    }
+  }).join('&')
+
+  console.log(query)
+
+  return axios.get(API_URL + `/api/products/find/filter/category/search/list/config?categoryId=${categoryId}&priceMin=${priceMin}&priceMax=${priceMax}&page=${page}&${query}`, config)
+}
+
 // Get detail Product
 export const getProductDetailById = (id) => {
   const config = {

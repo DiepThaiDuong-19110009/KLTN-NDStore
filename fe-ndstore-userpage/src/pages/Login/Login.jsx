@@ -66,7 +66,7 @@ const Login = () => {
                     } else if (res?.data?.message === 'Your account is block') {
                         setMessage('Tài khoản đã bị vô hiệu hóa')
                     } else {
-                        setMessage('Đã xảy ra lỗi')
+                        setMessage('Vui lòng kiểm tra lại Email hoặc Mật khẩu')
                     }
                     setIsLoading(false);
                     return;
@@ -75,7 +75,7 @@ const Login = () => {
             .catch((err) => {
                 setIsLoading(false);
                 if (err?.response?.data?.message === 'Email or password incorrect') {
-                    setMessage('Email hoặc mật khẩu không đúng')
+                    setMessage('Vui lòng kiểm tra lại Email hoặc Mật khẩu')
                 }
                 return err;
             })

@@ -1,13 +1,14 @@
 import CardProduct from "../../components/CardProduct/CardProduct";
 import Footer from "../../components/Footer/Footer";
 import Header from "../../components/Header/Header";
-import { Grid, Pagination } from "@mui/material";
+import { FormControl, FormControlLabel, FormLabel, Grid, Pagination, Radio, RadioGroup } from "@mui/material";
 import '../Product/Product.css'
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getProductByBrandId, getProductByCategoryId, getProductByKeySearch, getProductByPage } from "../../apis/product.api";
+import { filterProductLaptop, getProductByBrandId, getProductByCategoryId, getProductByKeySearch, getProductByPage } from "../../apis/product.api";
 import { Loader } from "../../components/Loader/Loader";
 import { getAllBrandNoPage } from "../../apis/brand";
+import { getCategoryById } from "../../apis/category.api";
 
 const Product = () => {
     const [page, setPage] = useState(1);
@@ -15,6 +16,16 @@ const Product = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [listBrand, setListBrand] = useState([])
     const [searchParams, setSearchParams] = useSearchParams();
+    const [categoryDetail, setCategoryDetail] = useState({})
+    const [ASC, setASC] = useState(true)
+
+    const [filterBrand, setFilterBrand] = useState('')
+    const [minPrice, setMinPrice] = useState(0);
+    const [maxPrice, setMaxPrice] = useState(40000000);
+    // Config Laptop
+    const [RAM, setRAM] = useState('')
+    const [CPU, setCPU] = useState('')
+    const [PIN, setPIN] = useState('')
 
     const navigate = useNavigate();
 
@@ -25,7 +36,7 @@ const Product = () => {
     const [listProduct, setListProduct] = useState([])
 
     useEffect(() => {
-        getAllBrand()
+        getAllBrand();
     }, [])
 
     useEffect(() => {
@@ -33,7 +44,8 @@ const Product = () => {
             findProductByKeySearch(page, searchParams.get("keySearch"))
         }
         if (searchParams.get("categoryId")) {
-            getProductByCategory(page, searchParams.get("categoryId"))
+            getProductByCategory(page, searchParams.get("categoryId"));
+            getCategoryDetail(searchParams.get("categoryId"))
         }
         if (searchParams.get("brandId")) {
             getProductByBrand(page, searchParams.get("brandId"))
@@ -41,7 +53,16 @@ const Product = () => {
         if (searchParams.get("all")) {
             getProductAll(page);
         }
-    }, [page, searchParams])
+    }, [page, searchParams, ASC])
+
+    // Sort by price
+    const sortProductByPrice = (listProduct) => {
+        if (ASC === true && listProduct.length > 0) {
+            return listProduct.sort((a, b) => parseFloat(a.discountPrice) - parseFloat(b.discountPrice));
+        } else {
+            return listProduct.sort((a, b) => parseFloat(b.discountPrice) - parseFloat(a.discountPrice));
+        }
+    }
 
     // Get all products
     const getProductAll = (page) => {
@@ -51,7 +72,7 @@ const Product = () => {
                 if (res?.data?.success === true) {
                     setIsLoading(false);
                     setTotalAmount(res?.data?.data?.totalQuantity);
-                    setListProduct(res?.data?.data?.list)
+                    setListProduct(sortProductByPrice(res?.data?.data?.list))
                 }
             })
             .catch((err) => {
@@ -70,12 +91,29 @@ const Product = () => {
                 if (res?.data?.success === true) {
                     setIsLoading(false);
                     setTotalAmount(res?.data?.data?.totalQuantity);
-                    setListProduct(res?.data?.data?.list)
+                    setListProduct(sortProductByPrice(res?.data?.data?.list))
                 }
             })
             .catch((err) => {
                 setListProduct([])
                 setTotalAmount(0);
+                setIsLoading(false)
+                return err;
+            })
+    }
+
+    // Get category Detail
+    const getCategoryDetail = (id) => {
+        setIsLoading(true)
+        getCategoryById(id)
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    setIsLoading(false);
+                    setCategoryDetail(res?.data?.data);
+                }
+            })
+            .catch((err) => {
+                setCategoryDetail({})
                 setIsLoading(false)
                 return err;
             })
@@ -89,7 +127,7 @@ const Product = () => {
                 if (res?.data?.success === true) {
                     setIsLoading(false);
                     setTotalAmount(res?.data?.data?.totalQuantity);
-                    setListProduct(res?.data?.data?.list)
+                    setListProduct(sortProductByPrice(res?.data?.data?.list))
                 }
             })
             .catch((err) => {
@@ -129,7 +167,27 @@ const Product = () => {
                 if (res?.data?.success === true) {
                     setIsLoading(false);
                     setTotalAmount(res?.data?.data?.totalQuantity);
-                    setListProduct(res?.data?.data?.list)
+                    setListProduct(sortProductByPrice(res?.data?.data?.list))
+                }
+            })
+            .catch((err) => {
+                setListProduct([]);
+                setTotalAmount(0);
+                setIsLoading(false)
+                return err;
+            })
+    }
+
+    // Filter product
+    const filterProduct = () => {
+        console.log(searchParams.get("categoryId"), filterBrand, RAM, CPU, PIN)
+        setIsLoading(true)
+        filterProductLaptop(page - 1, searchParams.get("categoryId"), filterBrand, minPrice, maxPrice, RAM, CPU, PIN)
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    setIsLoading(false);
+                    setTotalAmount(res?.data?.data?.totalQuantity);
+                    setListProduct(sortProductByPrice(res?.data?.data?.list))
                 }
             })
             .catch((err) => {
@@ -148,53 +206,115 @@ const Product = () => {
             }
             <div className="container-product">
                 {
-                    !searchParams.get('keySearch') &&
+                    (searchParams.get('categoryId')) &&
                     <div className="filter-product">
                         <div className="filter-action">
-                            <button>Lọc <i className="fas fa-filter"></i></button>
-                            <button>Reset <i className="fas fa-undo"></i></button>
+                            <button onClick={() => filterProduct()}>Lọc <i className="fas fa-filter"></i></button>
+                            <button onClick={() => window.location.reload()}>Reset <i className="fas fa-undo"></i></button>
                         </div>
                         <hr />
                         <div className="range">
                             <strong>Chọn khoảng giá</strong>
                             <div style={{ marginTop: '10px' }}>
                                 <label style={{ margin: 0, padding: 0 }}>Từ:</label>
-                                <input value={0} min={0} style={{ margin: '0 0 10px 0' }} type="number"></input>
+                                <input onChange={(e) => setMinPrice(e.target.value)} value={minPrice}
+                                    style={{ margin: '0 0 10px 0' }} type="number"></input>
                                 <label style={{ margin: 0, padding: 0 }}>Đến:</label>
-                                <input value={10000000} max={10000000} type="number"></input>
+                                <input onChange={(e) => setMaxPrice(e.target.value)} value={maxPrice}
+                                    type="number"></input>
                             </div>
                         </div>
                         <hr />
                         <div>
-                            <strong>Thương hiệu</strong>
-                            <div style={{ margin: '10px 0' }}>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <input style={{ marginRight: '10px' }} type="checkbox"></input>
-                                    <label style={{ margin: 0, padding: 0 }}>ASUS</label>
-                                </div>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <input style={{ marginRight: '10px' }} type="checkbox"></input>
-                                    <label style={{ margin: 0, padding: 0 }}>MSI</label>
-                                </div>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <input style={{ marginRight: '10px' }} type="checkbox"></input>
-                                    <label style={{ margin: 0, padding: 0 }}>ACER</label>
-                                </div>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <input style={{ marginRight: '10px' }} type="checkbox"></input>
-                                    <label style={{ margin: 0, padding: 0 }}>HP</label>
-                                </div>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <input style={{ marginRight: '10px' }} type="checkbox"></input>
-                                    <label style={{ margin: 0, padding: 0 }}>LG</label>
-                                </div>
-                            </div>
+                            <FormControl>
+                                <FormLabel id="demo-radio-buttons-group-label">Thương hiệu</FormLabel>
+                                <RadioGroup
+                                    value={filterBrand}
+                                    onChange={(e) => setFilterBrand(e.target.value)}
+                                    aria-labelledby="demo-radio-buttons-group-label"
+                                    name="radio-buttons-group"
+                                >
+                                    <FormControlLabel value="" control={<Radio checked={filterBrand === ''} />} label="Tất cả" />
+                                    {
+                                        listBrand?.map((brand) => (
+                                            <FormControlLabel key={brand?.id} value={brand?.id} control={<Radio />} label={brand?.name} />
+                                        ))
+                                    }
+                                </RadioGroup>
+                            </FormControl>
                         </div>
+                        {
+                            categoryDetail?.titleCategory === 'Laptop' &&
+                            <>
+                                <hr />
+                                <div>
+                                    <FormControl>
+                                        <FormLabel id="demo-radio-buttons-group-label">RAM</FormLabel>
+                                        <RadioGroup
+                                            value={RAM}
+                                            onChange={(e) => setRAM(e.target.value)}
+                                            aria-labelledby="demo-radio-buttons-group-label"
+                                            name="radio-buttons-group"
+                                        >
+                                            <FormControlLabel value="" control={<Radio checked={RAM === ''} />} label="Tất cả" />
+                                            <FormControlLabel value="8GB" control={<Radio />} label="8GB" />
+                                            <FormControlLabel value="16GB" control={<Radio />} label="16GB" />
+                                            <FormControlLabel value="32GB" control={<Radio />} label="32GB" />
+                                        </RadioGroup>
+                                    </FormControl>
+                                </div>
+                                <hr />
+                                <div>
+                                    <FormControl>
+                                        <FormLabel id="demo-radio-buttons-group-label">CPU</FormLabel>
+                                        <RadioGroup
+                                            value={CPU}
+                                            onChange={(e) => setCPU(e.target.value)}
+                                            aria-labelledby="demo-radio-buttons-group-label"
+                                            name="radio-buttons-group"
+                                        >
+                                            <FormControlLabel value="" control={<Radio checked={CPU === ''} />} label="Tất cả" />
+                                            <FormControlLabel value="Core-i3" control={<Radio />} label="Core-i3" />
+                                            <FormControlLabel value="Core-i5" control={<Radio />} label="Core-i5" />
+                                            <FormControlLabel value="Core-i7" control={<Radio />} label="Core-i7" />
+                                            <FormControlLabel value="Core-i9" control={<Radio />} label="Core-i9" />
+                                        </RadioGroup>
+                                    </FormControl>
+                                </div>
+                                <hr />
+                                <div>
+                                    <FormControl>
+                                        <FormLabel id="demo-radio-buttons-group-label">PIN</FormLabel>
+                                        <RadioGroup
+                                            value={PIN}
+                                            onChange={(e) => setPIN(e.target.value)}
+                                            aria-labelledby="demo-radio-buttons-group-label"
+                                            name="radio-buttons-group"
+                                        >
+                                            <FormControlLabel value="" control={<Radio checked={PIN === ''} />} label="Tất cả" />
+                                            <FormControlLabel value="45WH" control={<Radio />} label="45WH" />
+                                            <FormControlLabel value="90WH" control={<Radio />} label="90WH" />
+                                        </RadioGroup>
+                                    </FormControl>
+                                </div>
+                            </>
+                        }
                     </div>
                 }
-                <div className="list-product" style={{ width: searchParams.get('keySearch') ? '100%' : '80%' }}>
+                <div className="list-product" style={{ width: (!searchParams.get('categoryId')) ? '100%' : '80%' }}>
                     <div className="name-category">
-                        <h5>Tìm thấy: <span>{totalAmount} sản phẩm</span></h5>
+                        <h5>Tìm thấy: {' '}
+                            <span>
+                                {totalAmount} sản phẩm <span>
+                                    {
+                                        searchParams.get('categoryId') && `(Thuộc danh mục ${categoryDetail?.titleCategory})`
+                                    }
+                                    {
+                                        searchParams.get('keySearch') && `(Với từ khóa  "${searchParams.get('keySearch')}")`
+                                    }
+                                </span>
+                            </span>
+                        </h5>
                     </div>
                     {/* row brand */}
                     {
@@ -222,15 +342,23 @@ const Product = () => {
                         listProduct?.length !== 0 &&
                         <div className="filter-by">
                             <strong>Sắp xếp theo</strong>
-                            <button>Giá tăng dần</button>
-                            <button>Giá giảm dần</button>
+                            <button style={{
+                                color: ASC === true ? 'var(--main-color)' : 'black',
+                                border: ASC === true ? '1px solid var(--main-color)' : 'none'
+                            }}
+                                onClick={() => setASC(true)}>Giá tăng dần</button>
+                            <button style={{
+                                color: ASC === false ? 'var(--main-color)' : 'black',
+                                border: ASC === false ? '1px solid var(--main-color)' : 'none'
+                            }}
+                                onClick={() => setASC(false)}>Giá giảm dần</button>
                         </div>
                     }
                     <Grid container spacing={0} className="products">
                         {
                             listProduct.length !== 0 ?
                                 listProduct.map((product) => (
-                                    <Grid key={product?.id} xs={6} md={4} xl={3}>
+                                    <Grid key={product?.id} xs={6} md={4} xl={!(searchParams.get('categoryId')) ? 2 : 3}>
                                         <CardProduct
                                             id={product?.id}
                                             src={product?.images[0]?.url || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsG3u77s8fTCxsnn7O/f5OfFyczP09bM0dO8wMPk6ezY3eDd4uXR1tnJzdBvAX/cAAACVElEQVR4nO3b23KDIBRA0ShGU0n0//+2KmO94gWZ8Zxmr7fmwWEHJsJUHw8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwO1MHHdn+L3rIoK6eshsNJ8kTaJI07fERPOO1Nc1vgQm2oiBTWJ+d8+CqV1heplLzMRNonED+4mg7L6p591FC+133/xCRNCtd3nL9BlxWP++MOaXFdEXFjZ7r8D9l45C8y6aG0cWtP/SUGhs2d8dA/ZfGgrzYX+TVqcTNRRO9l+fS5eSYzQs85psUcuzk6igcLoHPz2J8gvzWaH/JLS+95RfOD8o1p5CU5R7l5LkfKEp0mQ1UX7hsVXqDpRrifILD/3S9CfmlUQFhQfuFu0STTyJ8gsP3PH7GVxN1FC4t2sbBy4TNRTu7LyHJbqaqKFw+/Q0ncFloo7CjRPwMnCWqKXQZ75El4nKC9dmcJaou9AXOE5UXbi+RGeJygrz8Uf+GewSn9uXuplnWDZJ7d8f24F/s6iq0LYf9olbS3Q8i5oKrRu4S9ybwaQ/aCkqtP3I28QDgeoK7TBya/aXqL5COx67PTCD2grtdOwH+pQV2r0a7YVBgZoKwwIVFQYG6ikMDVRTGByopjD8ATcKb0UhhRTe77sKs2DV7FKSjId18TUEBYVyLhUThWfILHTDqmI85/2RWWjcE/bhP6OD7maT3h20MHsA47JC3PsW0wcwLhv9t0OOPOIkCn21y2bXXwlyylxiYMPk1SuCSmpfK8bNQvIrpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwNX4BCbAju9/X67UAAAAASUVORK5CYII='}

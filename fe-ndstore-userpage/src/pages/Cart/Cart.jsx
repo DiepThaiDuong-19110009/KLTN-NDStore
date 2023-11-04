@@ -190,7 +190,7 @@ const Cart = () => {
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '30px', flexDirection: 'column' }}>
                             <img style={{ width: '150px' }} src='https://cdni.iconscout.com/illustration/premium/thumb/empty-cart-7359557-6024626.png' alt='Giỏ hàng trống'></img>
                             <strong>Giỏ hàng trống</strong><br />
-                            <button onClick={() => navigate('/product')} style={{ border: 'none', backgroundColor: 'var(--main-color)', padding: '10px 20px', color: '#FFFFFF', borderRadius: '10px' }}>Mua ngay</button>
+                            <button onClick={() => navigate(`/product?all=${true}`)} style={{ border: 'none', backgroundColor: 'var(--main-color)', padding: '10px 20px', color: '#FFFFFF', borderRadius: '10px' }}>Mua ngay</button>
                         </div>
                     }
                 </div>

@@ -282,8 +282,8 @@ const OrderManagement = () => {
                                                 {
                                                     order?.paymentType === 'COD' ?
                                                         <p style={{
-                                                            width: '100px',
-                                                            backgroundColor: 'green', color: '#FFF',
+                                                            width: '100px', border: '1px solid green',
+                                                            backgroundColor: 'transparent', color: 'green',
                                                             textAlign: 'center', padding: '10px 0',
                                                             borderRadius: '5px'
                                                         }}>Tiền mặt</p>

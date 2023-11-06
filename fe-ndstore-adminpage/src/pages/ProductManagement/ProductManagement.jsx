@@ -31,6 +31,10 @@ const ProductManagement = () => {
     const [totalPage, setTotalPage] = useState(0);
     const [listProduct, setListProduct] = useState([]);
 
+    const numberWithCommas = (x) => {
+        return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
     const navigate = useNavigate()
 
     const handleChangePage = (e, newPage) => {
@@ -74,7 +78,6 @@ const ProductManagement = () => {
     }
 
     const updateStatusProduct = (id, role, images) => {
-        console.log(images)
         if (!id || role === 'Role_Admin') {
             return;
         }
@@ -138,7 +141,7 @@ const ProductManagement = () => {
                     <FormControl sx={{ minWidth: 300 }} style={{ marginBottom: '20px', backgroundColor: 'white' }}>
                         <Select
                             value={state}
-                            onChange={(e) => {setState(e.target.value); setPage(0); setSize(5)}}
+                            onChange={(e) => { setState(e.target.value); setPage(0); setSize(5) }}
                             displayEmpty
                             inputProps={{ 'aria-label': 'Without label' }}
                         >
@@ -182,7 +185,7 @@ const ProductManagement = () => {
                                             </TableCell>
                                             <TableCell align="left">{product?.nameCategory}</TableCell>
                                             <TableCell align="left">{product?.nameBrand}</TableCell>
-                                            <TableCell align="left">{product?.originPrice}</TableCell>
+                                            <TableCell align="left">{numberWithCommas(product?.originPrice)}</TableCell>
                                             <TableCell align="left">{product?.discount}%</TableCell>
                                             <TableCell align="left">{product?.stock}</TableCell>
                                             <TableCell align="left">

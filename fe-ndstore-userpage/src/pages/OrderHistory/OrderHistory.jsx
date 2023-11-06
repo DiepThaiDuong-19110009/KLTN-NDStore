@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import '../OrderHistory/OrderHistory.css'
 import {
-    Box, Button, FormControl, InputLabel, MenuItem, Modal, Paper, Select,
+    Box, Button, Modal, Paper,
     Tab, Tabs, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow
 } from "@mui/material";
 import { cancelOrderUser, getHistoryOrderUser, remakelOrderUser } from "../../apis/order.api";
-import { useEffect } from "react";
 import { Loader } from "../../components/Loader/Loader";
 import { useNavigate } from "react-router-dom";
+import imgVNPay from '../../images/vnpay.png';
+import imgPayPal from '../../images/paypal.png'
+
 
 const OrderHistory = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -198,7 +200,20 @@ const OrderHistory = () => {
                                                             {order?.shipment?.customerDistrict}{', '}
                                                             {order?.shipment?.customerProvince}</TableCell>
                                                         <TableCell align="left">{order?.createdDate}</TableCell>
-                                                        <TableCell align="left">{order?.paymentType === 'COD' ? 'Tiền mặt' : order?.paymentType}</TableCell>
+                                                        <TableCell align="left">
+                                                            {
+                                                                order?.paymentType === 'COD' ?
+                                                                    <p style={{
+                                                                        width: '100px', border: '1px solid green',
+                                                                        backgroundColor: 'transparent', color: 'green',
+                                                                        textAlign: 'center', padding: '10px 0',
+                                                                        borderRadius: '5px'
+                                                                    }}>Tiền mặt</p>
+                                                                    : order?.paymentType === 'VNPAY' ?
+                                                                        <img style={{ width: '100px' }} src={imgVNPay} alt="" /> : order?.paymentType === 'PAYPAL' ?
+                                                                            <img style={{ width: '100px' }} src={imgPayPal} alt="" /> : order?.paymentType
+                                                            }
+                                                        </TableCell>
                                                         <TableCell style={{ minWidth: '150px', color: 'var(--main-color)' }} align="right">{numberWithCommas(order?.totalPrice)} VNĐ</TableCell>
                                                         <TableCell style={{ minWidth: '150px' }} align="left">
                                                             {

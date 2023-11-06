@@ -182,7 +182,7 @@ const OrderHistory = () => {
                                                     <TableCell style={{ fontWeight: 'bold' }} align="left">Số điện thoại</TableCell>
                                                     <TableCell style={{ fontWeight: 'bold' }} align="left">Địa chỉ nhận hàng</TableCell>
                                                     <TableCell style={{ fontWeight: 'bold' }} align="left">Ngày đặt hàng</TableCell>
-                                                    <TableCell style={{ fontWeight: 'bold' }} align="left">Phương thức thanh toán</TableCell>
+                                                    <TableCell style={{ fontWeight: 'bold' }} align="left">Phương thức</TableCell>
                                                     <TableCell style={{ fontWeight: 'bold', minWidth: '150px', textAlign: 'right' }} align="left">Tổng tiền</TableCell>
                                                     <TableCell style={{ fontWeight: 'bold' }} align="left">Trạng thái</TableCell>
                                                     <TableCell style={{ fontWeight: 'bold' }} align="center">Cập nhật trạng thái</TableCell>
@@ -195,7 +195,9 @@ const OrderHistory = () => {
                                                         <TableCell align="center">{index + 1}</TableCell>
                                                         <TableCell align="left">{order?.shipment?.customerName}</TableCell>
                                                         <TableCell align="left">{order?.shipment?.customerPhone}</TableCell>
-                                                        <TableCell style={{ maxWidth: '200px' }} align="left">{order?.shipment?.customerAddress}{', '}
+                                                        <TableCell style={{ maxWidth: '200px' }} align="left">
+                                                            <i className="fas fa-map-marker-alt" style={{color: 'var(--main-color)', marginRight: '5px'}}></i>
+                                                            {order?.shipment?.customerAddress}{', '}
                                                             {order?.shipment?.customerWard}{', '}
                                                             {order?.shipment?.customerDistrict}{', '}
                                                             {order?.shipment?.customerProvince}</TableCell>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Loading from "../../../components/Loading/Loading";
 import Header from "../../../components/Header/Header";
-import { Breadcrumbs, Drawer, Modal, TextField, Typography } from "@mui/material";
+import { Alert, Breadcrumbs, Drawer, Modal, Snackbar, TextField, Typography } from "@mui/material";
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -17,7 +17,8 @@ const CategoryEditManagement = () => {
     const [openConfirmClose, setOpenConfirmClose] = useState(false);
     const [imageCategory, setImageCategory] = useState('')
     const [state, setState] = useState('')
-    const [messageImageCategory, setMessageImagecategory] = useState('')
+    const [messageImageCategory, setMessageImagecategory] = useState('');
+    const [openSnackbar, setOpenSnackbar] = useState(false);
 
     let { id } = useParams()
 
@@ -30,6 +31,15 @@ const CategoryEditManagement = () => {
     useEffect(() => {
         getCategoryDetail(id)
     }, [id])
+
+    // Close snackbar
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSnackbar(false);
+    };
 
     const validationSchema = Yup.object().shape({
         name: Yup.string()
@@ -80,7 +90,8 @@ const CategoryEditManagement = () => {
             .then((res) => {
                 if (res?.success === true) {
                     setIsLoading(false)
-                    navigate(PATH.CATEGORY)
+                    // navigate(PATH.CATEGORY)
+                    setOpenSnackbar(true)
                 }
             })
             .catch((err) => {
@@ -100,7 +111,8 @@ const CategoryEditManagement = () => {
             .then((res) => {
                 if (res?.success === true) {
                     setIsLoading(false)
-                    navigate(PATH.CATEGORY)
+                    // navigate(PATH.CATEGORY)
+                    setOpenSnackbar(true)
                 }
             })
             .catch((err) => {
@@ -218,7 +230,7 @@ const CategoryEditManagement = () => {
                                         backgroundColor: 'gray', border: 'none',
                                         outline: 'none', padding: '10px 20px', color: 'white',
                                         borderRadius: '5px', cursor: 'pointer'
-                                    }}>Hủy</button>
+                                    }}>Thoát</button>
                                 </div>
                             </div>
                         </div>
@@ -238,7 +250,7 @@ const CategoryEditManagement = () => {
                     background: 'white', overflowY: 'auto', padding: '20px',
                     borderRadius: '5px'
                 }}>
-                    <p>Bạn có chắc chắn muốn hủy các thay đổi không?</p>
+                    <p>Bạn có chắc chắn muốn thoát cập nhật danh mục không?</p>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '20px', justifyContent: 'end', marginTop: '50px' }}>
                         <button onClick={() => navigate(PATH.CATEGORY)} style={{
                             backgroundColor: 'var(--main-color)', border: 'none',
@@ -253,6 +265,11 @@ const CategoryEditManagement = () => {
                     </div>
                 </div>
             </Modal>
+            <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                    Cập nhật danh mục thành công
+                </Alert>
+            </Snackbar>
         </div >
     )
 }

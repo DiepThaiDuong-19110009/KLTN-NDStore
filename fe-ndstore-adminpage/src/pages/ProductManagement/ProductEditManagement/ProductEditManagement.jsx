@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Loading from "../../../components/Loading/Loading";
 import Header from "../../../components/Header/Header";
-import { Breadcrumbs, Drawer, FormControl, InputLabel, MenuItem, Modal, Select, TextField, Typography } from "@mui/material";
+import { Alert, Breadcrumbs, Drawer, FormControl, InputLabel, MenuItem, Modal, Select, Snackbar, TextField, Typography } from "@mui/material";
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -27,10 +27,20 @@ const ProductEditManagement = () => {
     const [imageBrand, setImageBrand] = useState([])
     const [messageBrandId, setMessageBrandId] = useState('')
     const [messageImageBrand, setMessageImageBrand] = useState('')
+    const [openSnackbar, setOpenSnackbar] = useState(false);
 
     const [inputList, setInputList] = useState([{ key: "", value: "" }]);
 
     let { id } = useParams()
+
+    // Close snackbar
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSnackbar(false);
+    };
 
     const handleInputChange = (e, index) => {
         const { name, value } = e.target;
@@ -83,7 +93,7 @@ const ProductEditManagement = () => {
                         if (res?.data?.productConfiguration[0].hasOwnProperty(key)) {
                             let tempObj = {};
                             tempObj[key] = res?.data?.productConfiguration[0][key];
-                            arr.push({key: key, value: tempObj[key]});
+                            arr.push({ key: key, value: tempObj[key] });
                         }
                     }
                     setInputList(arr);
@@ -140,6 +150,7 @@ const ProductEditManagement = () => {
                 if (res?.success === true) {
                     setIsLoading(false)
                     getProductDetail(id)
+                    setOpenSnackbar(true)
                 }
             })
             .catch((err) => {
@@ -161,6 +172,7 @@ const ProductEditManagement = () => {
                 if (res?.success === true) {
                     setIsLoading(false)
                     getProductDetail(id)
+                    setOpenSnackbar(true)
                 }
             })
             .catch((err) => {
@@ -205,7 +217,9 @@ const ProductEditManagement = () => {
             .editProduct({ ...data, category: categoryId, brand: brandId, state: state }, id)
             .then((res) => {
                 if (res?.success === true) {
-                    navigate(PATH.PRODUCT)
+                    // navigate(PATH.PRODUCT)
+                    setIsLoading(false);
+                    setOpenSnackbar(true)
                 }
             })
             .catch((err) => {
@@ -225,7 +239,9 @@ const ProductEditManagement = () => {
             .editConfigProduct(mergedObj, id)
             .then((res) => {
                 if (res?.success === true) {
-                    navigate(PATH.PRODUCT)
+                    // navigate(PATH.PRODUCT)
+                    setIsLoading(false);
+                    setOpenSnackbar(true)
                 }
             })
             .catch((err) => {
@@ -262,7 +278,14 @@ const ProductEditManagement = () => {
                     backgroundColor: '#FFFFFF', padding: '20px', marginTop: '20px', borderRadius: '5px'
                 }}>
                     <div>
-                        <h3 style={{ marginBottom: '20px' }}>Chỉnh sửa sản phẩm</h3>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <h3 style={{ marginBottom: '20px' }}>Chỉnh sửa sản phẩm</h3>
+                            <button onClick={() => setOpenConfirmClose(true)} style={{
+                                backgroundColor: 'gray', border: 'none',
+                                outline: 'none', padding: '10px 20px', color: 'white',
+                                borderRadius: '5px', cursor: 'pointer'
+                            }}>Thoát</button>
+                        </div>
                         <h5 style={{
                             color: 'white', background: 'var(--main-color)',
                             padding: '6px 10px', borderRadius: '5px', marginBottom: '10px'
@@ -487,11 +510,11 @@ const ProductEditManagement = () => {
                                         outline: 'none', padding: '10px 20px', color: 'white',
                                         borderRadius: '5px', cursor: 'pointer'
                                     }}>Lưu</button>
-                                    <button onClick={() => setOpenConfirmClose(true)} style={{
+                                    {/* <button onClick={() => setOpenConfirmClose(true)} style={{
                                         backgroundColor: 'gray', border: 'none',
                                         outline: 'none', padding: '10px 20px', color: 'white',
                                         borderRadius: '5px', cursor: 'pointer'
-                                    }}>Hủy</button>
+                                    }}>Hủy</button> */}
                                 </div>
                             </div>
                         </div>
@@ -554,11 +577,11 @@ const ProductEditManagement = () => {
                                     outline: 'none', padding: '10px 20px', color: 'white',
                                     borderRadius: '5px', cursor: 'pointer'
                                 }}>Lưu</button>
-                                <button onClick={() => setOpenConfirmClose(true)} style={{
+                                {/* <button onClick={() => setOpenConfirmClose(true)} style={{
                                     backgroundColor: 'gray', border: 'none',
                                     outline: 'none', padding: '10px 20px', color: 'white',
                                     borderRadius: '5px', cursor: 'pointer'
-                                }}>Hủy</button>
+                                }}>Hủy</button> */}
                             </div>
                         </div>
                     </div>
@@ -577,7 +600,7 @@ const ProductEditManagement = () => {
                     background: 'white', overflowY: 'auto', padding: '20px',
                     borderRadius: '5px'
                 }}>
-                    <p>Bạn có chắc chắn muốn hủy chỉnh sửa sản phẩm không?</p>
+                    <p>Bạn có chắc chắn muốn thoát chỉnh sửa sản phẩm không?</p>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '20px', justifyContent: 'end', marginTop: '50px' }}>
                         <button onClick={() => navigate(PATH.PRODUCT)} style={{
                             backgroundColor: 'var(--main-color)', border: 'none',
@@ -592,6 +615,11 @@ const ProductEditManagement = () => {
                     </div>
                 </div>
             </Modal>
+            <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                    Cập nhật sản phẩm thành công
+                </Alert>
+            </Snackbar>
         </div >
     )
 }

@@ -17,7 +17,8 @@ const Product = () => {
     const [listBrand, setListBrand] = useState([])
     const [searchParams, setSearchParams] = useSearchParams();
     const [categoryDetail, setCategoryDetail] = useState({})
-    const [ASC, setASC] = useState(true)
+
+    const [arrangeListProduct, setArrangeListProduct] = useState('')
 
     const [filterBrand, setFilterBrand] = useState('')
     const [minPrice, setMinPrice] = useState(0);
@@ -26,6 +27,10 @@ const Product = () => {
     const [RAM, setRAM] = useState('')
     const [CPU, setCPU] = useState('')
     const [PIN, setPIN] = useState('')
+
+    // Config desktop
+    const [IPS, setIPS] = useState('')
+    const [USB, setUSB] = useState('')
 
     const navigate = useNavigate();
 
@@ -36,8 +41,13 @@ const Product = () => {
     const [listProduct, setListProduct] = useState([])
 
     useEffect(() => {
+
+    }, [arrangeListProduct])
+
+    useEffect(() => {
+        resetFilter()
         getAllBrand();
-    }, [])
+    }, [searchParams.get("categoryId")])
 
     useEffect(() => {
         if (searchParams.get("keySearch")) {
@@ -53,13 +63,16 @@ const Product = () => {
         if (searchParams.get("all")) {
             getProductAll(page);
         }
-    }, [page, searchParams, ASC])
+    }, [page, searchParams])
 
     // Sort by price
-    const sortProductByPrice = (listProduct) => {
-        if (ASC === true && listProduct.length > 0) {
+    const sortProductByPrice = (key) => {
+        if (key === "ASC" && listProduct.length > 0) {
+            setArrangeListProduct('ASC')
             return listProduct.sort((a, b) => parseFloat(a.discountPrice) - parseFloat(b.discountPrice));
-        } else {
+        }
+        if (key === "DESC" && listProduct.length > 0) {
+            setArrangeListProduct('DESC')
             return listProduct.sort((a, b) => parseFloat(b.discountPrice) - parseFloat(a.discountPrice));
         }
     }
@@ -72,7 +85,7 @@ const Product = () => {
                 if (res?.data?.success === true) {
                     setIsLoading(false);
                     setTotalAmount(res?.data?.data?.totalQuantity);
-                    setListProduct(sortProductByPrice(res?.data?.data?.list))
+                    setListProduct(res?.data?.data?.list)
                 }
             })
             .catch((err) => {
@@ -91,7 +104,7 @@ const Product = () => {
                 if (res?.data?.success === true) {
                     setIsLoading(false);
                     setTotalAmount(res?.data?.data?.totalQuantity);
-                    setListProduct(sortProductByPrice(res?.data?.data?.list))
+                    setListProduct(res?.data?.data?.list)
                 }
             })
             .catch((err) => {
@@ -127,7 +140,7 @@ const Product = () => {
                 if (res?.data?.success === true) {
                     setIsLoading(false);
                     setTotalAmount(res?.data?.data?.totalQuantity);
-                    setListProduct(sortProductByPrice(res?.data?.data?.list))
+                    setListProduct(res?.data?.data?.list)
                 }
             })
             .catch((err) => {
@@ -167,7 +180,7 @@ const Product = () => {
                 if (res?.data?.success === true) {
                     setIsLoading(false);
                     setTotalAmount(res?.data?.data?.totalQuantity);
-                    setListProduct(sortProductByPrice(res?.data?.data?.list))
+                    setListProduct(res?.data?.data?.list)
                 }
             })
             .catch((err) => {
@@ -180,14 +193,14 @@ const Product = () => {
 
     // Filter product
     const filterProduct = () => {
-        console.log(searchParams.get("categoryId"), filterBrand, RAM, CPU, PIN)
+        console.log(searchParams.get("categoryId"), filterBrand, RAM, CPU, PIN, IPS, USB)
         setIsLoading(true)
-        filterProductLaptop(page - 1, searchParams.get("categoryId"), filterBrand, minPrice, maxPrice, RAM, CPU, PIN)
+        filterProductLaptop(page - 1, searchParams.get("categoryId"), filterBrand, minPrice, maxPrice, RAM, CPU, PIN, IPS, USB)
             .then((res) => {
                 if (res?.data?.success === true) {
                     setIsLoading(false);
                     setTotalAmount(res?.data?.data?.totalQuantity);
-                    setListProduct(sortProductByPrice(res?.data?.data?.list))
+                    setListProduct(res?.data?.data?.list)
                 }
             })
             .catch((err) => {
@@ -196,6 +209,17 @@ const Product = () => {
                 setIsLoading(false)
                 return err;
             })
+    }
+
+    // Reset filter
+    const resetFilter = () => {
+        setArrangeListProduct('')
+        setMinPrice(0);
+        setMaxPrice(40000000);
+        setFilterBrand('');
+        setCPU('');
+        setRAM('');
+        setPIN('');
     }
 
     return (
@@ -210,7 +234,7 @@ const Product = () => {
                     <div className="filter-product">
                         <div className="filter-action">
                             <button onClick={() => filterProduct()}>Lọc <i className="fas fa-filter"></i></button>
-                            <button onClick={() => window.location.reload()}>Reset <i className="fas fa-undo"></i></button>
+                            <button onClick={() => window.location.reload()}>Tải lại <i className="fas fa-undo"></i></button>
                         </div>
                         <hr />
                         <div className="range">
@@ -299,6 +323,44 @@ const Product = () => {
                                 </div>
                             </>
                         }
+                         {
+                            categoryDetail?.titleCategory === 'Màn hình' &&
+                            <>
+                                <hr />
+                                <div>
+                                    <FormControl>
+                                        <FormLabel id="demo-radio-buttons-group-label">IPS</FormLabel>
+                                        <RadioGroup
+                                            value={IPS}
+                                            onChange={(e) => setIPS(e.target.value)}
+                                            aria-labelledby="demo-radio-buttons-group-label"
+                                            name="radio-buttons-group"
+                                        >
+                                            <FormControlLabel value="" control={<Radio checked={IPS === ''} />} label="Tất cả" />
+                                            <FormControlLabel value="178H" control={<Radio />} label="178H" />
+                                            <FormControlLabel value="238H" control={<Radio />} label="238H" />
+                                        </RadioGroup>
+                                    </FormControl>
+                                </div>
+                                <hr />
+                                <div>
+                                    <FormControl>
+                                        <FormLabel id="demo-radio-buttons-group-label">USB</FormLabel>
+                                        <RadioGroup
+                                            value={USB}
+                                            onChange={(e) => setUSB(e.target.value)}
+                                            aria-labelledby="demo-radio-buttons-group-label"
+                                            name="radio-buttons-group"
+                                        >
+                                            <FormControlLabel value="" control={<Radio checked={USB === ''} />} label="Tất cả" />
+                                            <FormControlLabel value="3.0" control={<Radio />} label="3.0" />
+                                            <FormControlLabel value="5.0" control={<Radio />} label="5.0" />
+                                            <FormControlLabel value="7.0" control={<Radio />} label="7.0" />
+                                        </RadioGroup>
+                                    </FormControl>
+                                </div>
+                            </>
+                        }
                     </div>
                 }
                 <div className="list-product" style={{ width: (!searchParams.get('categoryId')) ? '100%' : '80%' }}>
@@ -343,15 +405,15 @@ const Product = () => {
                         <div className="filter-by">
                             <strong>Sắp xếp theo</strong>
                             <button style={{
-                                color: ASC === true ? 'var(--main-color)' : 'black',
-                                border: ASC === true ? '1px solid var(--main-color)' : 'none'
+                                color: arrangeListProduct === 'ASC' ? 'var(--main-color)' : 'black',
+                                border: arrangeListProduct === 'ASC' ? '1px solid var(--main-color)' : 'none'
                             }}
-                                onClick={() => setASC(true)}>Giá tăng dần</button>
+                                onClick={() => sortProductByPrice('ASC')}>Giá tăng dần</button>
                             <button style={{
-                                color: ASC === false ? 'var(--main-color)' : 'black',
-                                border: ASC === false ? '1px solid var(--main-color)' : 'none'
+                                color: arrangeListProduct === 'DESC' ? 'var(--main-color)' : 'black',
+                                border: arrangeListProduct === 'DESC' ? '1px solid var(--main-color)' : 'none'
                             }}
-                                onClick={() => setASC(false)}>Giá giảm dần</button>
+                                onClick={() => sortProductByPrice('DESC')}>Giá giảm dần</button>
                         </div>
                     }
                     <Grid container spacing={0} className="products">

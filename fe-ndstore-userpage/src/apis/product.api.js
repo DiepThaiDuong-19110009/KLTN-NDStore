@@ -57,23 +57,25 @@ export const getProductByKeySearch = (page, content) => {
 }
 
 // Filter product with category id + brand id + price + config
-export const filterProductLaptop = (page, categoryId, brandId, priceMin, priceMax, RAM, CPU, PIN) => {
+export const filterProductLaptop = (page, categoryId, brandId, priceMin, priceMax, RAM, CPU, PIN, IPS, USB) => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
     },
   }
 
-  let paramsLaptop = {
+  let params = {
     "brandId": brandId,
     "RAM": RAM,
     "CPU": CPU,
     "PIN": PIN,
+    "IPS": IPS,
+    "USB": USB
   };
 
-  let query = Object.keys(paramsLaptop).map((k) => {
-    if (paramsLaptop[k] !== "") {
-      return encodeURIComponent(k) + '=' + encodeURIComponent(paramsLaptop[k])
+  let query = Object.keys(params).map((k) => {
+    if (params[k] !== "") {
+      return encodeURIComponent(k) + '=' + encodeURIComponent(params[k])
     }
   }).join('&')
 

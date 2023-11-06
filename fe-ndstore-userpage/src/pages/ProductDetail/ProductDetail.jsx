@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Footer from "../../components/Footer/Footer";
 import Header from "../../components/Header/Header";
 import '../ProductDetail/ProductDetail.css'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Rating, TextField } from "@mui/material";
 import { getProductDetailById } from "../../apis/product.api";
 import { useNavigate, useParams } from "react-router-dom";
 import { addProductToCart } from "../../apis/cart.api";
@@ -103,12 +103,6 @@ const ProductDetail = () => {
                 isLoading === true && <Loader></Loader>
             }
             <div className="container-product-detail">
-                <button style={{ background: 'var(--main-color)', border: 'none', padding: '10px', color: '#FFFFFF', borderRadius: '5px' }}
-                    onClick={() => navigate(`/product?all=${true}`)} className="add-to-cart">
-                    <i style={{ marginRight: '10px' }} className="fas fa-arrow-left"></i>Tiếp tục mua hàng
-                </button>
-            </div>
-            <div className="container-product-detail">
                 <div className="product-detail">
                     <div className="imgae-product">
                         <img alt="img-product" src={srcImg}></img>
@@ -125,12 +119,15 @@ const ProductDetail = () => {
                     <div className="image-info-detail">
                         <h3 style={{ marginRight: '10px', wordBreak: 'break-all' }}>{productDetail?.name}</h3>
                         <span>(Đã bán {productDetail?.sold} sản phẩm)</span>
-                        <div>
+                        <div style={{ marginTop: '10px' }}>
                             {
                                 productDetail?.stock === 0 ?
                                     <p>Tình trạng: <strong style={{ color: 'red' }}>Hết hàng</strong></p> :
                                     <p>Tình trạng: <strong style={{ color: 'green' }}>Còn hàng</strong></p>
                             }
+                        </div> 
+                        <div style={{display: 'flex', alignItems: 'center'}}>
+                            <Rating name="read-only" value={productDetail?.rate} readOnly /> <span>({productDetail?.rateCount} đánh giá)</span>
                         </div>
                         <p style={{ marginTop: '10px' }}>Thương hiệu: <strong style={{ color: 'var(--main-color)' }}>{productDetail?.nameBrand}</strong></p>
                         <div>
@@ -156,7 +153,7 @@ const ProductDetail = () => {
                                     {
                                         productDetail?.productConfiguration &&
                                         Object.values(productDetail?.productConfiguration[0]).map((key, index) => (
-                                            <p style={{margin: '0'}} key={index}>{key || ''}</p>
+                                            <p style={{ margin: '0' }} key={index}>{key || ''}</p>
                                         ))
                                     }
                                 </div>
@@ -177,6 +174,12 @@ const ProductDetail = () => {
                     <span><i className="fas fa-shipping-fast"></i>Giao hàng trên toàn quốc</span><br />
                     <span><i className="fas fa-headset"></i>Hỗ trợ đổi trả</span>
                 </div>
+            </div>
+            <div className="container-product-detail">
+                <button style={{ background: 'var(--main-color)', border: 'none', padding: '10px', color: '#FFFFFF', borderRadius: '5px' }}
+                    onClick={() => navigate(`/product?all=${true}`)} className="add-to-cart">
+                    <i style={{ marginRight: '10px' }} className="fas fa-arrow-left"></i>Tiếp tục mua hàng
+                </button>
             </div>
             <div className="container-product-detail">
                 <div className="detail-infor-product">

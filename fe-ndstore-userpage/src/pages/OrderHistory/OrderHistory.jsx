@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import '../OrderHistory/OrderHistory.css'
-import { Box, Button, FormControl, InputLabel, MenuItem, Modal, Paper, Select, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tabs } from "@mui/material";
+import {
+    Box, Button, FormControl, InputLabel, MenuItem, Modal, Paper, Select,
+    Tab, Tabs, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow
+} from "@mui/material";
 import { cancelOrderUser, getHistoryOrderUser, remakelOrderUser } from "../../apis/order.api";
 import { useEffect } from "react";
 import { Loader } from "../../components/Loader/Loader";
@@ -22,8 +25,8 @@ const OrderHistory = () => {
 
     let navigate = useNavigate();
 
-    const handleChange = (event) => {
-        setState(event.target.value);
+    const handleChange = (event, newValue) => {
+        setState(newValue);
     };
 
     const handleChangePage = (e, newPage) => {
@@ -148,21 +151,22 @@ const OrderHistory = () => {
             }
             <div className="order-history">
                 <Box sx={{ minWidth: 120 }}>
-                    <FormControl fullWidth style={{ marginBottom: '30px' }}>
-                        <Select
-                            value={state}
-                            displayEmpty
+                    <Box sx={{ width: '100%' }} style={{ backgroundColor: 'white' }}>
+                        <Tabs
+                            scrollButtons="auto"
+                            variant="scrollable"
+                            allowScrollButtonsMobile
                             onChange={handleChange}
-                            inputProps={{ 'aria-label': 'Without label' }}
-                        >
-                            <MenuItem value=''>Tất cả</MenuItem>
-                            <MenuItem value='waiting'>Chờ giao hàng</MenuItem>
-                            <MenuItem value='process'>Chờ thanh toán</MenuItem>
-                            <MenuItem value='delivery'>Đang giao hàng</MenuItem>
-                            <MenuItem value='success'>Giao hàng thành công</MenuItem>
-                            <MenuItem value='cancel'>Đã hủy</MenuItem>
-                        </Select>
-                    </FormControl>
+                            value={state}
+                            aria-label="wrapped label tabs example">
+                            <Tab label="Tất cả" value="" />
+                            <Tab label="Chờ giao hàng" value="waiting" />
+                            <Tab label="Chờ thanh toán" value="process" />
+                            <Tab label="Đang giao hàng" value="delivery" />
+                            <Tab label="Giao hàng thành công" value="success" />
+                            <Tab label="Đã hủy" value="cancel" />
+                        </Tabs>
+                    </Box>
                     <Paper style={{ width: '100%' }}>
                         {
                             listOrder?.length !== 0 ?

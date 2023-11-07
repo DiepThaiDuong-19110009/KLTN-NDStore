@@ -19,6 +19,9 @@ export default function getCartProductUser() {
 
 export const addProductToCart = (productId, quantity) => {
   const token = localStorage.getItem('access-token')
+  if (!token) {
+    return;
+  }
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -31,6 +34,9 @@ export const addProductToCart = (productId, quantity) => {
 
 export const removeItemCart = (cartItemId) => {
   const token = localStorage.getItem('access-token')
+  if (!token) {
+    return;
+  }
   const config = {
     headers: {
       'Content-Type': 'application/json',

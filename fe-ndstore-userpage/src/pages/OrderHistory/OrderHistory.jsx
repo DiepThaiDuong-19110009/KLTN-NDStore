@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
-import '../OrderHistory/OrderHistory.css'
+import '../OrderHistory/OrderHistory.css';
 import {
     Box, Button, Modal, Paper,
     Tab, Tabs, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow
@@ -11,6 +11,7 @@ import { Loader } from "../../components/Loader/Loader";
 import { useNavigate } from "react-router-dom";
 import imgVNPay from '../../images/vnpay.png';
 import imgPayPal from '../../images/paypal.png'
+import OrderDetail from "./OrderDetail/OrderDetail";
 
 
 const OrderHistory = () => {
@@ -24,6 +25,7 @@ const OrderHistory = () => {
     const [currentState, setCurrentState] = useState('')
     const [orderDetail, setOrderDetail] = useState({})
     const [listOrder, setListOrder] = useState([])
+    const [openDetail, setOpenDetail] = useState(false);
 
     let navigate = useNavigate();
 
@@ -145,6 +147,12 @@ const OrderHistory = () => {
         setOpenSetStatus(false)
     }
 
+    // Show Detail Order
+    const showDetailOrder = (id) => {
+        setOrderIdDetail(id)
+        setOpenDetail(true)
+    }
+
     return (
         <div>
             <Header></Header>
@@ -196,7 +204,7 @@ const OrderHistory = () => {
                                                         <TableCell align="left">{order?.shipment?.customerName}</TableCell>
                                                         <TableCell align="left">{order?.shipment?.customerPhone}</TableCell>
                                                         <TableCell style={{ maxWidth: '200px' }} align="left">
-                                                            <i className="fas fa-map-marker-alt" style={{color: 'var(--main-color)', marginRight: '5px'}}></i>
+                                                            <i className="fas fa-map-marker-alt" style={{ color: 'var(--main-color)', marginRight: '5px' }}></i>
                                                             {order?.shipment?.customerAddress}{', '}
                                                             {order?.shipment?.customerWard}{', '}
                                                             {order?.shipment?.customerDistrict}{', '}
@@ -268,13 +276,16 @@ const OrderHistory = () => {
                                                             </div>
                                                         </TableCell>
                                                         <TableCell align="right">
-                                                            {/* <VisibilityIcon
-                                                    onClick={() => showDetailOrder(order?.id)}
-                                                    style={{
-                                                        fontSize: '28px', background: 'transparent', padding: '5px',
-                                                        borderRadius: '50%', border: '1px solid var(--main-color)',
-                                                        color: 'var(--main-color)', cursor: 'pointer'
-                                                    }} /> */}
+                                                            <strong
+                                                                onClick={() => showDetailOrder(order?.id)}
+                                                                style={{
+                                                                    width: '100px', display: 'flex',
+                                                                    justifyContent: 'center', alignItems: 'center',
+                                                                    fontSize: '15px', background: 'transparent',
+                                                                    color: 'var(--main-color)', cursor: 'pointer'
+                                                                }}>
+                                                                Chi tiết đơn
+                                                            </strong>
                                                         </TableCell>
                                                     </TableRow>
                                                 ))}
@@ -336,6 +347,16 @@ const OrderHistory = () => {
                             Xác nhận
                         </Button>
                     </div>
+                </div>
+            </Modal>
+            {/* detail modal */}
+            <Modal
+                open={openDetail}
+                onClose={() => setOpenDetail(false)}
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description">
+                <div>
+                    <OrderDetail id={orderIdDetail} handleClose={() => setOpenDetail(false)}></OrderDetail>
                 </div>
             </Modal>
         </div>

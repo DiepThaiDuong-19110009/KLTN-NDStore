@@ -9,6 +9,7 @@ import { addProductToCart } from "../../apis/cart.api";
 import { Loader } from "../../components/Loader/Loader";
 import { useDispatch } from "react-redux";
 import { actionCartRequest } from "../../redux/actions/ActionsCart";
+import getListComment, { createComment } from "../../apis/comment";
 
 const ProductDetail = () => {
     const [srcImg, setSrcImg] = useState('')
@@ -18,6 +19,11 @@ const ProductDetail = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const [productDetail, setProductDetail] = useState({})
+
+    // Comment
+    const [productComment, setProductComment] = useState([])
+    const [page, setPage] = useState(0)
+    const [vote, setVote] = useState(0)
 
     const dispatch = useDispatch()
 
@@ -32,6 +38,7 @@ const ProductDetail = () => {
     const handleClose = () => {
         setOpenComment(false);
         setContentComment('')
+        setVote(0)
     };
 
     useEffect(() => {
@@ -47,7 +54,7 @@ const ProductDetail = () => {
     }
 
     const sendComment = () => {
-        console.log(contentComment)
+        console.log(productDetail?.id, contentComment, vote)
     }
 
     // redirect to login
@@ -55,6 +62,7 @@ const ProductDetail = () => {
         navigate('/login')
     }
 
+    // Get product detail
     const getProductDetail = (id) => {
         setIsLoading(true)
         getProductDetailById(id)
@@ -62,6 +70,7 @@ const ProductDetail = () => {
                 if (res) {
                     setIsLoading(false)
                     setProductDetail(res?.data?.data)
+                    getProductComment(page, res?.data?.data?.id)
                     setSrcImg(res?.data?.data?.images[0]?.url)
                 }
             })
@@ -73,6 +82,47 @@ const ProductDetail = () => {
             })
     }
 
+    // Get comment product
+    const getProductComment = (page, productId) => {
+        setIsLoading(true)
+        getListComment(page, productId)
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    setIsLoading(false)
+                    setProductComment(res?.data?.data)
+                } else if (res?.data?.success === false) {
+                    setProductComment([])
+                    setIsLoading(false)
+                }
+            })
+            .catch((err) => {
+                if (err) {
+                    console.log(err)
+                    setProductComment([])
+                    setIsLoading(false)
+                }
+            })
+    }
+
+    // Create Comment
+    const createProductComment = (productId, description, vote) => {
+        setIsLoading(true)
+        createComment(productId, description, vote)
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    setIsLoading(false)
+                    getProductDetail(id)
+                }
+            })
+            .catch((err) => {
+                if (err) {
+                    console.log(err)
+                    setIsLoading(false)
+                }
+            })
+    }
+
+    // Add to cart
     const addToCart = (stock) => {
         if (stock === 0) {
             return;
@@ -125,8 +175,8 @@ const ProductDetail = () => {
                                     <p>Tình trạng: <strong style={{ color: 'red' }}>Hết hàng</strong></p> :
                                     <p>Tình trạng: <strong style={{ color: 'green' }}>Còn hàng</strong></p>
                             }
-                        </div> 
-                        <div style={{display: 'flex', alignItems: 'center'}}>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
                             <Rating name="read-only" value={productDetail?.rate} readOnly /> <span>({productDetail?.rateCount} đánh giá)</span>
                         </div>
                         <p style={{ marginTop: '10px' }}>Thương hiệu: <strong style={{ color: 'var(--main-color)' }}>{productDetail?.nameBrand}</strong></p>
@@ -191,45 +241,26 @@ const ProductDetail = () => {
                 <DialogTitle>Đánh giá sản phẩm</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Vui lòng đánh giá sản phẩm.
+                        Chọn sao đánh giá sản phẩm.
+                    </DialogContentText>
+                    <Rating
+                    style={{marginBottom: '10px', marginTop: '5px'}}
+                        name="simple-controlled"
+                        value={vote}
+                        onChange={(event, newValue) => {
+                            setVote(newValue);
+                        }}
+                    />
+                    <DialogContentText>
+                        Nội dung đánh giá sản phẩm.
                     </DialogContentText>
                     <textarea value={contentComment} onChange={(e) => setContentComment(e.target.value)} className="text-area-comment"></textarea>
                     <DialogActions>
-                        <Button onClick={handleClose}>Hủy</Button>
-                        <Button disabled={!contentComment ? true : false} onClick={sendComment}>Gửi đánh giá</Button>
+                        <Button onClick={handleClose}>Quay lại</Button>
+                        <Button disabled={!contentComment ? true : false} onClick={sendComment}>Gửi bình luận</Button>
                     </DialogActions>
                     <div className="last-comment">
-                        <h5 style={{ marginBottom: '20px' }}>Các đánh giá trước đó <span style={{ color: 'var(--main-color)' }}>(5)</span></h5>
-                        <div style={{ boxShadow: '1px 2px 10px rgb(224, 224, 224)', padding: '10px', marginTop: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQAp-kUfbmEzt3HLLzgNOoQjCsz-mywoifMg&usqp=CAU" alt="" className="avatar-comment"></img>
-                                <div>
-                                    <strong>Duong Diep</strong><br />
-                                    <small style={{ margin: 0 }}>20/07/2023 13:40</small>
-                                </div>
-                            </div>
-                            <p style={{ marginTop: '10px' }}>Sản phẩm tạm ổn</p>
-                        </div>
-                        <div style={{ boxShadow: '1px 2px 10px rgb(224, 224, 224)', padding: '10px', marginTop: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQAp-kUfbmEzt3HLLzgNOoQjCsz-mywoifMg&usqp=CAU" alt="" className="avatar-comment"></img>
-                                <div>
-                                    <strong>Duong Diep</strong><br />
-                                    <small style={{ margin: 0 }}>20/07/2023 13:40</small>
-                                </div>
-                            </div>
-                            <p style={{ marginTop: '10px' }}>Sản phẩm tạm ổn</p>
-                        </div>
-                        <div style={{ boxShadow: '1px 2px 10px rgb(224, 224, 224)', padding: '10px', marginTop: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQAp-kUfbmEzt3HLLzgNOoQjCsz-mywoifMg&usqp=CAU" alt="" className="avatar-comment"></img>
-                                <div>
-                                    <strong>Duong Diep</strong><br />
-                                    <small style={{ margin: 0 }}>20/07/2023 13:40</small>
-                                </div>
-                            </div>
-                            <p style={{ marginTop: '10px' }}>Sản phẩm tạm ổn</p>
-                        </div>
+                        <h5 style={{ marginBottom: '20px' }}>Các đánh giá trước đó <span style={{ color: 'var(--main-color)' }}>({productComment?.length})</span></h5>
                         <div style={{ boxShadow: '1px 2px 10px rgb(224, 224, 224)', padding: '10px', marginTop: '10px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQAp-kUfbmEzt3HLLzgNOoQjCsz-mywoifMg&usqp=CAU" alt="" className="avatar-comment"></img>

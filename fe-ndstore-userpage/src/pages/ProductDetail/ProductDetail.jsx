@@ -24,6 +24,7 @@ const ProductDetail = () => {
     // Comment
     const [productComment, setProductComment] = useState([]);
     const [contentComment, setContentComment] = useState('');
+    const [errorMessageComment, setErrorMessageComment] = useState('')
     const [page, setPage] = useState(0);
     const [vote, setVote] = useState(0);
 
@@ -43,6 +44,7 @@ const ProductDetail = () => {
     const handleClose = () => {
         setOpenComment(false);
         setContentComment('')
+        setErrorMessageComment('')
         setVote(0)
     };
 
@@ -157,11 +159,13 @@ const ProductDetail = () => {
                 if (res) {
                     setIsLoading(false)
                     getProductDetail(id)
+                    getProductComment(page, productId)
                 }
             })
             .catch((err) => {
                 if (err) {
                     console.log(err)
+                    setErrorMessageComment('Bạn đã đánh giá sản phẩm này')
                     setIsLoading(false)
                 }
             })
@@ -200,7 +204,7 @@ const ProductDetail = () => {
             <div className="container-product-detail">
                 <div className="product-detail">
                     <div className="imgae-product">
-                        <img style={{cursor: 'zoom-in'}} onClick={() => setOpenZoomImage(true)} alt="img-product" src={srcImg}></img>
+                        <img style={{ cursor: 'zoom-in' }} onClick={() => setOpenZoomImage(true)} alt="img-product" src={srcImg}></img>
                         <div className="list-detail-imgage">
                             {
                                 productDetail?.images?.map((img) => {
@@ -223,7 +227,7 @@ const ProductDetail = () => {
                             }
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <Rating name="read-only" value={productDetail?.rate} readOnly /> <span>({productDetail?.rateCount} đánh giá)</span>
+                            <Rating name="read-only" value={parseInt(productDetail?.rate)} readOnly /> <span>({productDetail?.rateCount} đánh giá)</span>
                         </div>
                         <p style={{ marginTop: '10px' }}>Thương hiệu: <strong style={{ color: 'var(--main-color)' }}>{productDetail?.nameBrand}</strong></p>
                         <div>
@@ -307,23 +311,27 @@ const ProductDetail = () => {
                                     Nội dung đánh giá sản phẩm.
                                 </DialogContentText>
                                 <textarea value={contentComment} onChange={(e) => setContentComment(e.target.value)} className="text-area-comment"></textarea>
-                                <DialogActions>
+                                <DialogActions style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                    <span style={{color: 'red'}}>{errorMessageComment}</span>
                                     <Button disabled={!contentComment || !vote ? true : false} onClick={sendComment}>Gửi bình luận</Button>
                                 </DialogActions>
                             </> : 'Vui lòng mua hàng để có thể đánh giá sản phẩm'
                     }
                     <div className="last-comment">
-                        <h5 style={{ marginBottom: '20px' }}>Các đánh giá trước đó <span style={{ color: 'var(--main-color)' }}>({productComment?.length})</span></h5>
-                        <div style={{ boxShadow: '1px 2px 10px rgb(224, 224, 224)', padding: '10px', marginTop: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQAp-kUfbmEzt3HLLzgNOoQjCsz-mywoifMg&usqp=CAU" alt="" className="avatar-comment"></img>
-                                <div>
-                                    <strong>Duong Diep</strong><br />
-                                    <small style={{ margin: 0 }}>20/07/2023 13:40</small>
+                        <h5 style={{ marginBottom: '20px' }}>Các đánh giá trước đó <span style={{ color: 'var(--main-color)' }}>({productComment?.numberOfReview ? productComment?.numberOfReview : '0'})</span></h5>
+                        {
+                            productComment?.allReview?.map((comment) => (
+                                <div key={comment?.id} style={{ boxShadow: '1px 2px 10px rgb(224, 224, 224)', padding: '10px', marginTop: '10px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <div>
+                                            <strong>{comment?.userNameReview}</strong><br />
+                                            <small style={{ margin: 0 }}>{comment?.commentCreateDate}</small>
+                                        </div>
+                                    </div>
+                                    <p style={{ marginTop: '10px' }}>{comment?.reviewDescription}</p>
                                 </div>
-                            </div>
-                            <p style={{ marginTop: '10px' }}>Sản phẩm tạm ổn</p>
-                        </div>
+                            ))
+                        }
                     </div>
                 </DialogContent>
             </Dialog>
@@ -357,11 +365,11 @@ const ProductDetail = () => {
                 <DialogContent>
                     <div style={{ position: 'fixed', top: '15px', right: '0' }}>
                         <Button style={{ width: '100px' }} onClick={() => setOpenZoomImage(false)}>
-                            <i style={{fontSize: '30px'}} className="fas fa-times"></i>
+                            <i style={{ fontSize: '30px' }} className="fas fa-times"></i>
                         </Button>
                     </div>
-                    <DialogContentText style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-                        <img src={srcImg} alt="img-product"/>
+                    <DialogContentText style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                        <img src={srcImg} alt="img-product" />
                     </DialogContentText>
                 </DialogContent>
             </Dialog>

@@ -9,21 +9,26 @@ import { addProductToCart } from "../../apis/cart.api";
 import { Loader } from "../../components/Loader/Loader";
 import { useDispatch } from "react-redux";
 import { actionCartRequest } from "../../redux/actions/ActionsCart";
-import getListComment, { createComment } from "../../apis/comment";
+import { getListComment, createComment } from "../../apis/comment";
+import { getHistoryOrderUser } from "../../apis/order.api";
 
 const ProductDetail = () => {
     const [srcImg, setSrcImg] = useState('')
     const [openComment, setOpenComment] = useState(false);
     const [open, setOpen] = useState(false);
-    const [contentComment, setContentComment] = useState('')
     const [isLoading, setIsLoading] = useState(false);
 
-    const [productDetail, setProductDetail] = useState({})
+    const [productDetail, setProductDetail] = useState({});
+    const [openZoomImage, setOpenZoomImage] = useState(false);
 
     // Comment
-    const [productComment, setProductComment] = useState([])
-    const [page, setPage] = useState(0)
-    const [vote, setVote] = useState(0)
+    const [productComment, setProductComment] = useState([]);
+    const [contentComment, setContentComment] = useState('');
+    const [page, setPage] = useState(0);
+    const [vote, setVote] = useState(0);
+
+    // Orde succes
+    const [listOrderSuccess, setListOrderSuccess] = useState([])
 
     const dispatch = useDispatch()
 
@@ -43,6 +48,7 @@ const ProductDetail = () => {
 
     useEffect(() => {
         getProductDetail(id)
+        getOrderSucces()
     }, [id])
 
     const numberWithCommas = (x) => {
@@ -55,6 +61,7 @@ const ProductDetail = () => {
 
     const sendComment = () => {
         console.log(productDetail?.id, contentComment, vote)
+        createProductComment(productDetail?.id, contentComment, vote)
     }
 
     // redirect to login
@@ -80,6 +87,44 @@ const ProductDetail = () => {
                     setIsLoading(false)
                 }
             })
+    }
+
+    // Get order with status Success
+    const getOrderSucces = () => {
+        const token = localStorage.getItem('access-token')
+        if (!token) {
+            return;
+        }
+        getHistoryOrderUser(0, 100, 'success')
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    setIsLoading(false)
+                    setListOrderSuccess(res?.data?.data?.listOrder)
+                } else if (res?.data?.success === false) {
+                    setListOrderSuccess([])
+                    setIsLoading(false)
+                }
+            })
+            .catch((err) => {
+                if (err) {
+                    console.log(err)
+                    setListOrderSuccess([])
+                    setIsLoading(false)
+                }
+            })
+    }
+
+    // Check order exist product bought success
+    const checkProductExistOrderSuccess = () => {
+        let check = false;
+        listOrderSuccess?.forEach((order) => {
+            order?.items?.forEach(item => {
+                if (item?.productId.toString() === id.toString()) {
+                    check = true;
+                }
+            })
+        })
+        return check;
     }
 
     // Get comment product
@@ -109,7 +154,7 @@ const ProductDetail = () => {
         setIsLoading(true)
         createComment(productId, description, vote)
             .then((res) => {
-                if (res?.data?.success === true) {
+                if (res) {
                     setIsLoading(false)
                     getProductDetail(id)
                 }
@@ -155,12 +200,13 @@ const ProductDetail = () => {
             <div className="container-product-detail">
                 <div className="product-detail">
                     <div className="imgae-product">
-                        <img alt="img-product" src={srcImg}></img>
+                        <img style={{cursor: 'zoom-in'}} onClick={() => setOpenZoomImage(true)} alt="img-product" src={srcImg}></img>
                         <div className="list-detail-imgage">
                             {
                                 productDetail?.images?.map((img) => {
                                     return (
-                                        <img key={img?.id_image} alt={img?.id_image} onClick={() => getImage(img.url)} src={img?.url}></img>
+                                        <img style={{ border: (img?.url === srcImg) && '1px solid var(--main-color)', cursor: 'pointer' }}
+                                            key={img?.id_image} alt={img?.id_image} onClick={() => getImage(img.url)} src={img?.url}></img>
                                     )
                                 })
                             }
@@ -238,27 +284,34 @@ const ProductDetail = () => {
                 </div>
             </div>
             <Dialog fullWidth open={openComment} onClose={handleClose}>
+                <div style={{ textAlign: 'right', marginTop: '10px' }}>
+                    <Button style={{ width: '100px' }} onClick={handleClose}>Quay lại</Button>
+                </div>
                 <DialogTitle>Đánh giá sản phẩm</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        Chọn sao đánh giá sản phẩm.
-                    </DialogContentText>
-                    <Rating
-                    style={{marginBottom: '10px', marginTop: '5px'}}
-                        name="simple-controlled"
-                        value={vote}
-                        onChange={(event, newValue) => {
-                            setVote(newValue);
-                        }}
-                    />
-                    <DialogContentText>
-                        Nội dung đánh giá sản phẩm.
-                    </DialogContentText>
-                    <textarea value={contentComment} onChange={(e) => setContentComment(e.target.value)} className="text-area-comment"></textarea>
-                    <DialogActions>
-                        <Button onClick={handleClose}>Quay lại</Button>
-                        <Button disabled={!contentComment ? true : false} onClick={sendComment}>Gửi bình luận</Button>
-                    </DialogActions>
+                    {
+                        checkProductExistOrderSuccess() === true ?
+                            <>
+                                <DialogContentText>
+                                    Chọn sao đánh giá sản phẩm.
+                                </DialogContentText>
+                                <Rating
+                                    style={{ marginBottom: '10px', marginTop: '5px' }}
+                                    name="simple-controlled"
+                                    value={vote}
+                                    onChange={(event, newValue) => {
+                                        setVote(newValue);
+                                    }}
+                                />
+                                <DialogContentText>
+                                    Nội dung đánh giá sản phẩm.
+                                </DialogContentText>
+                                <textarea value={contentComment} onChange={(e) => setContentComment(e.target.value)} className="text-area-comment"></textarea>
+                                <DialogActions>
+                                    <Button disabled={!contentComment || !vote ? true : false} onClick={sendComment}>Gửi bình luận</Button>
+                                </DialogActions>
+                            </> : 'Vui lòng mua hàng để có thể đánh giá sản phẩm'
+                    }
                     <div className="last-comment">
                         <h5 style={{ marginBottom: '20px' }}>Các đánh giá trước đó <span style={{ color: 'var(--main-color)' }}>({productComment?.length})</span></h5>
                         <div style={{ boxShadow: '1px 2px 10px rgb(224, 224, 224)', padding: '10px', marginTop: '10px' }}>
@@ -274,6 +327,7 @@ const ProductDetail = () => {
                     </div>
                 </DialogContent>
             </Dialog>
+            {/* Check login */}
             <Dialog
                 open={open}
                 onClose={() => setOpen(false)}
@@ -292,6 +346,24 @@ const ProductDetail = () => {
                         Đăng nhập
                     </Button>
                 </DialogActions>
+            </Dialog>
+            {/* Open zoom image */}
+            <Dialog
+                fullScreen
+                open={openZoomImage}
+                onClose={() => setOpenZoomImage(false)}
+                aria-labelledby="responsive-dialog-title"
+            >
+                <DialogContent>
+                    <div style={{ position: 'fixed', top: '15px', right: '0' }}>
+                        <Button style={{ width: '100px' }} onClick={() => setOpenZoomImage(false)}>
+                            <i style={{fontSize: '30px'}} className="fas fa-times"></i>
+                        </Button>
+                    </div>
+                    <DialogContentText style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
+                        <img src={srcImg} alt="img-product"/>
+                    </DialogContentText>
+                </DialogContent>
             </Dialog>
             <Footer></Footer>
         </div>

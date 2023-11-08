@@ -39,7 +39,7 @@ input[type=number] {
 
 /* width */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 6px;
 }
 
 /* Track */
@@ -49,13 +49,13 @@ input[type=number] {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #009ed4;
+  background: #17a2d0;
   border-radius: 5px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #009ed4;
+  background: #1b8fb6;
 }
 
 .slick-slider {

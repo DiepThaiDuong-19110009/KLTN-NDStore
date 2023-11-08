@@ -1,14 +1,14 @@
 import axios from "axios";
 import { API_URL } from "../common/common";
 
-export default function getListComment(page, productId) {
+export const getListComment = (page, productId) => {
     const config = {
         headers: {
             'Content-Type': 'application/json'
         },
     }
 
-    return axios.get(API_URL + `/api/comment/list/product/${productId}?page=${page}`, config)
+    return axios.get(API_URL + `/api/review/list/product/${productId}?page=${page}`, config)
 }
 
 export const createComment = (productId, description, vote) => {
@@ -23,5 +23,5 @@ export const createComment = (productId, description, vote) => {
         },
     }
 
-    return axios.post(API_URL + `/api/comment/content/create`, { productId: productId, description: description, vote: vote }, config)
+    return axios.post(API_URL + `/api/review/content/create`, { productBuyId: productId, description: description, vote: vote }, config)
 }

@@ -176,6 +176,11 @@ const ProductDetail = () => {
         if (stock === 0) {
             return;
         }
+        const token = localStorage.getItem('access-token')
+        if (!token) {
+            setOpen(true)
+            return;
+        }
         setIsLoading(true)
         addProductToCart(id, 1)
             .then((res) => {
@@ -311,8 +316,8 @@ const ProductDetail = () => {
                                     Nội dung đánh giá sản phẩm.
                                 </DialogContentText>
                                 <textarea value={contentComment} onChange={(e) => setContentComment(e.target.value)} className="text-area-comment"></textarea>
-                                <DialogActions style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                                    <span style={{color: 'red'}}>{errorMessageComment}</span>
+                                <DialogActions style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ color: 'red' }}>{errorMessageComment}</span>
                                     <Button disabled={!contentComment || !vote ? true : false} onClick={sendComment}>Gửi bình luận</Button>
                                 </DialogActions>
                             </> : 'Vui lòng mua hàng để có thể đánh giá sản phẩm'
@@ -324,8 +329,11 @@ const ProductDetail = () => {
                                 <div key={comment?.id} style={{ boxShadow: '1px 2px 10px rgb(224, 224, 224)', padding: '10px', marginTop: '10px' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                         <div>
-                                            <strong>{comment?.userNameReview}</strong><br />
+                                            <strong>{comment?.userNameReview}</strong>
+                                            <br />
                                             <small style={{ margin: 0 }}>{comment?.commentCreateDate}</small>
+                                            <br />
+                                            <Rating style={{padding: '10px 0', fontSize: '15px'}} name="read-only" value={parseInt(comment?.rate)} readOnly />
                                         </div>
                                     </div>
                                     <p style={{ marginTop: '10px' }}>{comment?.reviewDescription}</p>

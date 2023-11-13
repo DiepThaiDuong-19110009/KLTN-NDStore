@@ -124,7 +124,7 @@ const Register = () => {
             .then((res) => {
                 if (res?.data?.success === true) {
                     setIsLoading(false);
-                    return navigate(`/verify/${email}`)
+                    return navigate(`/verify/register/${email}`)
                 }
             })
             .catch((err) => {

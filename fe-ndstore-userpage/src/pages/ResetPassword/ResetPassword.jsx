@@ -1,44 +1,47 @@
 import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { updateNewPassword } from "../../apis/user.api";
 import { Loader } from "../../components/Loader/Loader";
-import { EMAIL_REGEX_PATTERN } from "../../common/common";
-import { useNavigate } from "react-router-dom";
-import { forgotPasswordUser } from "../../apis/user.api";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
-const ForgotPassword = () => {
+const ResetPassword = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const [email, setEmail] = useState('')
+    const [newPass, setNewPass] = useState('')
     const [message, setMessage] = useState('')
     const [openDialog, setOpenDialog] = useState(false);
+    // Check show password
+    const [passwordShown, setPasswordShown] = useState(false);
+    const togglePasswordVisiblity = () => {
+        setPasswordShown(passwordShown ? false : true);
+    };
+
+    const { id } = useParams('id')
+    const { token } = useParams('token')
 
     let navigate = useNavigate();
 
-    const getEmail = (e) => {
+    const getNewPass = (e) => {
         setMessage("")
-        setEmail(e.target.value)
+        setNewPass(e.target.value)
     }
 
-    const forgotPassword = () => {
+    const resetPassword = () => {
         setMessage('');
-        if (email === '') {
-            setMessage("Vui lòng cung cấp email");
-            return;
-        }
-        if (!email.match(EMAIL_REGEX_PATTERN)) {
-            setMessage("Email không đúng định dạng");
+        if (newPass === '') {
+            setMessage("Vui lòng cung cấp mật khẩu mới");
             return;
         }
         setIsLoading(true)
-        forgotPasswordUser(email)
+        updateNewPassword(newPass, id, token)
             .then((res) => {
                 if (res?.data?.success === true) {
                     setIsLoading(false);
-                    return navigate(`/verify/reset/${email}`)
+                    setOpenDialog(true)
                 }
             })
             .catch((err) => {
                 setIsLoading(false);
-                setMessage('Vui lòng kiểm tra lại email')
+                setMessage('Vui lòng kiểm tra lại mật khẩu')
                 return err;
             })
     }
@@ -57,18 +60,22 @@ const ForgotPassword = () => {
                 <a href='/' className='back-home'>Trang chủ</a>
                 <div className='form-login'>
                     <div>
-                        <h4 className='title-login' style={{ textAlign: 'center' }}>Quên mật khẩu</h4>
+                        <h4 className='title-login' style={{ textAlign: 'center' }}>Cập nhật mật khẩu mới</h4>
                         <div className='row-input-login'>
-                            <label>Email</label>
-                            <input className='input-login' value={email} onChange={(e) => getEmail(e)} placeholder='Email' type='email'></input>
+                            <label>Mật khẩu mới</label>
+                            <input className='input-login' value={newPass} onChange={(e) => getNewPass(e)} placeholder='Mật khẩu mới' type={passwordShown ? "text" : "password"}></input>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: ' 10px 20px' }}>
+                            <div className='show-password'>
+                                <input onClick={togglePasswordVisiblity} style={{ margin: '0px 10px 0px 0px' }} type='checkBox'></input>
+                                <label style={{ margin: '0px' }}>Hiển thị mật khẩu</label>
+                            </div>
                         </div>
                         {<p style={{ color: 'red', textAlign: 'center', marginTop: '10px' }}>{message}</p>}
                         <div className='row-input-login'>
-                            <button onClick={forgotPassword} className='btn-login'>Quên mật khẩu</button>
+                            <button onClick={resetPassword} className='btn-login'>Cập nhật mật khẩu</button>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'center', margin: '15px 0px 25px 0px' }}>
-                            <a style={{ color: 'var(--main-color)', fontWeight: 'bold' }} href='/login'>Quay lại trang đăng nhập</a>
-                        </div>
+                        <br />
                     </div>
                 </div>
                 <Dialog
@@ -82,11 +89,11 @@ const ForgotPassword = () => {
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            Mật khẩu mới đã được gửi qua email. Vui lòng kiểm tra!
+                            Bạn đã cập nhật mật khẩu mới thành công.
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleClose}>OK</Button>
+                        <Button onClick={() => navigate('/login')}>Đăng nhập</Button>
                     </DialogActions>
                 </Dialog>
             </div>
@@ -94,4 +101,4 @@ const ForgotPassword = () => {
     )
 }
 
-export default ForgotPassword
+export default ResetPassword

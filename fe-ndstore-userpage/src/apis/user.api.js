@@ -25,14 +25,14 @@ export const registerUser = (name, email, password, phone, provinceId, districtI
   }, config)
 }
 
-export const verifyUser = (email, otp) => {
+export const verifyUser = (email, otp, type) => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
     },
   }
 
-  return axios.post(API_URL + `/api/auth/verifyaccount/account`, { email: email, otp: otp, type: 'register' }, config)
+  return axios.post(API_URL + `/api/auth/verifyaccount/account`, { email: email, otp: otp, type: type }, config)
 }
 
 export const resendOTP = (email) => {
@@ -52,7 +52,19 @@ export const forgotPasswordUser = (email) => {
     },
   }
 
-  return axios.post(API_URL + `/api/auth/mail/forget/new/pass/account?email=${email}`, {}, config)
+  return axios.post(API_URL + `/api/auth/mail/forget/pass/account?email=${email}`, {}, config)
+}
+
+// Update pass when forgot successfully
+export const updateNewPassword = (newPass, userId, token) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+  }
+
+  return axios.put(API_URL + `/api/users/reset/new/password/${userId}`, { newPass: newPass }, config)
 }
 
 export const changePassword = (userId, oldPass, newPass) => {

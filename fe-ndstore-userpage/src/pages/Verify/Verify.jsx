@@ -19,6 +19,7 @@ const Verify = () => {
    }, [])
 
    const { email } = useParams('email')
+   const { type } = useParams('type')
 
    const verifyRegister = () => {
       setMessage('');
@@ -27,11 +28,15 @@ const Verify = () => {
          return;
       }
       setIsLoading(true);
-      verifyUser(email, OTP)
+      verifyUser(email, OTP, type)
          .then((res) => {
             if (res?.data?.success === true) {
                setIsLoading(false);
-               return navigate("/login")
+               if (type === 'reset') {
+                  return navigate(`/reset-password/${res?.data?.data?.id}/${res?.data?.data?.token}`)
+               } else {
+                  return navigate("/login")
+               }
             } else if (res?.data?.success === false) {
                setIsLoading(false);
                setMessage('Mã OTP không chính xác. Vui lòng kiểm tra lại')
@@ -63,7 +68,7 @@ const Verify = () => {
 
    const handleClose = () => {
       setOpenDialog(false);
-    };
+   };
 
    return (
       <div className="verify">

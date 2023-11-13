@@ -14,6 +14,7 @@ import ForgotPassword from '../pages/ForgotPassword/ForgotPassword';
 import AuthGoogle from '../pages/AuthGoogle/AuthGoogle';
 import CheckOut from '../pages/Payment/CheckOut/CheckOut';
 import NotFoundPage from '../pages/NotFoundPage/NotFoundPage';
+import ResetPassword from '../pages/ResetPassword/ResetPassword';
 
 const ClientRouter = () => {
   return (
@@ -25,8 +26,9 @@ const ClientRouter = () => {
           <Route path='/oauth2/redirect' element={<AuthGoogle />} />
           <Route path='/register' element={<Register />} />
           <Route path='/user-detail' element={<UserDetail />} />
-          <Route path='/verify/:email' element={<Verify />} />
+          <Route path='/verify/:type/:email' element={<Verify />} />
           <Route path='/forgot-password' element={<ForgotPassword />} />
+          <Route path='/reset-password/:id/:token' element={<ResetPassword />}/>
           <Route path='/order-history' element={<OrderHistory />} />
           <Route path='/product' element={<Product />} />
           <Route path='/product/:id' element={<ProductDetail />} />

@@ -3,6 +3,7 @@ import imgVNPay from '../../../images/vnpay.png';
 import imgPayPal from '../../../images/paypal.png'
 import { getDetailOrderUser } from "../../../apis/order.api";
 import { Loader } from "../../../components/Loader/Loader";
+import { useNavigate } from "react-router-dom";
 
 const OrderDetail = (props) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -11,6 +12,8 @@ const OrderDetail = (props) => {
     const numberWithCommas = (x) => {
         return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
+
+    const navigate = useNavigate()
 
     useEffect(() => {
         getOrderDetail(props?.id);
@@ -99,8 +102,8 @@ const OrderDetail = (props) => {
                                         display: 'flex', justifyContent: 'space-between',
                                         alignItems: 'center', padding: '0 10px'
                                     }} key={item?.itemCartId}>
-                                        <h5>{item?.productName}</h5>
-                                        <img style={{ width: '100px' }} src={item?.image[0]?.url} alt="img-product" />
+                                        <h5 style={{cursor: 'pointer'}} onClick={() => navigate(`/product/${item?.productId}`)}>{item?.productName}</h5>
+                                        <img onClick={() => navigate(`/product/${item?.productId}`)} style={{ width: '100px', cursor: 'pointer' }} src={item?.image[0]?.url} alt="img-product" />
                                         <span>Số lượng: <h5>{item?.quantity} sản phẩm</h5></span>
                                         <span>Đơn giá: <h5>{numberWithCommas(item?.productPrice)} VNĐ</h5></span>
                                         <span style={{ color: 'var(--main-color)' }}>Thành tiền: <h5>{numberWithCommas(item?.subPrice)} VNĐ</h5></span>

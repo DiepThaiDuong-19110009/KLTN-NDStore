@@ -8,11 +8,13 @@ import { getAllProductNoPage } from "../../apis/product.api";
 import { Loader } from "../../components/Loader/Loader";
 import Slider from "react-slick";
 import { getAllBrandNoPage } from "../../apis/brand";
+import { getCategoryAll } from "../../apis/category.api";
 
 const Home = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [listProduct, setListProduct] = useState([])
-    const [listProductLaptop, setListProductLaptop] = useState([])
+    const [listProductLaptop, setListProductLaptop] = useState([]);
+    const [listCategory, setListCategory] = useState([])
     const [listBrand, setListBrand] = useState([])
 
     const navigate = useNavigate();
@@ -46,6 +48,7 @@ const Home = () => {
     useEffect(() => {
         getAllProduct();
         getAllBrand();
+        getCategory();
     }, [navigate])
 
     // Get All products
@@ -81,8 +84,26 @@ const Home = () => {
             })
     }
 
+    // Get al category 
+    const getCategory = () => {
+        getCategoryAll()
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    setListCategory(res?.data?.data)
+                }
+            })
+            .catch((err) => {
+                return err;
+            })
+    }
+
     const findProductByBrand = (idBrand) => {
         navigate(`/product?brandId=${idBrand}`)
+    }
+
+    // Find product by category
+    const findProductByCategory = (idCategory) => {
+        navigate(`/product?categoryId=${idCategory}`)
     }
 
     return (
@@ -92,6 +113,23 @@ const Home = () => {
                 isLoading === true && <Loader></Loader>
             }
             <div className="container-home" style={{ marginTop: '30px' }}>
+                {/* Category */}
+                <div className="category"
+                    style={{
+                        display: 'flex', gap: '30px', flexWrap: 'wrap', alignItems: 'center',
+                        margin: '0 auto 20px auto', width: '80%', backgroundColor: 'white',
+                        boxShadow: '1px 2px 8px rgb(231, 231, 231)', padding: '10px', borderRadius: '5px'
+                    }}>
+                    {
+                        listCategory.length > 0 &&
+                        listCategory.map((category) => (
+                            <div className="item-category" key={category?.id} onClick={() => findProductByCategory(category?.id)}>
+                                <img style={{ width: '20px' }} src={category?.imageCategory} alt="" />
+                                <span style={{ marginLeft: '10px' }}>{category?.titleCategory}</span>
+                            </div>
+                        ))
+                    }
+                </div>
                 {/* Banner */}
                 <div className="banner-row">
                     <div className="banner-item" onClick={() => navigate(`/product/${listProductLaptop[0]?.id}`)}>
@@ -179,7 +217,6 @@ const Home = () => {
                 {/* row product */}
                 <div className="product-row" style={{ justifyContent: 'space-between' }}>
                     <h4 style={{ color: 'black' }}>Laptop</h4>
-                    <a style={{ color: 'var(--main-color)', marginRight: '10px' }} href="/product">Xem tất cả</a>
                 </div>
                 <div style={{ borderBottom: '3px dotted white', width: '80%', margin: '0 auto', overflow: 'hidden' }}></div>
                 <div className="product-row" style={{ marginBottom: '20px' }}>

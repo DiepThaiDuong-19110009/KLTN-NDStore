@@ -22,11 +22,11 @@ const App = () => {
         <ScrollToTop viewBox="0 0 24 24" color='var(--main-color)'
           svgPath='M18 15l-6-6-6 6' smooth />
       }
-      {path !== '/login' &&
+      {/* {path !== '/login' &&
         <div style={{position: 'fixed', bottom: '120px', right: '43px'}}>
           <i style={{fontSize: '40px', color: 'var(--main-color)', cursor: 'pointer'}} className="fab fa-facebook-messenger"></i>
         </div>
-      }
+      } */}
     </BrowserRouter>
   );
 }

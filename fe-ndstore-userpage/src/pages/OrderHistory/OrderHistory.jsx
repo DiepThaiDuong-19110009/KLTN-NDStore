@@ -281,7 +281,7 @@ const OrderHistory = () => {
                                                                 style={{
                                                                     width: '100px', display: 'flex',
                                                                     justifyContent: 'center', alignItems: 'center',
-                                                                    fontSize: '15px', background: 'transparent',
+                                                                    fontSize: '12px', background: 'transparent',
                                                                     color: 'var(--main-color)', cursor: 'pointer'
                                                                 }}>
                                                                 Chi tiết đơn

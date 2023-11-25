@@ -119,10 +119,13 @@ const Cart = () => {
                             (cart?.length !== 0) &&
                             <span style={{ color: 'red', fontWeight: 'bold' }}>Xóa tất cả</span>
                         } */}
-                        <button style={{ background: 'var(--main-color)', border: 'none', padding: '10px', color: '#FFFFFF', borderRadius: '5px' }}
-                            onClick={() => navigate(`/product?all=${true}`)} className="add-to-cart">
-                            <i style={{ marginRight: '10px' }} className="fas fa-arrow-left"></i>Tiếp tục mua hàng
-                        </button>
+                        {
+                            cart?.length !== 0 &&
+                            <button style={{ background: 'var(--main-color)', border: 'none', padding: '10px', color: '#FFFFFF', borderRadius: '5px' }}
+                                onClick={() => navigate(-1)} className="add-to-cart">
+                                <i style={{ marginRight: '10px' }} className="fas fa-arrow-left"></i>Tiếp tục mua hàng
+                            </button>
+                        }
                     </div>
                     {
                         (cart?.length !== 0 || !cart) &&

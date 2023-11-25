@@ -42,6 +42,15 @@
     width: 80%;
 }
 
+/* Category */
+.item-category {
+    padding: 10px;
+    cursor: pointer;
+}
+.item-category:hover {
+    background-color: rgb(243, 243, 243);
+}
+
 /* Banner */
 .banner-row {
     display: flex;

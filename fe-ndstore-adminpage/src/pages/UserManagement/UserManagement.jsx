@@ -20,6 +20,9 @@ const UserManagement = () => {
     // data for call api get all
     const [size, setSize] = useState(5)
     const [page, setPage] = useState(0)
+    const [role, setRole] = useState('');
+    const [status, setStatus] = useState('');
+    const [accountMail, setAccountMail] = useState('')
 
     // set datar response
     const [totalAmount, setTotalAmount] = useState(0);
@@ -30,11 +33,11 @@ const UserManagement = () => {
 
     const handleChangePage = (e, newPage) => {
         setPage(newPage)
-        getAllUser(newPage, size);
+        getAllUser(newPage, size, role, status, accountMail);
     };
 
     const handleChangeSize = (event) => {
-        getAllUser(0, event.target.value);
+        getAllUser(0, event.target.value, '', '', '');
         setSize(parseInt(+event.target.value));
         setPage(0);
     };
@@ -44,13 +47,13 @@ const UserManagement = () => {
     }
 
     useEffect(() => {
-        getAllUser(page, size);
+        getAllUser(page, size, role, status, accountMail);
     }, [])
 
-    const getAllUser = (page, size) => {
+    const getAllUser = (page, size, role, status, accountMail) => {
         setIsLoading(true)
         managementUserApi
-            .getUserList(page, size)
+            .getUserList(page, size, role, status, accountMail)
             .then((res) => {
                 if (res?.success === true) {
                     setTotalAmount(res?.data?.allQuantity)
@@ -60,13 +63,19 @@ const UserManagement = () => {
                 }
             })
             .catch((err) => {
+                if (err?.success === false) {
+                    setTotalAmount(0)
+                    setTotalPage(0)
+                    setListUser([])
+                    setIsLoading(false);
+                }
                 setIsLoading(false);
                 console.log(err)
             })
     }
 
-    const updateStatusUser = (id, role) => {
-        if (!id || role === 'Role_Admin') {
+    const updateStatusUser = (id, Role) => {
+        if (!id || Role === 'Role_Admin') {
             return;
         }
         setIsLoading(true)
@@ -74,7 +83,7 @@ const UserManagement = () => {
             .setStatusUser(id)
             .then((res) => {
                 if (res?.success === true) {
-                    getAllUser(page, size);
+                    getAllUser(page, size, role, status, accountMail);
                     setIsLoading(false);
                 }
             })
@@ -91,7 +100,20 @@ const UserManagement = () => {
 
     const handleClose = () => {
         setOpenDetail(false)
-    }
+    };
+
+    const searchUser = () => {
+        getAllUser(0, 5, role, status, accountMail);
+    };
+
+    const resetSearch = () => {
+        setAccountMail('');
+        setRole('');
+        setStatus('');
+        setPage(0);
+        setSize(5);
+        getAllUser(0, 5, '', '', '');
+    } 
 
     return (
         <div style={{ paddingLeft: '260px' }}>
@@ -112,9 +134,24 @@ const UserManagement = () => {
                     <Typography color="var(--main-color)" fontSize='14px'>Quản lý người dùng</Typography>
                 </Breadcrumbs>
                 <div>
-                    <div style={{ margin: '15px 0' }}>
-                        <h3 style={{ marginBottom: '15px' }}>Quản lý người dùng</h3>
+                    <div style={{ margin: '15px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <h3>Quản lý người dùng</h3>
                         <span>Tổng số người dùng: <strong>{totalAmount}</strong></span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '20px' }}>
+                        <input value={accountMail} onChange={(e) => setAccountMail(e.target.value)} className="input-search-admin" placeholder="Tìm kiếm bằng Email"></input>
+                        <select className="input-search-admin" value={role} onChange={(e) => setRole(e.target.value)}>
+                            <option value={''}>Vai trò (Tất cả)</option>
+                            <option value={'Role_Admin'}>Quản trị viên</option>
+                            <option value={'Role_User'}>Người dùng</option>
+                        </select>
+                        <select className="input-search-admin" value={status} onChange={(e) => setStatus(e.target.value)}>
+                            <option value={''}>Trạng thái (Tất cả)</option>
+                            <option value={'activated'}>Hoạt động</option>
+                            <option value={'blocked'}>Khóa</option>
+                        </select>
+                        <button onClick={() => searchUser()} className="btn-search-admin">Tìm kiếm</button>
+                        <button onClick={() => resetSearch()} className="btn-search-admin">Tải lại</button>
                     </div>
                     <Paper style={{ width: '100%' }}>
                         <TableContainer>

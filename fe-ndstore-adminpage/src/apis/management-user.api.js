@@ -1,8 +1,8 @@
 import httpClient from "./http-client.api";
 
 class ManegementUserApis {
-    async getUserList(page, size) {
-        return httpClient.httpGet(`api/admin/manage/users/get/all/list?page=${page}&size=${size}`);
+    async getUserList(page, size, role, status, accountMail) {
+        return httpClient.httpGet(`api/admin/manage/users/to/search/control/all?page=${page}&size=${size}&role=${role}&status=${status}&accountMail=${accountMail}`);
     }
 
     async setStatusUser(userId) {

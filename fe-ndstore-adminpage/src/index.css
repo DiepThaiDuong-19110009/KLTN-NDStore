@@ -24,3 +24,23 @@ body {
   padding-top: 0px;
   padding-bottom: 0px;
 }
+
+.input-search-admin {
+  padding: 5px;
+  border: solid 1px #bbbbbb;
+  border-radius: 5px;
+  outline: none;
+}
+
+.btn-search-admin {
+  padding: 5px 10px;
+  color: white;
+  background-color: var(--main-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-search-admin:hover {
+  background-color: #00aee9;
+}

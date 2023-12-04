@@ -20,7 +20,7 @@ const ProductManagement = () => {
     const [openDetail, setOpenDetail] = useState(false);
     const [productIdDetail, setProductIdDetail] = useState('')
     // data for call api get all
-    const [size, setSize] = useState(5)
+    const [size, setSize] = useState(10)
     const [page, setPage] = useState(0)
 
     // Option search
@@ -200,7 +200,7 @@ const ProductManagement = () => {
                                                     }
                                                 />
                                             </TableCell>
-                                            <TableCell align="right">
+                                            <TableCell style={{minWidth: '100px'}} align="right">
                                                 <EditIcon
                                                     onClick={() => navigate(PATH.PRODUCT + '/' + product?.id)}
                                                     style={{

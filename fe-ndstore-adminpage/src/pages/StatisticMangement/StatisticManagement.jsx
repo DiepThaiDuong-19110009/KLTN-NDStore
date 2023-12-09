@@ -1,4 +1,4 @@
-import { Breadcrumbs, Drawer, Paper, Typography } from "@mui/material";
+import { Breadcrumbs, Drawer, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from "@mui/material";
 import Header from "../../components/Header/Header";
 import Menu from "../../components/Menu/Menu";
 import Loading from "../../components/Loading/Loading";
@@ -13,6 +13,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Bar, Line } from "react-chartjs-2";
 import { Chart as ChartJS, registerables } from 'chart.js';
+import managementProductApi from "../../apis/management-product.api";
 ChartJS.register(...registerables);
 
 const StatisticManagement = () => {
@@ -31,10 +32,19 @@ const StatisticManagement = () => {
     const [listStatistic, setListStatistic] = useState([])
     const [listReportSales, setListReportSales] = useState([])
 
+    const [listSold, setListSold] = useState([])
+    const [totalAmount, setTotalAmount] = useState(0);
+    const [size, setSize] = useState(10)
+    const [page, setPage] = useState(0)
+
     const navigate = useNavigate();
 
     const handleClickBreadcrumb = (link) => {
         navigate(link);
+    }
+
+    const numberWithCommas = (x) => {
+        return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
     useEffect(() => {
@@ -44,6 +54,10 @@ const StatisticManagement = () => {
     useEffect(() => {
         getProductSales(fromDayReportSales.format('DD-MM-YYYY'), toDayReportSales.format('DD-MM-YYYY'));
     }, [fromDayReportSales, toDayReportSales])
+
+    useEffect(() => {
+        getSold()
+    }, [])
 
     const getProductSales = (fromDay, toDay) => {
         setIsLoading(true)
@@ -81,6 +95,40 @@ const StatisticManagement = () => {
             .catch((err) => {
                 setIsLoading(false);
                 setListStatistic([])
+                console.log(err)
+            })
+    }
+
+    const handleChangePage = (e, newPage) => {
+        getSold();
+        setPage(newPage)
+    };
+
+    const handleChangeSize = (event) => {
+        setSize(parseInt(+event.target.value));
+        getSold();
+        setPage(0);
+    };
+
+    const getSold = () => {
+        setIsLoading(true)
+        managementProductApi
+            .getProductBySold(0, 10, 'asc', '')
+            .then((res) => {
+                if (res?.success === true) {
+                    setTotalAmount(res?.data?.totalQuantity)
+                    setListSold(res?.data?.list);
+                    setIsLoading(false);
+                } else {
+                    setListSold([]);
+                    setTotalAmount(0)
+                    setIsLoading(false);
+                }
+            })
+            .catch((err) => {
+                setIsLoading(false);
+                setListSold([])
+                setTotalAmount(0)
                 console.log(err)
             })
     }
@@ -200,6 +248,55 @@ const StatisticManagement = () => {
                             />
                         </LocalizationProvider>
                     </Paper>
+                    {/* <Paper style={{ width: '100%' }}>
+                        <TableContainer>
+                            <Table stickyHeader aria-label="sticky table" style={{ width: '100%' }}>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell style={{ fontWeight: 'bold' }} align="center">#</TableCell>
+                                        <TableCell style={{ fontWeight: 'bold' }} align="left">Tên sản phẩm</TableCell>
+                                        <TableCell style={{ fontWeight: 'bold' }} align="center">Hình ảnh</TableCell>
+                                        <TableCell style={{ fontWeight: 'bold' }} align="left">Danh mục</TableCell>
+                                        <TableCell style={{ fontWeight: 'bold' }} align="left">Thương hiệu</TableCell>
+                                        <TableCell style={{ fontWeight: 'bold' }} align="left">Giá gốc</TableCell>
+                                        <TableCell style={{ fontWeight: 'bold' }} align="left">Kho</TableCell>
+                                        <TableCell style={{ fontWeight: 'bold' }} align="right"></TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {listSold?.map((product, index) => (
+                                        <TableRow key={product?.id} hover role="checkbox" tabIndex={-1}>
+                                            <TableCell align="center">{index + 1}</TableCell>
+                                            <TableCell align="left">{product?.name}</TableCell>
+                                            <TableCell align="center">
+                                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                                    <img style={{ width: '70px' }} alt={product?.name} src={product?.images && product?.images[0] ? product?.images[0]?.url : 'https://static.vecteezy.com/system/resources/thumbnails/011/537/824/small/picture-image-empty-state-single-isolated-icon-with-outline-style-free-vector.jpg'}></img>
+                                                    {
+                                                        product?.images && product?.images[0] ? '' :
+                                                            <span style={{ marginTop: '5px', color: 'red' }}>Chưa cập nhật</span>
+                                                    }
+                                                </div>
+                                            </TableCell>
+                                            <TableCell align="left">{product?.nameCategory}</TableCell>
+                                            <TableCell align="left">{product?.nameBrand}</TableCell>
+                                            <TableCell align="left">{numberWithCommas(product?.originPrice)} VNĐ</TableCell>
+                                            <TableCell align="left">{product?.stock}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 15]}
+                            component="div"
+                            labelRowsPerPage='Hiển thị:'
+                            count={totalAmount}
+                            rowsPerPage={size}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeSize}
+                        />
+                    </Paper> */}
                 </div>
             </div>
             <div style={{ position: 'fixed', bottom: '0', left: '0', width: 'calc(100% - 260px)', marginLeft: '260px' }}>

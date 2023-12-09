@@ -2,8 +2,12 @@ import axios from "axios";
 import httpClient from "./http-client.api";
 
 class ManegementOrderApis {
-    async getOrderList(page, size, state) {
+    async getOrderAll(page, size, state) {
         return httpClient.httpGet(`api/admin/manage/orders/get/all?page=${page}&size=${size}&state=${state}`);
+    }
+
+    async getOrderList(page, size, customerName, status, beginDate, endDate) {
+        return httpClient.httpGet(`api/admin/manage/orders/to/search/another/control/all?page=${page}&size=${size}&status=${status}&customerName=${customerName}&beginDate=${beginDate}&endDate=${endDate}`);
     }
 
     async setStatusOrderToComplete(orderId) {

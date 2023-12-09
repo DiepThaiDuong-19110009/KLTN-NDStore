@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import Loading from "../../components/Loading/Loading";
 import {
+    Alert,
     Breadcrumbs, Button, Drawer, FormControl, MenuItem, Modal, Paper,
     Select,
+    Snackbar,
     Table, TableBody, TableCell, TableContainer,
     TableHead, TablePagination, TableRow, Typography
 } from "@mui/material";
@@ -16,8 +18,16 @@ import StoreIcon from '@material-ui/icons/Store';
 import OrderDetailManagement from "./OrderDetailManagement/OrderDetailManagement";
 import imgPayPal from '../../assets/images/paypal.png'
 import imgVNPay from '../../assets/images/vnpay.png'
+import dayjs from "dayjs";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from "@mui/x-date-pickers";
 
 const OrderManagement = () => {
+    const today = new Date()
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+
     const [isLoading, setIsLoading] = useState(false);
     const [openDetail, setOpenDetail] = useState(false);
     const [openSetStatus, setOpenSetStatus] = useState(false);
@@ -25,16 +35,17 @@ const OrderManagement = () => {
     const [nextState, setNextState] = useState('')
     const [orderDetail, setOrderDetail] = useState({})
     // data for call api get all
-    const [size, setSize] = useState(5)
-    const [page, setPage] = useState(0)
+    const [size, setSize] = useState(10);
+    const [page, setPage] = useState(0);
+    const [customerName, setCustomerName] = useState('');
+    const [status, setStatus] = useState('');
+    const [fromDay, setFromDay] = useState(dayjs('2023-09-01'));
+    const [toDay, setToDay] = useState(dayjs(today));
 
     // set data response
     const [totalAmount, setTotalAmount] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const [listOrder, setListOrder] = useState([]);
-
-    // Option search
-    const [state, setState] = useState('')
 
     const navigate = useNavigate()
 
@@ -44,6 +55,7 @@ const OrderManagement = () => {
 
     const handleChangePage = (e, newPage) => {
         setPage(newPage)
+        getAllOrder(newPage, size, customerName, status, fromDay.format('DD-MM-YYYY'), toDay.format('DD-MM-YYYY'))
     };
 
     const handleChangeSize = (event) => {
@@ -56,14 +68,23 @@ const OrderManagement = () => {
     }
 
     useEffect(() => {
-        getAllOrder(page, size, state);
-    }, [page, size, state])
+        getAllOrder(page, size, customerName, status, fromDay.format('DD-MM-YYYY'), toDay.format('DD-MM-YYYY'));
+    }, [])
+
+    // Close snackbar
+    const handleCloseSnackbar = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSnackbar(false);
+    };
 
     // Get All Order for page
-    const getAllOrder = (page, size, state) => {
+    const getAllOrder = (page, size, customerName, status, fromDay, toDay) => {
         setIsLoading(true)
         managementOrderApi
-            .getOrderList(page, size, state)
+            .getOrderList(page, size, customerName, status, fromDay, toDay)
             .then((res) => {
                 if (res?.success === true) {
                     setTotalAmount(res?.data?.totalQuantity)
@@ -73,6 +94,11 @@ const OrderManagement = () => {
                 }
             })
             .catch((err) => {
+                if (err?.success === false) {
+                    setTotalAmount(0)
+                    setListOrder([])
+                    setIsLoading(false);
+                }
                 setIsLoading(false);
                 console.log(err)
             })
@@ -106,7 +132,8 @@ const OrderManagement = () => {
             .setStatusOrderToCancel(idOrder)
             .then((res) => {
                 if (res?.success === true) {
-                    getAllOrder(page, size, state)
+                    getAllOrder(page, size, customerName, status, fromDay.format('DD-MM-YYYY'), toDay.format('DD-MM-YYYY'))
+                    setOpenSnackbar(true)
                     handleCloseSetStatus();
                     setIsLoading(false);
                 }
@@ -127,7 +154,8 @@ const OrderManagement = () => {
             .setStatusOrderToComplete(idOrder)
             .then((res) => {
                 if (res?.success === true) {
-                    getAllOrder(page, size, state)
+                    getAllOrder(page, size, customerName, status, fromDay.format('DD-MM-YYYY'), toDay.format('DD-MM-YYYY'))
+                    setOpenSnackbar(true)
                     handleCloseSetStatus();
                     setIsLoading(false);
                 }
@@ -148,7 +176,8 @@ const OrderManagement = () => {
             .setStatusOrderToDelivery(orderDetail?.id, expected_delivery_time.toString())
             .then((res) => {
                 if (res?.success === true) {
-                    getAllOrder(page, size, state)
+                    getAllOrder(page, size, customerName, status, fromDay.format('DD-MM-YYYY'), toDay.format('DD-MM-YYYY'))
+                    setOpenSnackbar(true)
                     handleCloseSetStatus();
                     setIsLoading(false);
                 }
@@ -200,6 +229,20 @@ const OrderManagement = () => {
         setOpenSetStatus(false)
     }
 
+    const searchUser = () => {
+        getAllOrder(0, 10, customerName, status, fromDay.format('DD-MM-YYYY'), toDay.format('DD-MM-YYYY'));
+    };
+
+    const resetSearch = () => {
+        setCustomerName('');
+        setStatus('');
+        setFromDay(dayjs('2023-09-01'))
+        setToDay(dayjs(today))
+        setPage(0);
+        setSize(10);
+        getAllOrder(0, 10, '', '', '01-09-2023', dayjs(today).format('DD-MM-YYYY'));
+    }
+
     return (
         <div style={{ paddingLeft: '260px' }}>
             {isLoading ? <Loading isLoading={isLoading} /> : undefined}
@@ -233,23 +276,46 @@ const OrderManagement = () => {
                             </a>
                         </div>
                     </div>
-                    <FormControl sx={{ minWidth: 300 }} style={{ marginBottom: '20px', backgroundColor: 'white' }}>
-                        <Select
-                            value={state}
-                            onChange={(e) => { setState(e.target.value); setPage(0); setSize(5) }}
-                            displayEmpty
-                            inputProps={{ 'aria-label': 'Without label' }}
-                        >
-                            <MenuItem value="">
-                                <em>Tất cả trạng thái</em>
-                            </MenuItem>
-                            <MenuItem value={'waiting'}>Đang chờ xác nhận</MenuItem>
-                            <MenuItem value={'process'}>Chờ thanh toán</MenuItem>
-                            <MenuItem value={'delivery'}>Đang giao hàng</MenuItem>
-                            <MenuItem value={'success'}>Đã giao</MenuItem>
-                            <MenuItem value={'cancel'}>Đã hủy</MenuItem>
-                        </Select>
-                    </FormControl>
+                    <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '20px' }}>
+                        <input style={{ width: '260px', height: '40px' }} value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="input-search-admin" placeholder="Tìm kiếm bằng tên"></input>
+                        <FormControl sx={{ minWidth: 300 }} style={{ backgroundColor: 'white' }}>
+                            <Select
+                                size="small"
+                                value={status}
+                                onChange={(e) => { setStatus(e.target.value) }}
+                                displayEmpty
+                                inputProps={{ 'aria-label': 'Without label' }}
+                            >
+                                <MenuItem value="">
+                                    <em>Tất cả trạng thái</em>
+                                </MenuItem>
+                                <MenuItem value={'waiting'}>Đang chờ xác nhận</MenuItem>
+                                <MenuItem value={'process'}>Chờ thanh toán</MenuItem>
+                                <MenuItem value={'delivery'}>Đang giao hàng</MenuItem>
+                                <MenuItem value={'success'}>Đã giao</MenuItem>
+                                <MenuItem value={'cancel'}>Đã hủy</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <button onClick={() => searchUser()} className="btn-search-admin">Tìm kiếm</button>
+                        <button onClick={() => resetSearch()} className="btn-search-admin">Tải lại</button>
+                    </div>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DemoContainer components={['DatePicker', 'DatePicker']}>
+                            <DatePicker
+                                slotProps={{ textField: { size: 'small' } }}
+                                label="Từ ngày"
+                                value={fromDay}
+                                onChange={(newValue) => setFromDay(newValue)}
+                            />
+                            <DatePicker
+                                slotProps={{ textField: { size: 'small' } }}
+                                label="Đến ngày"
+                                value={toDay}
+                                onChange={(newValue) => setToDay(newValue)}
+                            />
+                        </DemoContainer>
+                    </LocalizationProvider>
+                    <div style={{ marginBottom: '20px' }}></div>
                     <Paper style={{ width: '100%' }}>
                         <TableContainer>
                             <Table stickyHeader aria-label="sticky table" style={{ width: '100%' }}>
@@ -452,6 +518,11 @@ const OrderManagement = () => {
                     </div>
                 </div>
             </Modal>
+            <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+                <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+                    Cập nhật trạng thái đơn hàng thành công
+                </Alert>
+            </Snackbar>
         </div>
     )
 }

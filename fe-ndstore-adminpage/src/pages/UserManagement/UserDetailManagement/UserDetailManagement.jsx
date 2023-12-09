@@ -45,7 +45,7 @@ const UserDetailManagement = (props) => {
                     <span>Tên người dùng: <strong>{userDetail?.name}</strong></span>
                     <span>Email: <strong style={{ color: 'var(--main-color)' }}>{userDetail?.email}</strong></span>
                     <span>Số điện thoại: <strong>{userDetail?.phone}</strong></span>
-                    <span>Địa chỉ: <strong>{userDetail?.address}</strong></span>
+                    {/* <span>Địa chỉ: <strong>{userDetail?.address}</strong></span> */}
                     <span>Vai trò: <strong>{userDetail?.role === 'Role_Admin' ?
                         <strong style={{ color: 'red' }}>Quản trị viên</strong> :
                         'Người dùng'}</strong></span>

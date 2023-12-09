@@ -1,8 +1,12 @@
 import httpClient from "./http-client.api";
 
 class ManagementProductApis {
-    async getProductList(page, size, state) {
+    async getProductAll(page, size, state) {
         return httpClient.httpGet(`api/admin/manage/products/get/all/list?page=${page}&size=${size}&state=${state}`);
+    }
+
+    async getProductList(page, size, categoryId, brandId, name) {
+        return httpClient.httpGet(`api/admin/manage/products/to/search/control/update/all?page=${page}&size=${size}&categoryId=${categoryId}&brandId=${brandId}&name=${name}`);
     }
 
     async setStatusProduct(productId) {
@@ -61,6 +65,10 @@ class ManagementProductApis {
             return;
         }
         return httpClient.httpDelete(`api/admin/manage/products/delete/detail/${id}/${idImage}`)
+    }
+
+    async getProductBySold(page, size, sortSoldOption, sortPriceOption) {
+        return httpClient.httpGet(`api/admin/manage/products/to/search/control/sort/option/all?sortSoldOption=${sortSoldOption}&sortPriceOption=${sortPriceOption}&page=${page}&size=${size}`)
     }
 }
 

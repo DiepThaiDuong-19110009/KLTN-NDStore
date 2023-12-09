@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import Loading from "../../components/Loading/Loading";
 import {
-    Breadcrumbs, Drawer, FormControl, FormControlLabel, MenuItem, Modal, Paper, Select, Switch,
+    Alert,
+    Breadcrumbs, Drawer, FormControl, FormControlLabel, MenuItem, Modal, Paper, Select, Snackbar, Switch,
     Table, TableBody, TableCell, TableContainer,
     TableHead, TablePagination, TableRow, Typography
 } from "@mui/material";
@@ -14,22 +15,27 @@ import EditIcon from '@material-ui/icons/Edit';
 import managementProductApi from "../../apis/management-product.api";
 import { PATH } from "../../contants/Path";
 import ProductDetailManagement from "./ProductDetailManagement/ProductDetailManagement";
+import managementBrandApi from "../../apis/management-brand.api";
+import managementCategoryApi from "../../apis/management-category.api";
 
 const ProductManagement = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [openDetail, setOpenDetail] = useState(false);
-    const [productIdDetail, setProductIdDetail] = useState('')
+    const [productIdDetail, setProductIdDetail] = useState('');
+    const [openSnackbar, setOpenSnackbar] = useState(false);
     // data for call api get all
     const [size, setSize] = useState(10)
     const [page, setPage] = useState(0)
-
-    // Option search
-    const [state, setState] = useState('')
+    const [name, setName] = useState('')
+    const [categoryId, setCategoryId] = useState('')
+    const [brandId, setBrandId] = useState('')
 
     // set datar response
     const [totalAmount, setTotalAmount] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const [listProduct, setListProduct] = useState([]);
+    const [listCategory, setCategory] = useState([])
+    const [listBrand, setBrand] = useState([])
 
     const numberWithCommas = (x) => {
         return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -38,11 +44,13 @@ const ProductManagement = () => {
     const navigate = useNavigate()
 
     const handleChangePage = (e, newPage) => {
+        getAllProduct(newPage, size, categoryId, brandId, name);
         setPage(newPage)
     };
 
     const handleChangeSize = (event) => {
         setSize(parseInt(+event.target.value));
+        getAllProduct(0, event.target.value, '', '', '');
         setPage(0);
     };
 
@@ -51,13 +59,61 @@ const ProductManagement = () => {
     }
 
     useEffect(() => {
-        getAllProduct(page, size, state);
-    }, [page, size, state])
+        getAllCategory();
+        getAllBrand();
+    }, [])
 
-    const getAllProduct = (page, size, state) => {
+    useEffect(() => {
+        getAllProduct(page, size, categoryId, brandId, name);
+    }, [])
+
+    // Close snackbar
+    const handleCloseSnackbar = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSnackbar(false);
+    };
+
+    const getAllBrand = (page, size) => {
+        setIsLoading(true)
+        managementBrandApi
+            .getBrandAll(page, size, 'enable')
+            .then((res) => {
+                if (res?.success === true) {
+                    setBrand(res?.data?.listBrand)
+                    setIsLoading(false);
+                }
+            })
+            .catch((err) => {
+                setIsLoading(false);
+                console.log(err)
+            })
+    }
+
+
+    const getAllCategory = () => {
+        setIsLoading(true)
+        managementCategoryApi
+            .getAllCategory(null, null, 'enable')
+            .then((res) => {
+                if (res?.success === true) {
+                    setCategory(res?.data?.listCategory)
+                    setIsLoading(false);
+                }
+            })
+            .catch((err) => {
+                setIsLoading(false);
+                console.log(err)
+            })
+    }
+
+    // Get all product
+    const getAllProduct = (page, size, categoryId, brandId, name) => {
         setIsLoading(true)
         managementProductApi
-            .getProductList(page, size, state)
+            .getProductList(page, size, categoryId, brandId, name)
             .then((res) => {
                 if (res?.success === true) {
                     setTotalAmount(res?.data?.totalQuantity)
@@ -72,6 +128,11 @@ const ProductManagement = () => {
                 }
             })
             .catch((err) => {
+                if (err?.success === false) {
+                    setTotalAmount(0)
+                    setListProduct([])
+                    setIsLoading(false);
+                }
                 setIsLoading(false);
                 console.log(err)
             })
@@ -82,7 +143,7 @@ const ProductManagement = () => {
             return;
         }
         if (images?.length === 0) {
-            console.log('Vui lòng cập nhật')
+            setOpenSnackbar(true)
             return;
         }
         setIsLoading(true)
@@ -90,7 +151,7 @@ const ProductManagement = () => {
             .setStatusProduct(id)
             .then((res) => {
                 if (res?.success === true) {
-                    getAllProduct(page, size, state);
+                    getAllProduct(page, size, categoryId, brandId, name);
                     setIsLoading(false);
                 }
             })
@@ -107,6 +168,19 @@ const ProductManagement = () => {
 
     const handleClose = () => {
         setOpenDetail(false)
+    }
+
+    const searchUser = () => {
+        getAllProduct(0, 10, categoryId, brandId, name);
+    };
+
+    const resetSearch = () => {
+        setName('');
+        setCategoryId('');
+        setBrandId('');
+        setPage(0);
+        setSize(10);
+        getAllProduct(0, 10, '', '', '');
     }
 
     return (
@@ -138,7 +212,28 @@ const ProductManagement = () => {
                             }}>Thêm mới</button>
                         </div>
                     </div>
-                    <FormControl sx={{ minWidth: 300 }} style={{ marginBottom: '20px', backgroundColor: 'white' }}>
+                    <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '20px' }}>
+                        <input value={name} onChange={(e) => setName(e.target.value)} className="input-search-admin" placeholder="Tìm kiếm bằng tên"></input>
+                        <select className="input-search-admin" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+                        <option value={''}>Danh mục (Tất cả)</option>
+                            {
+                                listCategory.map((item) => (
+                                    <option value={item.id}>{item.titleCategory}</option>
+                                ))
+                            }
+                        </select>
+                        <select className="input-search-admin" value={brandId} onChange={(e) => setBrandId(e.target.value)}>
+                        <option value={''}>Thương hiệu (Tất cả)</option>
+                            {
+                                listBrand.map((item) => (
+                                    <option value={item.id}>{item.name}</option>
+                                ))
+                            }
+                        </select>
+                        <button onClick={() => searchUser()} className="btn-search-admin">Tìm kiếm</button>
+                        <button onClick={() => resetSearch()} className="btn-search-admin">Tải lại</button>
+                    </div>
+                    {/* <FormControl sx={{ minWidth: 300 }} style={{ marginBottom: '20px', backgroundColor: 'white' }}>
                         <Select
                             value={state}
                             onChange={(e) => { setState(e.target.value); setPage(0); setSize(5) }}
@@ -151,7 +246,7 @@ const ProductManagement = () => {
                             <MenuItem value={'enable'}>Đang hoạt động</MenuItem>
                             <MenuItem value={'disable'}>Khóa</MenuItem>
                         </Select>
-                    </FormControl>
+                    </FormControl> */}
                     <Paper style={{ width: '100%' }}>
                         <TableContainer>
                             <Table stickyHeader aria-label="sticky table" style={{ width: '100%' }}>
@@ -248,6 +343,12 @@ const ProductManagement = () => {
                     <ProductDetailManagement id={productIdDetail} handleClose={handleClose}></ProductDetailManagement>
                 </div>
             </Modal>
+
+            <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+                <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+                    Cập nhật trạng thái không thành công. Vui lòng cập nhật hình ảnh sản phẩm
+                </Alert>
+            </Snackbar>
         </div>
     )
 }

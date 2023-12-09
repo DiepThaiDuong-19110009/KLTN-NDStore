@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Loading from "../../components/Loading/Loading";
 import Header from "../../components/Header/Header";
-import { Breadcrumbs, Drawer, FormControl, FormControlLabel, MenuItem, Modal, Paper, Select, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from "@mui/material";
+import { Alert, Breadcrumbs, Drawer, FormControl, FormControlLabel, MenuItem, Modal, Paper, Select, Snackbar, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Menu from "../../components/Menu/Menu";
 import Footer from "../../components/Footer/Footer";
@@ -15,10 +15,13 @@ const CategoryManagement = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [openDetail, setOpenDetail] = useState(false);
     const [categoryIdDetail, setCategoryIdDetail] = useState('')
+    const [openSnackbar, setOpenSnackbar] = useState(false);
 
     // data for call api get all
-    const [size, setSize] = useState(5)
+    const [size, setSize] = useState(10)
     const [page, setPage] = useState(0)
+    const [title, setTitle] = useState('');
+    const [status, setStatus] = useState('');
 
     // Option search
     const [state, setState] = useState('')
@@ -32,10 +35,12 @@ const CategoryManagement = () => {
 
     const handleChangePage = (e, newPage) => {
         setPage(newPage)
+        getAllCategory(newPage, size, title, state);
     };
 
     const handleChangeSize = (event) => {
         setSize(parseInt(+event.target.value));
+        getAllCategory(0, event.target.value, '', '');
         setPage(0);
     };
 
@@ -44,13 +49,22 @@ const CategoryManagement = () => {
     }
 
     useEffect(() => {
-        getAllCategory(page, size, state);
-    }, [page, size, state])
+        getAllCategory(page, size, title, state);
+    }, [])
 
-    const getAllCategory = (page, size, state) => {
+    // Close snackbar
+    const handleCloseSnackbar = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpenSnackbar(false);
+    };
+
+    const getAllCategory = (page, size, title, state) => {
         setIsLoading(true)
         managementCategoryApi
-            .getCategoryList(page, size, state)
+            .getCategoryList(page, size, title, state)
             .then((res) => {
                 if (res?.success === true) {
                     setTotalAmount(res?.data?.totalCategory)
@@ -65,6 +79,11 @@ const CategoryManagement = () => {
                 }
             })
             .catch((err) => {
+                if (err?.success === false) {
+                    setTotalAmount(0)
+                    setListCategory([])
+                    setIsLoading(false);
+                }
                 setIsLoading(false);
                 console.log(err)
             })
@@ -80,11 +99,14 @@ const CategoryManagement = () => {
                 .setStatusCategoryToDisable(id)
                 .then((res) => {
                     if (res?.success === true) {
-                        getAllCategory(page, size, state);
+                        getAllCategory(page, size, title, state);
                         setIsLoading(false);
                     }
                 })
                 .catch((err) => {
+                    if (err.status === 409) {
+                        setOpenSnackbar(true)
+                    }
                     setIsLoading(false);
                     console.log(err?.status)
                 })
@@ -93,11 +115,14 @@ const CategoryManagement = () => {
                 .setStatusCategoryToEnable(id)
                 .then((res) => {
                     if (res?.success === true) {
-                        getAllCategory(page, size, state);
+                        getAllCategory(page, size, title, state);
                         setIsLoading(false);
                     }
                 })
                 .catch((err) => {
+                    if (err.status === 409) {
+                        setOpenSnackbar(true)
+                    }
                     setIsLoading(false);
                     console.log(err)
                 })
@@ -113,6 +138,17 @@ const CategoryManagement = () => {
         setOpenDetail(false)
     }
 
+    const searchUser = () => {
+        getAllCategory(0, 10, title, status);
+    };
+
+    const resetSearch = () => {
+        setTitle('');
+        setStatus('');
+        setPage(0);
+        setSize(10);
+        getAllCategory(0, 10, '', '');
+    }
 
     return (
         <div style={{ paddingLeft: '260px' }}>
@@ -142,7 +178,17 @@ const CategoryManagement = () => {
                             }}>Thêm mới</button>
                         </div>
                     </div>
-                    <FormControl sx={{ minWidth: 300 }} style={{ marginBottom: '20px', backgroundColor: 'white' }}>
+                    <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '20px' }}>
+                        <input value={title} onChange={(e) => setTitle(e.target.value)} className="input-search-admin" placeholder="Tìm kiếm bằng tên"></input>
+                        <select className="input-search-admin" value={status} onChange={(e) => setStatus(e.target.value)}>
+                            <option value={''}>Trạng thái (Tất cả)</option>
+                            <option value={'enable'}>Hoạt động</option>
+                            <option value={'disable'}>Khóa</option>
+                        </select>
+                        <button onClick={() => searchUser()} className="btn-search-admin">Tìm kiếm</button>
+                        <button onClick={() => resetSearch()} className="btn-search-admin">Tải lại</button>
+                    </div>
+                    {/* <FormControl sx={{ minWidth: 300 }} style={{ marginBottom: '20px', backgroundColor: 'white' }}>
                         <Select
                             value={state}
                             onChange={(e) => {setState(e.target.value); setPage(0); setSize(5)}}
@@ -155,7 +201,7 @@ const CategoryManagement = () => {
                             <MenuItem value={'enable'}>Đang hoạt động</MenuItem>
                             <MenuItem value={'disable'}>Khóa</MenuItem>
                         </Select>
-                    </FormControl>
+                    </FormControl> */}
                     <Paper style={{ width: '100%' }}>
                         <TableContainer>
                             <Table stickyHeader aria-label="sticky table" style={{ width: '100%' }}>
@@ -236,6 +282,12 @@ const CategoryManagement = () => {
                     <CategoryDetailManagement id={categoryIdDetail} handleClose={handleClose}></CategoryDetailManagement>
                 </div>
             </Modal>
+
+            <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+                <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+                    Cập nhật trạng thái không thành công
+                </Alert>
+            </Snackbar>
         </div>
     )
 }

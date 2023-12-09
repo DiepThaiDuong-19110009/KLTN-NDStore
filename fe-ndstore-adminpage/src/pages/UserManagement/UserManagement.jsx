@@ -18,7 +18,7 @@ const UserManagement = () => {
     const [openDetail, setOpenDetail] = useState(false);
     const [userIdDetail, setUsetIdDetail] = useState('')
     // data for call api get all
-    const [size, setSize] = useState(5)
+    const [size, setSize] = useState(10)
     const [page, setPage] = useState(0)
     const [role, setRole] = useState('');
     const [status, setStatus] = useState('');
@@ -26,7 +26,6 @@ const UserManagement = () => {
 
     // set datar response
     const [totalAmount, setTotalAmount] = useState(0);
-    const [totalPage, setTotalPage] = useState(0);
     const [listUser, setListUser] = useState([]);
 
     const navigate = useNavigate()
@@ -57,7 +56,6 @@ const UserManagement = () => {
             .then((res) => {
                 if (res?.success === true) {
                     setTotalAmount(res?.data?.allQuantity)
-                    setTotalPage(res?.data?.allPage)
                     setListUser(res?.data?.listUser)
                     setIsLoading(false);
                 }
@@ -65,7 +63,6 @@ const UserManagement = () => {
             .catch((err) => {
                 if (err?.success === false) {
                     setTotalAmount(0)
-                    setTotalPage(0)
                     setListUser([])
                     setIsLoading(false);
                 }
@@ -103,7 +100,7 @@ const UserManagement = () => {
     };
 
     const searchUser = () => {
-        getAllUser(0, 5, role, status, accountMail);
+        getAllUser(0, 10, role, status, accountMail);
     };
 
     const resetSearch = () => {
@@ -111,9 +108,9 @@ const UserManagement = () => {
         setRole('');
         setStatus('');
         setPage(0);
-        setSize(5);
-        getAllUser(0, 5, '', '', '');
-    } 
+        setSize(10);
+        getAllUser(0, 10, '', '', '');
+    }
 
     return (
         <div style={{ paddingLeft: '260px' }}>
@@ -172,7 +169,10 @@ const UserManagement = () => {
                                         <TableRow key={user?.id} hover role="checkbox" tabIndex={-1}>
                                             <TableCell align="center">{index + 1}</TableCell>
                                             <TableCell align="left">{user?.name}</TableCell>
-                                            <TableCell align="left">{user?.email}</TableCell>
+                                            <TableCell align="left">
+                                                <a style={{ color: 'var(--main-color)', cursor: 'pointer' }}
+                                                    href={`mailto:${user?.email}`}>{user?.email}</a>
+                                            </TableCell>
                                             <TableCell align="right">{user?.phone}</TableCell>
                                             <TableCell align="left">{user?.role === 'Role_Admin' ?
                                                 <span style={{ color: 'red' }}>Quản trị viên</span> : 'Người dùng'}</TableCell>

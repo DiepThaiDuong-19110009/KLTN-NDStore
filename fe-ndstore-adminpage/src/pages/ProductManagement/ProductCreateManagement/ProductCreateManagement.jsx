@@ -55,7 +55,7 @@ const ProductCreateManagement = () => {
     const getAllBrand = (page, size) => {
         setIsLoading(true)
         managementBrandApi
-            .getBrandList(page, size, 'enable')
+            .getBrandAll(page, size, 'enable')
             .then((res) => {
                 if (res?.success === true) {
                     setListBrand(res?.data?.listBrand)
@@ -72,7 +72,7 @@ const ProductCreateManagement = () => {
     const getAllCategory = () => {
         setIsLoading(true)
         managementCategoryApi
-            .getCategoryList(null, null, 'enable')
+            .getAllCategory(null, null, 'enable')
             .then((res) => {
                 if (res?.success === true) {
                     setListCategory(res?.data?.listCategory)

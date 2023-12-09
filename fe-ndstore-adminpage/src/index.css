@@ -30,6 +30,8 @@ body {
   border: solid 1px #bbbbbb;
   border-radius: 5px;
   outline: none;
+  height: 40px;
+  width: 300px;
 }
 
 .btn-search-admin {
@@ -39,6 +41,7 @@ body {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  height: 40px;
 }
 
 .btn-search-admin:hover {

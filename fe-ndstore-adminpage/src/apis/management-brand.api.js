@@ -1,8 +1,13 @@
 import httpClient from "./http-client.api";
 
 class ManegementBrandApis {
-    async getBrandList(page, size, state) {
+
+    async getBrandAll(page, size, state) {
         return httpClient.httpGet(`api/admin/manage/brands/get/list/all?page=${page}&size=${size}&state=${state}`);
+    }
+
+    async getBrandList(page, size, title, state) {
+        return httpClient.httpGet(`api/admin/manage/brands/to/search/control/all?page=${page}&size=${size}&state=${state}&title=${title}`);
     }
 
     async setStatusBrandToEnable(brandId) {

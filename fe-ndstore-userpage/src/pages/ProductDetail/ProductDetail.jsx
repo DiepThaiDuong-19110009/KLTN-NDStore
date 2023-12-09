@@ -150,9 +150,24 @@ const ProductDetail = () => {
                 }
             })
     }
+    // Check negative word
+    const checkNegativeWord = (text) => {
+        const listNegativeWord = ['gạt', 'lừa', 'cắp', 'ngu', 'đểu', 'fake']
+        let checkPass = true;
+        listNegativeWord.forEach((word) => {
+            if(text.includes(word)) {
+                checkPass = false
+            }
+        })
+        return checkPass;
+    }
 
     // Create Comment
     const createProductComment = (productId, description, vote) => {
+        if (!checkNegativeWord(description)) {
+            setErrorMessageComment('Vui lòng không sử dụng các từ ngữ tiêu cực')
+            return;
+        }
         setIsLoading(true)
         createComment(productId, description, vote)
             .then((res) => {

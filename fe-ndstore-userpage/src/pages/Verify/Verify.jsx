@@ -95,7 +95,10 @@ const Verify = () => {
          </div>
          <p style={{ color: 'red' }}>{message}</p>
          <button onClick={() => verifyRegister()} className="btn-login">Xác thực</button>
-         <strong onClick={() => resend()} style={{ color: 'var(--main-color)', marginTop: '20px', cursor: 'pointer' }}>Gửi lại mã OTP</strong>
+         {
+            type !== 'reset' &&
+            <strong onClick={() => resend()} style={{ color: 'var(--main-color)', marginTop: '20px', cursor: 'pointer' }}>Gửi lại mã OTP</strong>
+         }
          <Dialog
             open={openDialog}
             onClose={handleClose}

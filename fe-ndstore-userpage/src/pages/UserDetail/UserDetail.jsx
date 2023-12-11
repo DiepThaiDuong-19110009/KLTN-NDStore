@@ -55,6 +55,10 @@ const UserDetail = () => {
             })
     }
     const getDistrictList = (provinceId) => {
+        if (!provinceId) {
+            setDistrict([])
+            return;
+        }
         getDistrict(provinceId)
             .then((res) => {
                 setDistrict(res?.data?.data)
@@ -64,6 +68,10 @@ const UserDetail = () => {
             })
     }
     const getWardList = (districtId) => {
+        if (!districtId) {
+            setDistrict([])
+            return;
+        }
         getWard(districtId)
             .then((res) => {
                 setWard(res?.data?.data)

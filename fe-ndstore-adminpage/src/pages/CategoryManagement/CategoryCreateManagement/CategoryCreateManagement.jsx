@@ -87,7 +87,7 @@ const CategoryCreateManagement = () => {
             <div style={{ padding: '70px 15px 15px 15px', height: 'auto' }}>
                 <Breadcrumbs aria-label="breadcrumb">
                     <Typography onClick={() => handleClickBreadcrumb(PATH.HOME)} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Trang chủ</Typography>
-                    <Typography onClick={() => handleClickBreadcrumb(PATH.CATEGORY_CREATE)} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Thương hiệu</Typography>
+                    <Typography onClick={() => handleClickBreadcrumb(PATH.CATEGORY)} color="gray" fontSize='14px' style={{ cursor: 'pointer' }}>Danh mục</Typography>
                     <Typography color="var(--main-color)" fontSize='14px'>Thêm mới danh mục</Typography>
                 </Breadcrumbs>
                 <div style={{

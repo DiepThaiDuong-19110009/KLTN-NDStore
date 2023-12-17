@@ -21,6 +21,8 @@ const ProductDetail = () => {
     const [productDetail, setProductDetail] = useState({});
     const [openZoomImage, setOpenZoomImage] = useState(false);
 
+    const uniqueIds = [];
+
     // Comment
     const [productComment, setProductComment] = useState([]);
     const [contentComment, setContentComment] = useState('');
@@ -217,6 +219,21 @@ const ProductDetail = () => {
             })
     }
 
+    //
+    const historyProducts = (arr) => {
+        return arr.filter(element => {
+            const isDuplicate = uniqueIds.includes(element.id);
+
+            if (!isDuplicate) {
+                uniqueIds.push(element.id);
+
+                return true;
+            }
+
+            return false;
+        });
+    }
+
     // Save history see product detail
     const saveHistorySeeProduct = (detail) => {
         let listHistoryProduct = JSON.parse(localStorage.getItem('history-product'));
@@ -232,7 +249,7 @@ const ProductDetail = () => {
         } else if (listHistoryProduct.length === 0){
             listHistoryProduct.push(detail);
         }
-        localStorage.setItem('history-product', JSON.stringify(listHistoryProduct))
+        localStorage.setItem('history-product', JSON.stringify(historyProducts(listHistoryProduct)));
     }
 
     return (

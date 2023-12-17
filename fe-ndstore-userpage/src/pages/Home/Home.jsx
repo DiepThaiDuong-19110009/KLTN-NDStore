@@ -116,7 +116,7 @@ const Home = () => {
         if (!listHistoryProduct || listHistoryProduct.length === 0) {
             return;
         }
-        setHistoryProduct(historyProducts(listHistoryProduct))
+        setHistoryProduct(historyProducts(listHistoryProduct));
     }
 
     const historyProducts = (arr) => {
@@ -131,8 +131,6 @@ const Home = () => {
 
             return false;
         });
-        // localStorage.setItem('history-product', JSON.stringify(unique));
-        // return unique;
     }
 
     return (

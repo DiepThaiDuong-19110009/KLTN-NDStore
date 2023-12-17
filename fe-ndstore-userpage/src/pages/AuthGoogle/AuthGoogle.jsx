@@ -22,6 +22,7 @@ const AuthGoogle = () => {
             setOpen(true)
         }
         if (searchParams.get("token")) {
+            localStorage.setItem('history-product', JSON.stringify([]))
             localStorage.setItem('access-token', searchParams.get("token"))
             localStorage.setItem('user-infor', JSON.stringify(jwt_decode(searchParams.get('token'))))
             return navigate("/")

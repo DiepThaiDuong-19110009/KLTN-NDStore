@@ -49,8 +49,9 @@ const ProductDetail = () => {
     };
 
     useEffect(() => {
-        getProductDetail(id)
-        getOrderSucces()
+        getProductDetail(id);
+        getOrderSucces();
+        console.log('abc')
     }, [id])
 
     const numberWithCommas = (x) => {
@@ -79,6 +80,7 @@ const ProductDetail = () => {
                 if (res) {
                     setIsLoading(false)
                     setProductDetail(res?.data?.data)
+                    saveHistorySeeProduct(res?.data?.data)
                     getProductComment(page, res?.data?.data?.id)
                     setSrcImg(res?.data?.data?.images[0]?.url)
                 }
@@ -213,6 +215,24 @@ const ProductDetail = () => {
                     setIsLoading(false)
                 }
             })
+    }
+
+    // Save history see product detail
+    const saveHistorySeeProduct = (detail) => {
+        let listHistoryProduct = JSON.parse(localStorage.getItem('history-product'));
+        if (!listHistoryProduct) {
+            return;
+        }
+        if (listHistoryProduct.length !== 0) {
+            listHistoryProduct.forEach((item) => {
+                if (item.id !== detail.id) {
+                    listHistoryProduct.push(detail);
+                }
+            })
+        } else if (listHistoryProduct.length === 0){
+            listHistoryProduct.push(detail);
+        }
+        localStorage.setItem('history-product', JSON.stringify(listHistoryProduct))
     }
 
     return (

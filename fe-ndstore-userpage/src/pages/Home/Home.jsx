@@ -9,6 +9,7 @@ import { Loader } from "../../components/Loader/Loader";
 import Slider from "react-slick";
 import { getAllBrandNoPage } from "../../apis/brand";
 import { getCategoryAll } from "../../apis/category.api";
+import { Grid } from "@mui/material";
 
 const Home = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -16,6 +17,8 @@ const Home = () => {
     const [listProductLaptop, setListProductLaptop] = useState([]);
     const [listCategory, setListCategory] = useState([])
     const [listBrand, setListBrand] = useState([])
+    const [historyProduct, setHistoryProduct] = useState([])
+    const uniqueIds = [];
 
     const navigate = useNavigate();
 
@@ -49,6 +52,7 @@ const Home = () => {
         getAllProduct();
         getAllBrand();
         getCategory();
+        getHistoryProduct();
     }, [navigate])
 
     // Get All products
@@ -104,6 +108,31 @@ const Home = () => {
     // Find product by category
     const findProductByCategory = (idCategory) => {
         navigate(`/product?categoryId=${idCategory}`)
+    }
+
+    // Get history product
+    const getHistoryProduct = () => {
+        let listHistoryProduct = JSON.parse(localStorage.getItem('history-product'));
+        if (!listHistoryProduct || listHistoryProduct.length === 0) {
+            return;
+        }
+        setHistoryProduct(historyProducts(listHistoryProduct))
+    }
+
+    const historyProducts = (arr) => {
+        return arr.filter(element => {
+            const isDuplicate = uniqueIds.includes(element.id);
+
+            if (!isDuplicate) {
+                uniqueIds.push(element.id);
+
+                return true;
+            }
+
+            return false;
+        });
+        // localStorage.setItem('history-product', JSON.stringify(unique));
+        // return unique;
     }
 
     return (
@@ -234,6 +263,32 @@ const Home = () => {
                         }
                     </Slider>
                 </div>
+
+                {/* history product */}
+                {
+                    historyProduct?.length > 0 &&
+                    <>
+                        <div className="product-row" style={{ justifyContent: 'space-between' }}>
+                            <h4 style={{ color: 'black' }}>Sản phẩm đã xem</h4>
+                        </div>
+                        <div style={{ borderBottom: '3px dotted white', width: '80%', margin: '0 auto', overflow: 'hidden' }}></div>
+                        <div className="product-row" style={{ marginBottom: '20px' }}>
+                            <Grid container spacing={0} className="products">
+                                {
+                                    historyProduct?.map((item) => (
+                                        <Grid key={item?.id} lg={2} xs={6} md={4}>
+                                            <CardProduct
+                                                id={item?.id}
+                                                src={item?.images[0]?.url || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsG3u77s8fTCxsnn7O/f5OfFyczP09bM0dO8wMPk6ezY3eDd4uXR1tnJzdBvAX/cAAACVElEQVR4nO3b23KDIBRA0ShGU0n0//+2KmO94gWZ8Zxmr7fmwWEHJsJUHw8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwO1MHHdn+L3rIoK6eshsNJ8kTaJI07fERPOO1Nc1vgQm2oiBTWJ+d8+CqV1heplLzMRNonED+4mg7L6p591FC+133/xCRNCtd3nL9BlxWP++MOaXFdEXFjZ7r8D9l45C8y6aG0cWtP/SUGhs2d8dA/ZfGgrzYX+TVqcTNRRO9l+fS5eSYzQs85psUcuzk6igcLoHPz2J8gvzWaH/JLS+95RfOD8o1p5CU5R7l5LkfKEp0mQ1UX7hsVXqDpRrifILD/3S9CfmlUQFhQfuFu0STTyJ8gsP3PH7GVxN1FC4t2sbBy4TNRTu7LyHJbqaqKFw+/Q0ncFloo7CjRPwMnCWqKXQZ75El4nKC9dmcJaou9AXOE5UXbi+RGeJygrz8Uf+GewSn9uXuplnWDZJ7d8f24F/s6iq0LYf9olbS3Q8i5oKrRu4S9ybwaQ/aCkqtP3I28QDgeoK7TBya/aXqL5COx67PTCD2grtdOwH+pQV2r0a7YVBgZoKwwIVFQYG6ikMDVRTGByopjD8ATcKb0UhhRTe77sKs2DV7FKSjId18TUEBYVyLhUThWfILHTDqmI85/2RWWjcE/bhP6OD7maT3h20MHsA47JC3PsW0wcwLhv9t0OOPOIkCn21y2bXXwlyylxiYMPk1SuCSmpfK8bNQvIrpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwNX4BCbAju9/X67UAAAAASUVORK5CYII='}
+                                                brand={item?.nameBrand} name={item?.name} discountPercent={item?.discount}
+                                                price={item?.discountPrice} discount={item?.originPrice}>
+                                            </CardProduct>
+                                        </Grid>
+                                    ))
+                                }
+                            </Grid>
+                        </div></>
+                }
             </div>
             <Footer></Footer>
         </div>

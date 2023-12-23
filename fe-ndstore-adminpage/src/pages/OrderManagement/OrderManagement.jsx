@@ -26,6 +26,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 
 const OrderManagement = () => {
     const today = new Date()
+    const tomorrow = new Date(today)
     const [openSnackbar, setOpenSnackbar] = useState(false);
 
     const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +41,7 @@ const OrderManagement = () => {
     const [customerName, setCustomerName] = useState('');
     const [status, setStatus] = useState('');
     const [fromDay, setFromDay] = useState(dayjs('2023-09-01'));
-    const [toDay, setToDay] = useState(dayjs(today));
+    const [toDay, setToDay] = useState(dayjs(tomorrow.setDate(today.getDate() + 1)))
 
     // set data response
     const [totalAmount, setTotalAmount] = useState(0);

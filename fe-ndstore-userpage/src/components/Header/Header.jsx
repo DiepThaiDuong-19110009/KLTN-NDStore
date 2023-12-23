@@ -18,6 +18,9 @@ const Header = () => {
     const [keySearch, setKeySearch] = useState('')
     const openUserInfo = Boolean(openMenuUserInfo);
     const openCategory = Boolean(openMenuCategory);
+    const [historyProduct, setHistoryProduct] = useState([])
+    const [historySearch, setHistorySearch] = useState([])
+    const uniqueIds = [];
 
     const dispatch = useDispatch()
 
@@ -133,8 +136,79 @@ const Header = () => {
         if (!keySearch) {
             return;
         }
+        if (localStorage.getItem('user-infor')) {
+            const listHistorySearch = JSON.parse(localStorage.getItem('history-keysearch'));
+            if (listHistorySearch) {
+                listHistorySearch.push(keySearch);
+                localStorage.setItem('history-keysearch', JSON.stringify(listHistorySearch));
+            }
+
+        }
         navigate(`/product?keySearch=${keySearch}`)
-        // setKeySearch('')
+        setKeySearch('')
+        let boxHistorySearch = document.getElementById('box-history-search');
+        return boxHistorySearch.style.display = "none";
+    }
+
+    // Change Input search
+    const setChangeKeySearch = (keySearch) => {
+        setKeySearch(keySearch);
+        let boxHistorySearch = document.getElementById('box-history-search')
+        if (localStorage.getItem('user-infor')) {
+            if (keySearch !== '') {
+                boxHistorySearch.style.display = "block";
+                getHistoryProduct();
+                getHistorySearchKey();
+            } else {
+                return boxHistorySearch.style.display = "none";
+            }
+        }
+    }
+
+    // Delete History Search
+    const deleteHistorySearch = () => {
+        localStorage.setItem('history-keysearch', JSON.stringify([]));
+        setHistorySearch([])
+    }
+
+    // Get history search key
+    const getHistorySearchKey = () => {
+        let listHistorySearch = JSON.parse(localStorage.getItem('history-keysearch'));
+        if (!listHistorySearch || listHistorySearch.length === 0) {
+            localStorage.setItem('history-keysearch', JSON.stringify([]));
+            return;
+        }
+        setHistorySearch(listHistorySearch);
+    }
+
+    // Get history product
+    const getHistoryProduct = () => {
+        let listHistoryProduct = JSON.parse(localStorage.getItem('history-product'));
+        if (!listHistoryProduct || listHistoryProduct.length === 0) {
+            return;
+        }
+        setHistoryProduct(historyProducts(listHistoryProduct));
+    }
+
+    const historyProducts = (arr) => {
+        return arr.filter(element => {
+            const isDuplicate = uniqueIds.includes(element.id);
+
+            if (!isDuplicate) {
+                uniqueIds.push(element.id);
+
+                return true;
+            }
+
+            return false;
+        });
+    }
+
+    const selectProductSearch = (id) => {
+        navigate(`/product/${id}`)
+        let boxHistorySearch = document.getElementById('box-history-search')
+        setKeySearch('');
+        return boxHistorySearch.style.display = "none";
     }
 
     return (
@@ -178,13 +252,71 @@ const Header = () => {
                     </div>
                 </div>
                 <div className='search-header'>
-                    <input
-                        value={keySearch} onChange={(e) => setKeySearch(e.target.value)}
-                        className='input-search-header' placeholder='Tìm kiếm sản phẩm...'>
-                    </input>
-                    <button onClick={searchProduct} className='btn-search'>
-                        <i className='fas fa-search icon-search'></i>
-                    </button>
+                    <div style={{ width: '100%', display: 'flex', height: '100%' }}>
+                        <input
+                            value={keySearch} onChange={(e) => setChangeKeySearch(e.target.value)}
+                            className='input-search-header' placeholder='Tìm kiếm sản phẩm...'>
+                        </input>
+                        <button onClick={searchProduct} className='btn-search'>
+                            <i className='fas fa-search icon-search'></i>
+                        </button>
+                    </div>
+                    <div id='box-history-search'>
+                        {
+                            localStorage.getItem('user-infor') &&
+                            <div>
+                                {
+                                    historySearch.length !== 0 ?
+                                        <div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <b>Lịch sử tìm kiếm</b>
+                                                <span onClick={() => deleteHistorySearch()}
+                                                    style={{ cursor: 'pointer' }}>Xóa lịch sử</span>
+                                            </div>
+                                            <div style={{ marginTop: '10px', maxHeight: '150px', overflow: 'auto' }}>
+                                                {
+                                                    historySearch.map((item, index) => {
+                                                        return (
+                                                            <div key={index} className='choose-item-box-search'
+                                                                onClick={() => navigate(`/product?keySearch=${item}`)}
+                                                                style={{ display: 'flex', alignItems: 'center', padding: '5px' }}>
+                                                                <i style={{ marginRight: '10px' }} className='fas fa-history'></i>
+                                                                <span>{item}</span>
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
+                                            </div>
+                                        </div> :
+                                        <div>
+                                            <b>Lịch sử tìm kiếm</b>
+                                            <div style={{ textAlign: 'center', minHeight: '50px', marginTop: '20px' }}>
+                                                Chưa có lịch sử tìm kiếm
+                                            </div>
+                                        </div>
+                                }
+                                {
+                                    historyProduct.length !== 0 &&
+                                    <div style={{ marginTop: '10px' }}>
+                                        <b>Sản phẩm đã xem</b>
+                                        <div style={{ marginTop: '10px', maxHeight: '200px', overflow: 'auto' }}>
+                                            {
+                                                historyProduct.map((item) => {
+                                                    return (
+                                                        <div className='choose-item-box-search' onClick={() => selectProductSearch(item.id)}
+                                                            style={{ display: 'flex', alignItems: 'center', padding: '5px' }}>
+                                                            <img style={{ width: '40px' }} src={item?.images[0]?.url} />
+                                                            <span>{item?.name}</span>
+                                                        </div>
+                                                    )
+                                                })
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
                 </div>
                 <div className='login-register-cart-user'>
                     {

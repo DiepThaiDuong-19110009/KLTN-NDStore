@@ -56,6 +56,19 @@ export const getProductByKeySearch = (page, content) => {
   return axios.get(API_URL + `/api/products/find/get/search?content=${content}&page=${page}`, config)
 }
 
+// Filter product when have filter item
+// Find product by key search
+export const filterProductByKeySearch = (page, keyword, brandId, priceMin, priceMax) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }
+
+  return axios.get(API_URL +
+     `/api/products/find/search/brand/fill/full/all/enable/price/config?keyword=${keyword}&page=${page}&priceMax=${priceMax}&priceMin=${priceMin}&brandId=${brandId}`, config)
+}
+
 // Filter product with category id + brand id + price + config
 export const filterProductLaptop = (page, categoryId, brandId, priceMin, priceMax, RAM, CPU, PIN, IPS, USB) => {
   const config = {

@@ -5,7 +5,7 @@ import { FormControl, FormControlLabel, FormLabel, Grid, Pagination, Radio, Radi
 import '../Product/Product.css'
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { filterProductLaptop, getProductByBrandId, getProductByCategoryId, getProductByKeySearch, getProductByPage } from "../../apis/product.api";
+import { filterProductByKeySearch, filterProductLaptop, getProductByBrandId, getProductByCategoryId, getProductByKeySearch, getProductByPage } from "../../apis/product.api";
 import { Loader } from "../../components/Loader/Loader";
 import { getAllBrandNoPage } from "../../apis/brand";
 import { getCategoryById } from "../../apis/category.api";
@@ -181,6 +181,7 @@ const Product = () => {
                     setIsLoading(false);
                     setTotalAmount(res?.data?.data?.totalQuantity);
                     setListProduct(res?.data?.data?.list)
+                    resetFilter();
                 }
             })
             .catch((err) => {
@@ -194,21 +195,39 @@ const Product = () => {
     // Filter product
     const filterProduct = () => {
         console.log(searchParams.get("categoryId"), filterBrand, RAM, CPU, PIN, IPS, USB)
-        setIsLoading(true)
-        filterProductLaptop(page - 1, searchParams.get("categoryId"), filterBrand, minPrice, maxPrice, RAM, CPU, PIN, IPS, USB)
-            .then((res) => {
-                if (res?.data?.success === true) {
-                    setIsLoading(false);
-                    setTotalAmount(res?.data?.data?.totalQuantity);
-                    setListProduct(res?.data?.data?.list)
-                }
-            })
-            .catch((err) => {
-                setListProduct([]);
-                setTotalAmount(0);
-                setIsLoading(false)
-                return err;
-            })
+        if (searchParams.get("categoryId")) {
+            setIsLoading(true)
+            filterProductLaptop(page - 1, searchParams.get("categoryId"), filterBrand, minPrice, maxPrice, RAM, CPU, PIN, IPS, USB)
+                .then((res) => {
+                    if (res?.data?.success === true) {
+                        setIsLoading(false);
+                        setTotalAmount(res?.data?.data?.totalQuantity);
+                        setListProduct(res?.data?.data?.list)
+                    }
+                })
+                .catch((err) => {
+                    setListProduct([]);
+                    setTotalAmount(0);
+                    setIsLoading(false)
+                    return err;
+                })
+        } else if (searchParams.get("keySearch")) {
+            setIsLoading(true)
+            filterProductByKeySearch(page - 1, searchParams.get("keySearch"), filterBrand, minPrice, maxPrice)
+                .then((res) => {
+                    if (res?.data?.success === true) {
+                        setIsLoading(false);
+                        setTotalAmount(res?.data?.data?.totalQuantity);
+                        setListProduct(res?.data?.data?.list)
+                    }
+                })
+                .catch((err) => {
+                    setListProduct([]);
+                    setTotalAmount(0);
+                    setIsLoading(false)
+                    return err;
+                })
+        }
     }
 
     // Reset filter
@@ -230,7 +249,7 @@ const Product = () => {
             }
             <div className="container-product">
                 {
-                    (searchParams.get('categoryId')) &&
+                    (searchParams.get('categoryId') || searchParams.get("keySearch")) &&
                     <div className="filter-product">
                         <div className="filter-action">
                             <button onClick={() => filterProduct()}>Lọc <i className="fas fa-filter"></i></button>
@@ -268,7 +287,7 @@ const Product = () => {
                             </FormControl>
                         </div>
                         {
-                            categoryDetail?.titleCategory === 'Laptop' &&
+                            categoryDetail?.titleCategory === 'Laptop' && !searchParams.get("keySearch") &&
                             <>
                                 <hr />
                                 <div>
@@ -324,7 +343,7 @@ const Product = () => {
                             </>
                         }
                          {
-                            categoryDetail?.titleCategory === 'Màn hình' &&
+                            categoryDetail?.titleCategory === 'Màn hình' && !searchParams.get("keySearch") &&
                             <>
                                 <hr />
                                 <div>
@@ -363,7 +382,7 @@ const Product = () => {
                         }
                     </div>
                 }
-                <div className="list-product" style={{ width: (!searchParams.get('categoryId')) ? '100%' : '80%' }}>
+                <div className="list-product" style={{ width: (!searchParams.get('categoryId') && !searchParams.get('keySearch')) ? '100%' : '80%' }}>
                     <div className="name-category">
                         <h5>Tìm thấy: {' '}
                             <span>
@@ -420,7 +439,7 @@ const Product = () => {
                         {
                             listProduct.length !== 0 ?
                                 listProduct.map((product) => (
-                                    <Grid key={product?.id} xs={6} md={4} xl={!(searchParams.get('categoryId')) ? 2 : 3}>
+                                    <Grid key={product?.id} xs={6} md={4} xl={(!searchParams.get('categoryId') && !searchParams.get('keySearch')) ? 2 : 3}>
                                         <CardProduct
                                             id={product?.id}
                                             src={product?.images[0]?.url || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsG3u77s8fTCxsnn7O/f5OfFyczP09bM0dO8wMPk6ezY3eDd4uXR1tnJzdBvAX/cAAACVElEQVR4nO3b23KDIBRA0ShGU0n0//+2KmO94gWZ8Zxmr7fmwWEHJsJUHw8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwO1MHHdn+L3rIoK6eshsNJ8kTaJI07fERPOO1Nc1vgQm2oiBTWJ+d8+CqV1heplLzMRNonED+4mg7L6p591FC+133/xCRNCtd3nL9BlxWP++MOaXFdEXFjZ7r8D9l45C8y6aG0cWtP/SUGhs2d8dA/ZfGgrzYX+TVqcTNRRO9l+fS5eSYzQs85psUcuzk6igcLoHPz2J8gvzWaH/JLS+95RfOD8o1p5CU5R7l5LkfKEp0mQ1UX7hsVXqDpRrifILD/3S9CfmlUQFhQfuFu0STTyJ8gsP3PH7GVxN1FC4t2sbBy4TNRTu7LyHJbqaqKFw+/Q0ncFloo7CjRPwMnCWqKXQZ75El4nKC9dmcJaou9AXOE5UXbi+RGeJygrz8Uf+GewSn9uXuplnWDZJ7d8f24F/s6iq0LYf9olbS3Q8i5oKrRu4S9ybwaQ/aCkqtP3I28QDgeoK7TBya/aXqL5COx67PTCD2grtdOwH+pQV2r0a7YVBgZoKwwIVFQYG6ikMDVRTGByopjD8ATcKb0UhhRTe77sKs2DV7FKSjId18TUEBYVyLhUThWfILHTDqmI85/2RWWjcE/bhP6OD7maT3h20MHsA47JC3PsW0wcwLhv9t0OOPOIkCn21y2bXXwlyylxiYMPk1SuCSmpfK8bNQvIrpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwNX4BCbAju9/X67UAAAAASUVORK5CYII='}

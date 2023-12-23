@@ -50,6 +50,7 @@ const Login = () => {
         loginUser(email, password)
             .then((res) => {
                 if (res?.data?.success === true) {
+                    localStorage.setItem('history-keysearch', JSON.stringify([]))
                     localStorage.setItem('history-product', JSON.stringify([]))
                     localStorage.setItem('access-token', res?.data?.data?.accessToken)
                     localStorage.setItem('user-infor', JSON.stringify({

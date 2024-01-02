@@ -238,7 +238,7 @@ const OrderManagement = () => {
         setCustomerName('');
         setStatus('');
         setFromDay(dayjs('2023-09-01'))
-        setToDay(dayjs(today))
+        setToDay(dayjs(tomorrow.setDate(today.getDate() + 1)))
         setPage(0);
         setSize(10);
         getAllOrder(0, 10, '', '', '01-09-2023', dayjs(today).format('DD-MM-YYYY'));

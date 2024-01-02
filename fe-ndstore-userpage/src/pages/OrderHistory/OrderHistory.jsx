@@ -97,14 +97,14 @@ const OrderHistory = () => {
                     if (res?.data?.data !== '') {
                         window.location.href = res?.data?.data;
                     } else if (res?.data?.data === '') {
-                        window.location.href = 'http://localhost:3000/checkout/order/payment?complete=&cancel=&cod=true';
+                        navigate(`/checkout/order/payment?complete=&cancel=&cod=true`)
                     }
                 }
             })
             .catch((err) => {
                 if (err) {
                     setIsLoading(false)
-                    window.location.href = 'http://localhost:3000/checkout/order/payment?complete=true&cancel=true';
+                    navigate(`/checkout/order/payment?complete=true&cancel=true`)
                 }
             })
     }

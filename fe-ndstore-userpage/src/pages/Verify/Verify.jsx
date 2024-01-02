@@ -30,16 +30,21 @@ const Verify = () => {
       setIsLoading(true);
       verifyUser(email, OTP, type)
          .then((res) => {
-            if (res?.data?.success === true) {
-               setIsLoading(false);
-               if (type === 'reset') {
+            if (type === 'reset') {
+               if (res?.data?.success === true && Object.keys(res?.data?.data).length !== 0) {
                   return navigate(`/reset-password/${res?.data?.data?.id}/${res?.data?.data?.token}`)
-               } else {
-                  return navigate("/login")
+               } else if (Object.keys(res?.data?.data).length === 0) {
+                  setIsLoading(false);
+                  setMessage('Mã OTP không chính xác. Vui lòng kiểm tra lại')
                }
-            } else if (res?.data?.success === false) {
-               setIsLoading(false);
-               setMessage('Mã OTP không chính xác. Vui lòng kiểm tra lại')
+            }
+            if (type === 'register') {
+               if (res?.data?.success === true) {
+                  return navigate("/login")
+               } else if (res?.data?.success === false) {
+                  setIsLoading(false);
+                  setMessage('Mã OTP không chính xác. Vui lòng kiểm tra lại')
+               }
             }
          })
          .catch((err) => {

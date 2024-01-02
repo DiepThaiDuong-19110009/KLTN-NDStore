@@ -307,14 +307,14 @@ const Payment = () => {
                         window.location.href = res?.data?.data;
                     } else if (res?.data?.data === '') {
                         setIsLoading(false);
-                        window.location.href = 'http://localhost:3000/checkout/order/payment?complete=&cancel=&cod=true';
+                        navigate(`/checkout/order/payment?complete=&cancel=&cod=true`)
                     }
                 }
             })
             .catch((err) => {
                 if (err) {
                     setIsLoading(false);
-                    window.location.href = 'http://localhost:3000/checkout/order/payment?complete=false&cancel=false';
+                    navigate(`/checkout/order/payment?complete=false&cancel=false`)
                 }
             })
     }

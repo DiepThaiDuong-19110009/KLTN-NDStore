@@ -6,8 +6,12 @@ import { registerUser } from '../../apis/user.api'
 import { getDistrict, getProvince, getWard } from '../../apis/logictis.api'
 import { Loader } from '../../components/Loader/Loader'
 import { useNavigate } from 'react-router-dom'
+import { API_URL } from "../../common/common"
 
 const Register = () => {
+
+    const urlLoginGoogle = API_URL + `/oauth2/authorization/google`
+
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -221,7 +225,7 @@ const Register = () => {
                                 <span style={{ margin: '0 auto' }}>Hoặc</span>
                             </div>
                             <div className='row-input-register'>
-                                <a href='http://localhost:8080/oauth2/authorization/google' className='btn-login-google'>
+                                <a href={urlLoginGoogle} className='btn-login-google'>
                                     <img style={{ width: '30px', marginRight: '20px' }} src={logoGoogle} alt='icon-google'></img>
                                     <span>Đăng ký với Google</span>
                                 </a>

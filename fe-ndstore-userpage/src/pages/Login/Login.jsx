@@ -5,8 +5,11 @@ import logoGoogle from '../../images/icon-google.png'
 import { EMAIL_REGEX_PATTERN } from '../../common/common'
 import { loginUser } from '../../apis/user.api'
 import { Loader } from '../../components/Loader/Loader'
+import { API_URL } from "../../common/common"
 
 const Login = () => {
+
+    const urlLoginGoogle = API_URL + `/oauth2/authorization/google`
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -116,7 +119,7 @@ const Login = () => {
                             <span style={{ margin: '0 auto' }}>Hoặc</span>
                         </div>
                         <div className='row-input-login'>
-                            <a href='http://localhost:8080/oauth2/authorization/google' className='btn-login-google'>
+                            <a href={urlLoginGoogle} className='btn-login-google'>
                                 <img style={{ width: '30px', marginRight: '20px' }} src={logoGoogle} alt='icon-google'></img>
                                 <span>Đăng nhập với Google</span>
                             </a>

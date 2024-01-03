@@ -146,7 +146,7 @@ const UserDetail = () => {
     }
 
     const saveEdit = () => {
-        if (!phone || !address || !provinceId || !wardId || !districtId) {
+        if (!name || !phone || !address || !provinceId || !wardId || !districtId) {
             setMessage('Vui lòng cung cấp đầy đủ thông tin')
             return;
         }

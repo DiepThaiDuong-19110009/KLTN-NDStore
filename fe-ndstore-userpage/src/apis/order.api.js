@@ -46,6 +46,21 @@ export const cancelOrderUser = (orderId) => {
     return axios.put(API_URL + `/api/orders/cancel/${orderId}`, {}, config)
 }
 
+export const confirmOrderUser = (orderId) => {
+    const token = localStorage.getItem('access-token')
+    if (!token) {
+        return;
+    }
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+    }
+
+    return axios.put(API_URL + `/api/orders/confirm/complete/${orderId}`, {}, config)
+}
+
 export const remakelOrderUser = (orderId, method) => {
     const token = localStorage.getItem('access-token')
     if (!token) {

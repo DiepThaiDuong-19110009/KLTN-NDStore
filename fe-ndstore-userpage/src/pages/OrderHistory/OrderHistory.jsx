@@ -6,7 +6,7 @@ import {
     Box, Button, Modal, Paper,
     Tab, Tabs, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow
 } from "@mui/material";
-import { cancelOrderUser, getHistoryOrderUser, remakelOrderUser } from "../../apis/order.api";
+import { cancelOrderUser, confirmOrderUser, getHistoryOrderUser, remakelOrderUser } from "../../apis/order.api";
 import { Loader } from "../../components/Loader/Loader";
 import { useNavigate } from "react-router-dom";
 import imgVNPay from '../../images/vnpay.png';
@@ -64,6 +64,29 @@ const OrderHistory = () => {
         if (currentState === 'cancel') {
             cancelOrder(orderDetail);
         }
+        if (currentState === 'delivery') {
+            confirmOrder(orderDetail);
+        }
+    }
+
+    // Confirm Order
+    const confirmOrder = (orderDetail) => {
+        if (!orderDetail) {
+            return;
+        }
+        setIsLoading(true)
+        confirmOrderUser(orderDetail?.id)
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    setIsLoading(false);
+                    getOrderHistory(page, size, state)
+                    setOpenSetStatus(false)
+                }
+            })
+            .catch((err) => {
+                setIsLoading(false)
+                console.log(err)
+            })
     }
 
     // Cancel Order
@@ -170,7 +193,7 @@ const OrderHistory = () => {
                             value={state}
                             aria-label="wrapped label tabs example">
                             <Tab label="Tất cả" value="" />
-                            <Tab label="Chờ giao hàng" value="waiting" />
+                            <Tab label="Chờ lấy hàng" value="waiting" />
                             <Tab label="Chờ thanh toán" value="process" />
                             <Tab label="Đang giao hàng" value="delivery" />
                             <Tab label="Giao hàng thành công" value="success" />
@@ -186,12 +209,10 @@ const OrderHistory = () => {
                                             <TableHead>
                                                 <TableRow>
                                                     <TableCell style={{ fontWeight: 'bold' }} align="center">#</TableCell>
-                                                    <TableCell style={{ fontWeight: 'bold' }} align="left">Tên người nhận</TableCell>
-                                                    <TableCell style={{ fontWeight: 'bold' }} align="left">Số điện thoại</TableCell>
-                                                    <TableCell style={{ fontWeight: 'bold' }} align="left">Địa chỉ nhận hàng</TableCell>
+                                                    <TableCell style={{ fontWeight: 'bold', maxWidth: '250px' }} align="left">Thông tin giao hàng</TableCell>
                                                     <TableCell style={{ fontWeight: 'bold' }} align="left">Ngày đặt hàng</TableCell>
                                                     <TableCell style={{ fontWeight: 'bold' }} align="left">Phương thức</TableCell>
-                                                    <TableCell style={{ fontWeight: 'bold', minWidth: '150px', textAlign: 'right' }} align="left">Tổng tiền</TableCell>
+                                                    <TableCell style={{ fontWeight: 'bold', minWidth: '200px', textAlign: 'left' }} align="left">Tổng tiền</TableCell>
                                                     <TableCell style={{ fontWeight: 'bold' }} align="left">Trạng thái</TableCell>
                                                     <TableCell style={{ fontWeight: 'bold' }} align="center">Cập nhật trạng thái</TableCell>
                                                     <TableCell style={{ fontWeight: 'bold' }} align="left"></TableCell>
@@ -201,33 +222,53 @@ const OrderHistory = () => {
                                                 {listOrder?.map((order, index) => (
                                                     <TableRow key={order?.id} hover role="checkbox" tabIndex={-1}>
                                                         <TableCell align="center">{index + 1}</TableCell>
-                                                        <TableCell align="left">{order?.shipment?.customerName}</TableCell>
-                                                        <TableCell align="left">{order?.shipment?.customerPhone}</TableCell>
-                                                        <TableCell style={{ maxWidth: '200px' }} align="left">
-                                                            <i className="fas fa-map-marker-alt" style={{ color: 'var(--main-color)', marginRight: '5px' }}></i>
-                                                            {order?.shipment?.customerAddress}{', '}
-                                                            {order?.shipment?.customerWard}{', '}
-                                                            {order?.shipment?.customerDistrict}{', '}
-                                                            {order?.shipment?.customerProvince}</TableCell>
+                                                        <TableCell style={{ maxWidth: '250px' }} align="left">
+                                                            <div style={{ fontSize: '14px' }}>
+                                                                {order?.shipment?.customerName}
+                                                            </div>
+                                                            <div style={{ padding: '5px 0' }}>
+                                                                SĐT: {order?.shipment?.customerPhone}
+                                                            </div>
+                                                            <div>
+                                                                <i className="fas fa-map-marker-alt" style={{ color: 'var(--main-color)', marginRight: '5px' }}></i>
+                                                                {order?.shipment?.customerAddress}{', '}
+                                                                {order?.shipment?.customerWard}{', '}
+                                                                {order?.shipment?.customerDistrict}{', '}
+                                                                {order?.shipment?.customerProvince}
+                                                            </div>
+                                                        </TableCell>
                                                         <TableCell align="left">{order?.createdDate}</TableCell>
                                                         <TableCell align="left">
                                                             {
                                                                 order?.paymentType === 'COD' ?
                                                                     <p style={{
-                                                                        width: '100px', border: '1px solid green',
+                                                                        width: '80px', border: '1px solid green',
                                                                         backgroundColor: 'transparent', color: 'green',
                                                                         textAlign: 'center', padding: '10px 0',
                                                                         borderRadius: '5px'
                                                                     }}>Tiền mặt</p>
                                                                     : order?.paymentType === 'VNPAY' ?
-                                                                        <img style={{ width: '100px' }} src={imgVNPay} alt="" /> : order?.paymentType === 'PAYPAL' ?
-                                                                            <img style={{ width: '100px' }} src={imgPayPal} alt="" /> : order?.paymentType
+                                                                        <img style={{ width: '80px' }} src={imgVNPay} alt="" /> : order?.paymentType === 'PAYPAL' ?
+                                                                            <img style={{ width: '80px' }} src={imgPayPal} alt="" /> : order?.paymentType
                                                             }
                                                         </TableCell>
-                                                        <TableCell style={{ minWidth: '150px', color: 'var(--main-color)' }} align="right">{numberWithCommas(order?.totalPrice)} VNĐ</TableCell>
+                                                        <TableCell style={{ minWidth: '200px' }} align="left">
+                                                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+                                                                <p>
+                                                                    <strong>Tiền hàng:</strong> {numberWithCommas(order?.totalPrice)} VNĐ
+                                                                </p>
+                                                                <p>
+                                                                    <strong>Phí vận chuyển:</strong> {numberWithCommas(order?.shipment?.serviceShipDetail?.totalFeeShip)} VNĐ
+                                                                </p>
+                                                                <p>
+                                                                    <strong>Thành tiền:</strong> <span style={{ fontSize: '14px', color: 'var(--main-color)' }}>{numberWithCommas(order?.totalPrice + order?.shipment?.serviceShipDetail?.totalFeeShip)} VNĐ</span>
+                                                                </p>
+                                                            </div>
+                                                        </TableCell>
                                                         <TableCell style={{ minWidth: '150px' }} align="left">
                                                             {
-                                                                order?.state === 'waiting' && <strong style={{ color: '#FFD700' }}>Chờ xác nhận</strong>
+                                                                order?.state === 'waiting' &&
+                                                                <strong style={{ color: '#FFD700' }}>Chờ lấy hàng</strong>
                                                             }
                                                             {
                                                                 order?.state === 'cancel' && <strong style={{ color: 'red' }}>Đã hủy</strong>
@@ -245,6 +286,16 @@ const OrderHistory = () => {
                                                         <TableCell align="center">
                                                             <div>
                                                                 {
+                                                                    order?.state === 'delivery' &&
+                                                                    <button onClick={() => showSetStatus(order, 'delivery')} style={{
+                                                                        width: '150px', backgroundColor: 'green',
+                                                                        border: 'none', padding: '10px 0', cursor: 'pointer',
+                                                                        color: 'white', boxShadow: '1px 2px 8px #BABABA', borderRadius: '5px'
+                                                                    }}>
+                                                                        Đã nhận được hàng
+                                                                    </button>
+                                                                }
+                                                                {
                                                                     order?.state === 'waiting' &&
                                                                     <button onClick={() => showSetStatus(order, 'cancel')} style={{
                                                                         width: '150px', backgroundColor: 'red',
@@ -258,7 +309,7 @@ const OrderHistory = () => {
                                                                     order?.state === 'process' &&
                                                                     <div>
                                                                         <button onClick={() => showSetStatus(order, 'process')} style={{
-                                                                            width: '150px', backgroundColor: 'green', marginBottom: '20px',
+                                                                            width: '150px', backgroundColor: 'var(--main-color)', marginBottom: '20px',
                                                                             border: 'none', padding: '10px 0', cursor: 'pointer',
                                                                             color: 'white', boxShadow: '1px 2px 8px #BABABA', borderRadius: '5px'
                                                                         }}>
@@ -323,6 +374,13 @@ const OrderHistory = () => {
                     borderRadius: '5px'
                 }}>
                     {
+                        currentState === 'delivery' &&
+                        <div>
+                            <h4 style={{ marginBottom: '20px' }}>Xác nhận đã nhận được đơn hàng</h4>
+                            <p>Bạn đã nhận được hàng?</p>
+                        </div>
+                    }
+                    {
                         currentState === 'cancel' &&
                         <div>
                             <h4 style={{ marginBottom: '20px' }}>Hủy đơn hàng</h4>
@@ -341,7 +399,7 @@ const OrderHistory = () => {
                     }
                     <div style={{ display: 'flex', justifyContent: 'end', gap: '30px', marginTop: '40px' }}>
                         <Button autoFocus onClick={handleCloseSetStatus}>
-                            Không
+                            Hủy
                         </Button>
                         <Button autoFocus onClick={handleUpdateStatus}>
                             Xác nhận

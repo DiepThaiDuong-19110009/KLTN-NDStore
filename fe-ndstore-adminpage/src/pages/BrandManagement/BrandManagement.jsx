@@ -100,7 +100,7 @@ const BrandManagement = () => {
                 .setStatusBrandToDisable(id)
                 .then((res) => {
                     if (res?.success === true) {
-                        getAllBrand(page, size, state);
+                        getAllBrand(page, size, title, state);
                         setIsLoading(false);
                     }
                 })
@@ -116,7 +116,7 @@ const BrandManagement = () => {
                 .setStatusBrandToEnable(id)
                 .then((res) => {
                     if (res?.success === true) {
-                        getAllBrand(page, size, state);
+                        getAllBrand(page, size, title, state);
                         setIsLoading(false);
                     }
                 })

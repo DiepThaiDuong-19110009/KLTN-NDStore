@@ -140,7 +140,7 @@ const ProductEditManagement = () => {
 
     const updateImage = (img) => {
         if (img === '') {
-            setMessageImageBrand('Vui lòng cung cấp hình ảnh thương hiệu');
+            setMessageImageBrand('Vui lòng cung cấp hình ảnh sản phẩm');
             return;
         }
         setIsLoading(true)
@@ -151,6 +151,7 @@ const ProductEditManagement = () => {
                     setIsLoading(false)
                     getProductDetail(id)
                     setOpenSnackbar(true)
+                    window.location.reload();
                 }
             })
             .catch((err) => {

@@ -159,7 +159,7 @@ const ProductDetail = () => {
         const listNegativeWord = ['gạt', 'lừa', 'cắp', 'ngu', 'đểu', 'fake']
         let checkPass = true;
         listNegativeWord.forEach((word) => {
-            if(text.includes(word)) {
+            if (text.includes(word)) {
                 checkPass = false
             }
         })
@@ -246,7 +246,7 @@ const ProductDetail = () => {
                     listHistoryProduct.push(detail);
                 }
             })
-        } else if (listHistoryProduct.length === 0){
+        } else if (listHistoryProduct.length === 0) {
             listHistoryProduct.push(detail);
         }
         localStorage.setItem('history-product', JSON.stringify(historyProducts(listHistoryProduct)));
@@ -262,7 +262,7 @@ const ProductDetail = () => {
                 <div className="product-detail">
                     <div className="imgae-product">
                         <img style={{ cursor: 'zoom-in' }} onClick={() => setOpenZoomImage(true)} alt="img-product" src={srcImg}></img>
-                        <div className="list-detail-imgage">
+                        <div style={{overflow: 'auto'}} className="list-detail-imgage">
                             {
                                 productDetail?.images?.map((img) => {
                                     return (
@@ -341,7 +341,18 @@ const ProductDetail = () => {
             <div className="container-product-detail">
                 <div className="detail-infor-product">
                     <h4>Mô tả sản phẩm</h4>
-                    <p>{productDetail?.description}</p>
+                    {
+                        productDetail?.description?.split('#').map((text, index) => {
+                            return (
+                                <div style={{fontSize: '16px'}}>
+                                    <p>{text}</p>
+                                    {
+                                        index === 0 && <img style={{width: '400px'}} alt={productDetail?.images[0].id_image} src={productDetail?.images[0]?.url}></img>
+                                    }
+                                </div>
+                            )
+                        })
+                    }
                 </div>
             </div>
             <Dialog fullWidth open={openComment} onClose={handleClose}>
@@ -385,7 +396,7 @@ const ProductDetail = () => {
                                             <br />
                                             <small style={{ margin: 0 }}>{comment?.commentCreateDate}</small>
                                             <br />
-                                            <Rating style={{padding: '10px 0', fontSize: '15px'}} name="read-only" value={parseInt(comment?.rate)} readOnly />
+                                            <Rating style={{ padding: '10px 0', fontSize: '15px' }} name="read-only" value={parseInt(comment?.rate)} readOnly />
                                         </div>
                                     </div>
                                     <p style={{ marginTop: '10px' }}>{comment?.reviewDescription}</p>

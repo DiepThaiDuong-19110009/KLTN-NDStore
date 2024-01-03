@@ -70,7 +70,7 @@ export const filterProductByKeySearch = (page, keyword, brandId, priceMin, price
 }
 
 // Filter product with category id + brand id + price + config
-export const filterProductLaptop = (page, categoryId, brandId, priceMin, priceMax, RAM, CPU, PIN, IPS, USB) => {
+export const filterProductLaptop = (page, categoryId, brandId, priceMin, priceMax, RAM, CPU, PIN, CHIP, IPS, USB) => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -82,6 +82,7 @@ export const filterProductLaptop = (page, categoryId, brandId, priceMin, priceMa
     "RAM": RAM,
     "CPU": CPU,
     "PIN": PIN,
+    "CHIP": CHIP,
     "IPS": IPS,
     "USB": USB
   };

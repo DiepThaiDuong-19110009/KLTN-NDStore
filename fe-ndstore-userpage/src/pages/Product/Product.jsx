@@ -27,6 +27,7 @@ const Product = () => {
     const [RAM, setRAM] = useState('')
     const [CPU, setCPU] = useState('')
     const [PIN, setPIN] = useState('')
+    const [CHIP, setCHIP] = useState('')
 
     // Config desktop
     const [IPS, setIPS] = useState('')
@@ -197,7 +198,7 @@ const Product = () => {
         console.log(searchParams.get("categoryId"), filterBrand, RAM, CPU, PIN, IPS, USB)
         if (searchParams.get("categoryId")) {
             setIsLoading(true)
-            filterProductLaptop(page - 1, searchParams.get("categoryId"), filterBrand, minPrice, maxPrice, RAM, CPU, PIN, IPS, USB)
+            filterProductLaptop(page - 1, searchParams.get("categoryId"), filterBrand, minPrice, maxPrice, RAM, CPU, PIN, CHIP, IPS, USB)
                 .then((res) => {
                     if (res?.data?.success === true) {
                         setIsLoading(false);
@@ -239,6 +240,7 @@ const Product = () => {
         setCPU('');
         setRAM('');
         setPIN('');
+        setCHIP('');
     }
 
     return (
@@ -337,6 +339,22 @@ const Product = () => {
                                             <FormControlLabel value="" control={<Radio checked={PIN === ''} />} label="Tất cả" />
                                             <FormControlLabel value="45WH" control={<Radio />} label="45WH" />
                                             <FormControlLabel value="90WH" control={<Radio />} label="90WH" />
+                                        </RadioGroup>
+                                    </FormControl>
+                                </div>
+                                <hr />
+                                <div>
+                                    <FormControl>
+                                        <FormLabel id="demo-radio-buttons-group-label">CHIP</FormLabel>
+                                        <RadioGroup
+                                            value={CHIP}
+                                            onChange={(e) => setCHIP(e.target.value)}
+                                            aria-labelledby="demo-radio-buttons-group-label"
+                                            name="radio-buttons-group"
+                                        >
+                                            <FormControlLabel value="" control={<Radio checked={CHIP === ''} />} label="Tất cả" />
+                                            <FormControlLabel value="GTX" control={<Radio />} label="GTX" />
+                                            <FormControlLabel value="AMD" control={<Radio />} label="AMD" />
                                         </RadioGroup>
                                     </FormControl>
                                 </div>

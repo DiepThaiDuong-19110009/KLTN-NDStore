@@ -241,7 +241,7 @@ const OrderManagement = () => {
         setToDay(dayjs(tomorrow.setDate(today.getDate() + 1)))
         setPage(0);
         setSize(10);
-        getAllOrder(0, 10, '', '', '01-09-2023', dayjs(today).format('DD-MM-YYYY'));
+        getAllOrder(0, 10, '', '', '01-09-2023', dayjs(tomorrow.setDate(today.getDate() + 1)).format('DD-MM-YYYY'));
     }
 
     return (
@@ -290,7 +290,7 @@ const OrderManagement = () => {
                                 <MenuItem value="">
                                     <em>Tất cả trạng thái</em>
                                 </MenuItem>
-                                <MenuItem value={'waiting'}>Đang chờ xác nhận</MenuItem>
+                                <MenuItem value={'waiting'}>Đang chuẩn bị hàng</MenuItem>
                                 <MenuItem value={'process'}>Chờ thanh toán</MenuItem>
                                 <MenuItem value={'delivery'}>Đang giao hàng</MenuItem>
                                 <MenuItem value={'success'}>Đã giao</MenuItem>
@@ -328,7 +328,7 @@ const OrderManagement = () => {
                                         <TableCell style={{ fontWeight: 'bold' }} align="left">Địa chỉ nhận hàng</TableCell>
                                         <TableCell style={{ fontWeight: 'bold' }} align="left">Ngày đặt hàng</TableCell>
                                         <TableCell style={{ fontWeight: 'bold' }} align="left">Phương thức</TableCell>
-                                        <TableCell style={{ fontWeight: 'bold', minWidth: '150px', textAlign: 'right' }} align="left">Tổng tiền</TableCell>
+                                        <TableCell style={{ fontWeight: 'bold', minWidth: '250px', textAlign: 'left' }} align="left">Tổng tiền</TableCell>
                                         <TableCell style={{ fontWeight: 'bold' }} align="left">Trạng thái</TableCell>
                                         <TableCell style={{ fontWeight: 'bold' }} align="center">Cập nhật trạng thái</TableCell>
                                         <TableCell style={{ fontWeight: 'bold' }} align="left"></TableCell>
@@ -355,14 +355,29 @@ const OrderManagement = () => {
                                                             borderRadius: '5px'
                                                         }}>Tiền mặt</p>
                                                         : order?.paymentType === 'VNPAY' ?
-                                                            <img style={{ width: '100px' }} src={imgVNPay} /> : order?.paymentType === 'PAYPAL' ?
-                                                                <img style={{ width: '100px' }} src={imgPayPal} /> : order?.paymentType
+                                                            <img alt="VNPAY" style={{ width: '100px' }} src={imgVNPay} /> : order?.paymentType === 'PAYPAL' ?
+                                                                <img alt="PAYPAL" style={{ width: '100px' }} src={imgPayPal} /> : order?.paymentType
                                                 }
                                             </TableCell>
-                                            <TableCell style={{ minWidth: '150px', color: 'var(--main-color)' }} align="right">{numberWithCommas(order?.totalPrice)} VNĐ</TableCell>
+                                            <TableCell style={{ minWidth: '250px' }} align="right">
+                                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+                                                    <p>
+                                                        <strong>Tiền hàng:</strong> {numberWithCommas(order?.totalPrice)} VNĐ
+                                                    </p>
+                                                    <p style={{ padding: '5px 0' }}>
+                                                        <strong>Phí vận chuyển:</strong> {numberWithCommas(order?.shipment?.serviceShipDetail?.totalFeeShip)} VNĐ
+                                                    </p>
+                                                    <p>
+                                                        <strong>Thành tiền: </strong>
+                                                        <span style={{fontSize: '16px', color: 'var(--main-color)'}}>
+                                                            {numberWithCommas(order?.totalPrice + order?.shipment?.serviceShipDetail?.totalFeeShip)} VNĐ
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                            </TableCell>
                                             <TableCell style={{ minWidth: '150px' }} align="left">
                                                 {
-                                                    order?.state === 'waiting' && <strong style={{ color: '#FFD700' }}>Chờ giao hàng</strong>
+                                                    order?.state === 'waiting' && <strong style={{ color: 'orange' }}>Đang chuẩn bị hàng</strong>
                                                 }
                                                 {
                                                     order?.state === 'cancel' && <strong style={{ color: 'red' }}>Đã hủy</strong>
@@ -406,7 +421,7 @@ const OrderManagement = () => {
                                                                 border: 'none', padding: '10px 0', cursor: 'pointer', marginBottom: '10px',
                                                                 color: 'white', boxShadow: '1px 2px 8px #BABABA', borderRadius: '5px'
                                                             }}>
-                                                                Giao hàng thành công
+                                                                Xác nhận đã giao
                                                             </button>
                                                             <button onClick={() => showSetStatus(order, 'cancel')} style={{
                                                                 width: '150px', backgroundColor: 'red',

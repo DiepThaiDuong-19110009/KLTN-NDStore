@@ -290,7 +290,7 @@ const OrderManagement = () => {
                                 <MenuItem value="">
                                     <em>Tất cả trạng thái</em>
                                 </MenuItem>
-                                <MenuItem value={'waiting'}>Đang chuẩn bị hàng</MenuItem>
+                                <MenuItem value={'waiting'}>Chờ lấy hàng</MenuItem>
                                 <MenuItem value={'process'}>Chờ thanh toán</MenuItem>
                                 <MenuItem value={'delivery'}>Đang giao hàng</MenuItem>
                                 <MenuItem value={'success'}>Đã giao</MenuItem>
@@ -377,7 +377,7 @@ const OrderManagement = () => {
                                             </TableCell>
                                             <TableCell style={{ minWidth: '150px' }} align="left">
                                                 {
-                                                    order?.state === 'waiting' && <strong style={{ color: 'orange' }}>Đang chuẩn bị hàng</strong>
+                                                    order?.state === 'waiting' && <strong style={{ color: 'orange' }}>Chờ lấy hàng</strong>
                                                 }
                                                 {
                                                     order?.state === 'cancel' && <strong style={{ color: 'red' }}>Đã hủy</strong>

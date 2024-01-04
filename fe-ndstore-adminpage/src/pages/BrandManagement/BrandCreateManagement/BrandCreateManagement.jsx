@@ -15,6 +15,7 @@ import { PATH } from "../../../contants/Path";
 const BrandCreateManagement = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [openConfirmClose, setOpenConfirmClose] = useState(false);
+    const [openPopupError, setOpenPopupError] = useState(false);
     const [imageBrand, setImageBrand] = useState('')
     const [imageBrandData, setImageBrandData] = useState('')
     const [messageImageBrand, setMessageImageBrand] = useState('')
@@ -57,6 +58,7 @@ const BrandCreateManagement = () => {
             .catch((err) => {
                 setIsLoading(false);
                 console.log(err)
+                setOpenPopupError(true)
             })
     }
 
@@ -204,6 +206,27 @@ const BrandCreateManagement = () => {
                             outline: 'none', padding: '10px 20px', color: 'white',
                             borderRadius: '5px', cursor: 'pointer'
                         }}>Không</button>
+                    </div>
+                </div>
+            </Modal>
+
+            <Modal
+                open={openPopupError}
+                onClose={() => setOpenPopupError(false)}
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description">
+                <div style={{
+                    width: '500px', height: 'auto', margin: '100px auto',
+                    background: 'white', overflowY: 'auto', padding: '20px',
+                    borderRadius: '5px'
+                }}>
+                    <p>Tên thương hiệu đã tồn tại. Vui lòng nhập tên thương hiệu khác.</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px', justifyContent: 'end', marginTop: '50px' }}>
+                        <button onClick={() => setOpenPopupError(false)} style={{
+                            backgroundColor: 'gray', border: 'none',
+                            outline: 'none', padding: '10px 20px', color: 'white',
+                            borderRadius: '5px', cursor: 'pointer'
+                        }}>OK</button>
                     </div>
                 </div>
             </Modal>

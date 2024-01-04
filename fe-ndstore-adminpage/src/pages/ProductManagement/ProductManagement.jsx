@@ -218,7 +218,7 @@ const ProductManagement = () => {
                         <option value={''}>Danh mục (Tất cả)</option>
                             {
                                 listCategory.map((item) => (
-                                    <option value={item.id}>{item.titleCategory}</option>
+                                    <option key={item.id} value={item.id}>{item.titleCategory}</option>
                                 ))
                             }
                         </select>

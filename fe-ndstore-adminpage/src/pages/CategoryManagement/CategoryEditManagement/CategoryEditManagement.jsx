@@ -15,6 +15,7 @@ import managementCategoryApi from "../../../apis/management-category.api";
 const CategoryEditManagement = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [openConfirmClose, setOpenConfirmClose] = useState(false);
+    const [openPopupError, setOpenPopupError] = useState(false);
     const [imageCategory, setImageCategory] = useState('')
     const [state, setState] = useState('')
     const [messageImageCategory, setMessageImagecategory] = useState('');
@@ -61,7 +62,7 @@ const CategoryEditManagement = () => {
             .then((res) => {
                 if (res?.success === true) {
                     setImageCategory(res?.data?.imageCategory)
-                    setState(res?.data?.state)
+                    setState(res?.data?.display)
                     setValue('name', res?.data?.titleCategory)
                     setIsLoading(false);
                 }
@@ -85,6 +86,7 @@ const CategoryEditManagement = () => {
 
     const onSubmit = (data) => {
         setIsLoading(true)
+        console.log(data, state, id)
         managementCategoryApi
             .editCategory(data, state, id)
             .then((res) => {
@@ -97,6 +99,7 @@ const CategoryEditManagement = () => {
             .catch((err) => {
                 setIsLoading(false);
                 console.log(err)
+                setOpenPopupError(true)
             })
     }
 
@@ -265,6 +268,28 @@ const CategoryEditManagement = () => {
                     </div>
                 </div>
             </Modal>
+
+            <Modal
+                open={openPopupError}
+                onClose={() => setOpenPopupError(false)}
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description">
+                <div style={{
+                    width: '500px', height: 'auto', margin: '100px auto',
+                    background: 'white', overflowY: 'auto', padding: '20px',
+                    borderRadius: '5px'
+                }}>
+                    <p>Tên danh mục đã tồn tại. Vui lòng nhập tên danh mục khác.</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px', justifyContent: 'end', marginTop: '50px' }}>
+                        <button onClick={() => setOpenPopupError(false)} style={{
+                            backgroundColor: 'gray', border: 'none',
+                            outline: 'none', padding: '10px 20px', color: 'white',
+                            borderRadius: '5px', cursor: 'pointer'
+                        }}>OK</button>
+                    </div>
+                </div>
+            </Modal>
+
             <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
                     Cập nhật danh mục thành công

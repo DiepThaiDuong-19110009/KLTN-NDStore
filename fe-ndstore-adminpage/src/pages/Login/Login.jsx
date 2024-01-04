@@ -72,6 +72,10 @@ const Login = () => {
             setOpenPopup(true);
             setIsLoading(false);
           }
+        } else if (res?.success === false) {
+          setMessage('Vui lòng kiểm tra lại email hoặc mật khẩu');
+          setOpenPopup(true);
+          setIsLoading(false);
         }
       })
       .catch((err) => {

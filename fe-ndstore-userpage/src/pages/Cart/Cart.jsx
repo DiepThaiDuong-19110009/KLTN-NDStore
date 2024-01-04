@@ -99,10 +99,27 @@ const Cart = () => {
     }
 
     const goToPayment = () => {
-        if (cart?.length === 0) {
+        if (cart?.length === 0 || checkStockEmpty(cart)) {
             return;
         }
         navigate('/payment')
+    }
+
+    const checkStockEmpty = (cart) => {
+        if (cart?.length <= 0) {
+            return;
+        }
+
+        let check = false;
+
+        cart?.forEach(item => {
+            if (item?.productStock === 0) {
+                check = true
+            } else {
+                check = false;
+            }
+        });
+        return check;
     }
 
     return (
@@ -145,8 +162,8 @@ const Cart = () => {
                                             <span style={{ cursor: 'pointer', color: 'var(--main-color)' }} onClick={() => navigate(`/product/${item?.productId}`)}>{item?.productName}</span>
                                         </td>
                                         <td className='img-product' style={{ textAlign: 'center' }}>
-                                            <img style={{ width: '80px', height: '80px', border: '1px solid rgb(224, 224, 224)', borderRadius: '5px' }} alt=''
-                                                src={item?.image ? item?.image[0]?.url : ''}></img>
+                                        <img style={{ width: '80px', height: '80px', border: '1px solid rgb(224, 224, 224)', borderRadius: '5px' }} alt=''
+                                                    src={item?.image ? item?.image[0]?.url : ''}></img>
                                         </td>
                                         <td className='unit-price'>
                                             <strong>{numberWithCommas(parseInt(item?.discountPrice))} VNĐ</strong>
@@ -178,7 +195,10 @@ const Cart = () => {
                                             </div>
                                         </td>
                                         <td style={{ textAlign: 'right' }}>
-                                            <strong style={{ color: 'var(--main-color)', textAlign: 'right' }}>{numberWithCommas(parseInt(item?.discountPrice) * parseInt(item?.quantity))} VNĐ</strong>
+                                            {
+                                                item.productStock === 0 ? <span style={{color: 'red', fontWeight: 'bold'}}>Hết hàng</span>:
+                                                <strong style={{ color: 'var(--main-color)', textAlign: 'right' }}>{numberWithCommas(parseInt(item?.discountPrice) * parseInt(item?.quantity))} VNĐ</strong>
+                                            }
                                         </td>
                                         <td>
                                             <span onClick={() => deleteItemCart(item?.itemCartId)} style={{ color: 'red', cursor: 'pointer' }}>Xóa</span>
@@ -210,7 +230,7 @@ const Cart = () => {
                     <button
                         disabled={(cart?.length === 0)}
                         onClick={() => goToPayment()}
-                        style={{ background: (cart?.length === 0) ? '#009ed469' : 'var(--main-color)' }}
+                        style={{ background: (cart?.length === 0 || checkStockEmpty(cart)) ? '#009ed469' : 'var(--main-color)' }}
                         className='btn-payment-for-cart'>Tiến hành thanh toán</button>
                 </div>
             </div>

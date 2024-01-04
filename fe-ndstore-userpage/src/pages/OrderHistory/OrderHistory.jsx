@@ -292,7 +292,7 @@ const OrderHistory = () => {
                                                                         border: 'none', padding: '10px 0', cursor: 'pointer',
                                                                         color: 'white', boxShadow: '1px 2px 8px #BABABA', borderRadius: '5px'
                                                                     }}>
-                                                                        Đã nhận được hàng
+                                                                        Xác nhận đã giao
                                                                     </button>
                                                                 }
                                                                 {

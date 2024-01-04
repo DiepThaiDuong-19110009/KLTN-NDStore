@@ -348,7 +348,7 @@ const ProductDetail = () => {
                                     <p>{text}</p>
                                     <div style={{textAlign: 'center'}}>
                                         {
-                                            index < 3 && <img style={{ width: '400px' }} alt={productDetail?.images[index].id_image} src={productDetail?.images[index]?.url}></img>
+                                            index < 3 && <img style={{ width: '400px' }} alt={productDetail?.images[index]?.id_image} src={productDetail?.images[index]?.url}></img>
                                         }
                                     </div>
                                 </div>

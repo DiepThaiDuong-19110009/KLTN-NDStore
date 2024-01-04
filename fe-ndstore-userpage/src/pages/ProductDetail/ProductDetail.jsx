@@ -262,7 +262,7 @@ const ProductDetail = () => {
                 <div className="product-detail">
                     <div className="imgae-product">
                         <img style={{ cursor: 'zoom-in' }} onClick={() => setOpenZoomImage(true)} alt="img-product" src={srcImg}></img>
-                        <div style={{overflow: 'auto'}} className="list-detail-imgage">
+                        <div style={{ overflow: 'auto' }} className="list-detail-imgage">
                             {
                                 productDetail?.images?.map((img) => {
                                     return (
@@ -334,7 +334,7 @@ const ProductDetail = () => {
             </div>
             <div className="container-product-detail">
                 <button style={{ background: 'var(--main-color)', border: 'none', padding: '10px', color: '#FFFFFF', borderRadius: '5px' }}
-                    onClick={() => navigate(`/product?all=${true}`)} className="add-to-cart">
+                    onClick={() => navigate(`/product?categoryId=${productDetail?.categoryId}`)} className="add-to-cart">
                     <i style={{ marginRight: '10px' }} className="fas fa-arrow-left"></i>Tiếp tục mua hàng
                 </button>
             </div>
@@ -344,11 +344,13 @@ const ProductDetail = () => {
                     {
                         productDetail?.description?.split('#').map((text, index) => {
                             return (
-                                <div style={{fontSize: '16px'}}>
+                                <div style={{ fontSize: '16px' }}>
                                     <p>{text}</p>
-                                    {
-                                        index === 0 && <img style={{width: '400px'}} alt={productDetail?.images[0].id_image} src={productDetail?.images[0]?.url}></img>
-                                    }
+                                    <div style={{textAlign: 'center'}}>
+                                        {
+                                            index < 3 && <img style={{ width: '400px' }} alt={productDetail?.images[index].id_image} src={productDetail?.images[index]?.url}></img>
+                                        }
+                                    </div>
                                 </div>
                             )
                         })

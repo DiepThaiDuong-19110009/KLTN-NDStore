@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Footer from "../../components/Footer/Footer";
 import Header from "../../components/Header/Header";
 import '../ProductDetail/ProductDetail.css'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Rating, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Modal, Rating, TextField } from "@mui/material";
 import { getProductDetailById } from "../../apis/product.api";
 import { useNavigate, useParams } from "react-router-dom";
 import { addProductToCart } from "../../apis/cart.api";
@@ -16,10 +16,13 @@ const ProductDetail = () => {
     const [srcImg, setSrcImg] = useState('')
     const [openComment, setOpenComment] = useState(false);
     const [open, setOpen] = useState(false);
+    const [openModalNotPay, setOpenModalNotPay] = useState(false)
     const [isLoading, setIsLoading] = useState(false);
 
     const [productDetail, setProductDetail] = useState({});
     const [openZoomImage, setOpenZoomImage] = useState(false);
+    const [orderInProcess, setOrderInProcess] = useState(false);
+    const [disableButtonAdd, setDisableButtonAdd] = useState(false);
 
     const uniqueIds = [];
 
@@ -53,7 +56,9 @@ const ProductDetail = () => {
     useEffect(() => {
         getProductDetail(id);
         getOrderSucces();
-        console.log('abc')
+        if (localStorage.getItem('access-token')) {
+            getOrderHistory();
+        }
     }, [id])
 
     const numberWithCommas = (x) => {
@@ -200,6 +205,10 @@ const ProductDetail = () => {
             setOpen(true)
             return;
         }
+        if (token && orderInProcess) {
+            setOpenModalNotPay(true);
+            return;
+        }
         setIsLoading(true)
         addProductToCart(id, 1)
             .then((res) => {
@@ -250,6 +259,31 @@ const ProductDetail = () => {
             listHistoryProduct.push(detail);
         }
         localStorage.setItem('history-product', JSON.stringify(historyProducts(listHistoryProduct)));
+    }
+
+     // Get order user
+     const getOrderHistory = () => {
+        setIsLoading(true)
+        setDisableButtonAdd(true)
+        getHistoryOrderUser(0, 20, '')
+            .then((res) => {
+                if (res?.data?.success === true) {
+                    setIsLoading(false);
+                    if (res?.data?.data?.listOrder) {
+                        res?.data?.data?.listOrder?.forEach((order) => {
+                            if (order?.state === 'process') {
+                                setOrderInProcess(true)
+                            }
+                        })
+                    }
+                }
+                setDisableButtonAdd(false)
+            })
+            .catch((err) => {
+                setIsLoading(false)
+                setDisableButtonAdd(false)
+                return err;
+            })
     }
 
     return (
@@ -318,8 +352,8 @@ const ProductDetail = () => {
                         </div>
                         <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', gap: '30px' }}>
                             <button className="view-comment" onClick={handleClickOpen}>Xem đánh giá sản phẩm</button>
-                            <button style={{ background: productDetail?.stock === 0 ? '#009ed469' : 'var(--main-color)' }}
-                                disabled={productDetail?.stock === 0} onClick={() => addToCart(productDetail?.stock)} className="add-to-cart">
+                            <button style={{ background: productDetail?.stock === 0 || disableButtonAdd === true ? '#009ed469' : 'var(--main-color)' }}
+                                disabled={productDetail?.stock === 0 || disableButtonAdd === true} onClick={() => addToCart(productDetail?.stock)} className="add-to-cart">
                                 <i style={{ marginRight: '10px' }} className="fas fa-cart-plus"></i>Thêm vào giỏ hàng
                             </button>
                         </div>
@@ -446,6 +480,29 @@ const ProductDetail = () => {
                     </DialogContentText>
                 </DialogContent>
             </Dialog>
+            {/* If have other not pay */}
+            <Modal
+                open={openModalNotPay}
+                onClose={() => setOpenModalNotPay(false)}
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description">
+                <div style={{
+                    width: '500px', height: 'auto', margin: '30px auto',
+                    background: 'white', overflowY: 'auto', padding: '20px',
+                    borderRadius: '5px'
+                }}>
+                    <div>
+                        <h4 style={{ marginBottom: '20px' }}>Thông báo</h4>
+                        <p>Bạn còn đơn hàng đang chờ thanh toán. Vui lòng thanh toán để có thể tiếp tục đặt hàng.</p>
+                        <p style={{ color: 'var(--main-color)', cursor: 'pointer' }} onClick={() => navigate('/order-history')}>Đến lịch sử đơn hàng</p>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'end', gap: '30px', marginTop: '40px' }}>
+                        <Button autoFocus onClick={() => setOpenModalNotPay(false)}>
+                            OK
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
             <Footer></Footer>
         </div>
     )

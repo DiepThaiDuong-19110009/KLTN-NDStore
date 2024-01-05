@@ -265,7 +265,7 @@ const ProductDetail = () => {
      const getOrderHistory = () => {
         setIsLoading(true)
         setDisableButtonAdd(true)
-        getHistoryOrderUser(0, 20, '')
+        getHistoryOrderUser(0, 5, '')
             .then((res) => {
                 if (res?.data?.success === true) {
                     setIsLoading(false);

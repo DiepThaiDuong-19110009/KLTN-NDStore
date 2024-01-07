@@ -1,2 +1,3 @@
-# KLTN-NDStore-Client-Page
-Client Page
+KHÓA LUẬN TỐT NGHIỆP
+- User page
+- Admin page
